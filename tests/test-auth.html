@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Autenticação - Linkdireto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+            width: 100%;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-header h1 {
+            color: #ff6b35;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .test-header p {
+            color: #65676b;
+            font-size: 1rem;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .test-section h3 {
+            color: #ff6b35;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status.error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .status.info {
+            background: rgba(23, 162, 184, 0.1);
+            color: #17a2b8;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Voltar ao início
+        </a>
+
+        <div class="test-header">
+            <h1>Teste de Autenticação</h1>
+            <p>Verifique se o sistema de autenticação está funcionando corretamente</p>
+        </div>
+
+        <div class="test-section">
+            <h3>Status da Conexão</h3>
+            <div id="connectionStatus" class="status info">
+                Verificando conexão com Supabase...
+            </div>
+            <button class="test-btn" onclick="testConnection()">
+                <i class="fas fa-wifi"></i>
+                Testar Conexão
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>Status de Autenticação</h3>
+            <div id="authStatus" class="status info">
+                Verificando status de autenticação...
+            </div>
+            <button class="test-btn" onclick="checkAuthStatus()">
+                <i class="fas fa-user-check"></i>
+                Verificar Status
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>Navegação</h3>
+            <a href="register.html" class="test-btn">
+                <i class="fas fa-user-plus"></i>
+                Página de Registro
+            </a>
+            <a href="login.html" class="test-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Página de Login
+            </a>
+            <a href="index.html" class="test-btn">
+                <i class="fas fa-home"></i>
+                Página Inicial
+            </a>
+        </div>
+
+        <div class="test-section">
+            <h3>Logs de Debug</h3>
+            <div id="debugLogs" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; max-height: 200px; overflow-y: auto;">
+                Aguardando logs...
+            </div>
+            <button class="test-btn" onclick="clearLogs()">
+                <i class="fas fa-trash"></i>
+                Limpar Logs
+            </button>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://nvswucwnvshvklqgojcw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logsDiv = document.getElementById('debugLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#17a2b8';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Função para limpar logs
+        function clearLogs() {
+            document.getElementById('debugLogs').innerHTML = 'Logs limpos...';
+        }
+
+        // Função para testar conexão
+        async function testConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Testando conexão...';
+            addLog('Testando conexão com Supabase...');
+
+            try {
+                // Testar conexão básica
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('count')
+                    .limit(1);
+
+                if (error) throw error;
+
+                statusDiv.className = 'status success';
+                statusDiv.textContent = 'Conexão estabelecida com sucesso!';
+                addLog('Conexão com Supabase estabelecida com sucesso!', 'success');
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Erro na conexão: ' + error.message;
+                addLog('Erro na conexão: ' + error.message, 'error');
+            }
+        }
+
+        // Função para verificar status de autenticação
+        async function checkAuthStatus() {
+            const statusDiv = document.getElementById('authStatus');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Verificando autenticação...';
+            addLog('Verificando status de autenticação...');
+
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) throw error;
+
+                if (user) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `Usuário logado: ${user.email}`;
+                    addLog(`Usuário logado: ${user.email}`, 'success');
+
+                    // Verificar se o perfil existe
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (profileError) {
+                        addLog('Perfil não encontrado: ' + profileError.message, 'error');
+                    } else {
+                        addLog(`Perfil encontrado: ${profile.name} (${profile.turma})`, 'success');
+                    }
+                } else {
+                    statusDiv.className = 'status info';
+                    statusDiv.textContent = 'Nenhum usuário logado';
+                    addLog('Nenhum usuário logado', 'info');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Erro ao verificar autenticação: ' + error.message;
+                addLog('Erro ao verificar autenticação: ' + error.message, 'error');
+            }
+        }
+
+        // Executar testes automáticos ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('Página de teste carregada');
+            testConnection();
+            checkAuthStatus();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>briolink</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Plataforma de rede social para estudantes, com publicações, comentários e interações">
+    <meta name="theme-color" content="#371669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Briolink">
+    <meta name="msapplication-TileColor" content="#371669">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="favicon_io-22/apple-touch-icon.png">
+    <link rel="shortcut icon" href="favicon_io-22/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io-22/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io-22/favicon-16x16.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="stylesheet" href="src/css/auth-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+
+</script>
+
+
+</head>
+
+<body class="intro-active">
+
+<div class="intro-container" id="introContainer">
+    <div class="background-animation"></div>
+    <div class="particles" id="particles"></div>
+    <div class="connection-lines">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <div class="logo-container">
+        <div class="logop">briolink</div>
+        <div class="tagline">Valorizamos o que nasce da criatividade</div>
+        <div class="loading-container">
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-text" id="loadingText">Carregando...</div>
+        </div>
+    </div>
+</div>
+<div class="particles" id="particles"></div>
+
+    
+<div id="notification-container"></div>
+
+    <div id="notificationOverlay" class="notification-overlay"></div>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo" onclick="showSection('home')">briolink</h1>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="nav" id="nav">
+                <div id="profileInMenu"></div>
+                <a href="#home" class="nav-link active" onclick="showSection('home')" value="all">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text"></span>
+                </a>
+                <a href="#ranking" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span class="nav-text"></span>
+                </a>
+                <a href="#notificacoes" class="nav-link" id="notificationBell" style="position:relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount" style="display:none;">0</span>
+                    <span class="nav-text"></span>
+                </a>
+                <a href="#sobre" class="nav-link" onclick="showSection('sobre')">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="nav-text"></span>
+                </a>
+                <!-- Adicionado o menu suspenso do quick-menu-mobile dentro do menu principal -->
+                <div class="sidebar-section quick-menu-mobile" id="quickMenuSectionInNav">
+                    <div class="quick-menu-desktop">
+                      <a href="#" class="sidebar-item" data-filter="all">
+                        <i class="fas fa-home"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="programacao">
+                        <i class="fas fa-laptop-code"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="automacao">
+                        <i class="fas fa-industry"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="mecatronica">
+                        <i class="fas fa-robot"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="mecanica">
+                        <i class="fas fa-cogs"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="quimica">
+                        <i class="fas fa-flask"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="robotica">
+                        <i class="fas fa-microchip"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="sistemas">
+                        <i class="fas fa-network-wired"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="petroquimica">
+                        <i class="fas fa-oil-can"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="eletronica">
+                        <i class="fas fa-bolt"></i>
+                      </a>
+                  
+                      <a href="#" class="sidebar-item" data-filter="eletricidade">
+                        <i class="fas fa-plug"></i>
+                      </a>
+                    </div>
+                  </div>
+            </nav>
+
+            <!-- Campo de busca movido para o header -->
+            <div class="search-container">
+                <div class="searchP">
+                    <i class="fas fa-search lupa"></i> <input type="text" id="searchInput" placeholder="Buscar publicações..." class="search-input"> 
+                </div>
+           
+                
+                <button type="button" class="search-btn bthp" aria-label="Abrir pesquisa"><i class="fas fa-search"></i></button>
+            </div>
+            <!-- Botões de autenticação no header -->
+            <div class="auth-buttons" id="authButtons" >
+                
+               <span class="tituI"><i class="fas fa-user-circle "></i></span> 
+                <h3 class="titLogin">Bem-vindo ao briolink</h3>
+                <p class="tituPara">Conecte-se, inspire e transforme o mundo com suas ideias!</p>
+            <div class="BtnEnt">
+                <a href="src/html/login.html" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </a>
+                <a href="src/html/register.html" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    Criar Conta
+                </a>
+
+
+            </div>
+               
+            </div>
+        </div>
+    </header>
+    <div id="notificationPanel" class="notification-panel">
+        <div id="notificationList"></div>
+    </div>
+
+    <main class="main">
+        <!-- Sidebar Esquerda - Perfil do Usuário -->
+        <aside class="left-sidebar">
+            <!-- Seção de login quando não logado -->
+            <div class="login-section" id="loginSection">
+                <div class="login-card">
+                    <i class="fas fa-user-circle" style="font-size: 3rem; color: #5202dd; margin-bottom: 1rem;"></i>
+                    <h3>Bem-vindo ao briolink</h3>
+                    <p>Conecte-se, inspire e transforme o mundo com suas ideias!</p>
+                    <a href="src/html/login.html" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrar
+                    </a>
+                    <a href="src/html/register.html" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i>
+                        Criar Conta
+                    </a>
+                </div>
+            </div>
+            <!-- Mover user-profile-header para a sidebar -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Perfil</h3>
+                <div id="userProfileSection" class="user-profile-section" style="display: none;">
+                    <!-- Conteúdo do perfil já existente -->
+                    <div class="user-profile-card user-profile-summary" id="userProfileSummary">
+                        <div class="user-avatar-large" id="userAvatarLargeSummary" onclick="toggleUserProfileDetails()">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="user-full-name" id="userFullNameSummary">Nome do Usuário</h3>
+                        <p class="user-short-description" id="userShortDescription">Profissão ou área</p>
+                        <p class="user-turma" id="userTurmaSummary">Turma: Não definida</p>
+                        <button class="btn btn-outline" id="showProfileBtn" onclick="toggleUserProfileDetails()">
+                            <i class="fas fa-user"></i>
+                            Mostrar perfil
+                        </button>
+                    </div>
+                    <!-- Perfil Completo (expandido) -->
+                    <div class="user-profile-card user-profile-details" id="userProfileDetails" style="display: none;">
+
+                        <button class="btn btn-secondary" onclick="logout()" style="margin-top: -20px; padding: 12px; position: absolute; right: 16px;color: aliceblue; ">
+                            <i class="fas fa-sign-out-alt"></i>
+                            
+                        </button>
+                        
+                        <div class="user-avatar-large" id="userAvatarLargeDetails">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="user-full-name" id="userFullNameDetails">Nome do Usuário</h3>
+                        <p class="user-turma" id="userTurmaDetails">Turma: Não definida</p>
+                        <p class="user-description" id="userDescriptionDetails">Sem descrição</p>
+                      
+                        <button class="btn btn-outline btn-outline2 " onclick="openEditProfileModal()" >
+                            <i class="fas fa-edit"></i>
+                            
+                        </button>
+                   
+                        <button class="btn btn-outline btn-outline1" id="hideProfileBtn" onclick="toggleUserProfileDetails()">
+                            <i class="fas fa-chevron-up"></i>
+                            
+                        </button>
+                    </div>
+                </div>
+                <!-- Fim do bloco de perfil -->
+                <div class="user-profile-header" id="userProfileHeader" style="display: none;">
+                    
+                    <div class="user-avatar-small" id="userAvatarSmall" onclick="toggleUserProfile()">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="user-name" id="userName" onclick="toggleUserProfile()" style="display: none;">Usuário</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Feed Central -->
+        <section class="feed-container">
+            <!-- Criar Publicação (só aparece quando logado) -->
+            <div class="create-post" id="createPost" style="display: none;">
+                <div class="create-post-header">
+                    <div class="create-post-avatar" id="createPostAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <input type="text" class="create-post-input" placeholder="O que você está pensando?" onclick="openModal()">
+                </div>
+                <div class="create-post-actions">
+                    <button class="create-post-btn" onclick="filterByMedia('photo')">
+                        <i class="fas fa-image"></i>
+                        Foto
+                    </button>
+                    <button class="create-post-btn" onclick="filterByMedia('video')">
+                        <i class="fas fa-video"></i>
+                        Vídeo
+                    </button>
+                    <button class="create-post-btn primary" onclick="openModal()">
+                        <i class="fas fa-edit"></i>
+                        Escrever
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Carregando publicações...</p>
+            </div>
+
+            <!-- Publicações -->
+            <div id="publicationsGrid">
+                <!-- As publicações serão inseridas aqui dinamicamente -->
+            </div>
+        </section>
+
+        <!-- Sidebar Direita - Menu Rápido -->
+        <aside class="right-sidebar">
+            <div class="sidebar-section" id="quickMenuSection">
+                <h3 class="sidebar-title">Menu Rápido</h3>
+                <div class="quick-menu-desktop">
+                    <a href="#" class="sidebar-item" data-filter="all">
+                        <i class="fas fa-home"></i>
+                        Página Inicial
+                    </a>
+                    <a href="#" class="sidebar-item" data-filter="programacao">
+                        <i class="fas fa-laptop-code"></i>
+                        Programação
+                    </a>
+                    <a href="#" class="sidebar-item" data-filter="automacao">
+                        <i class="fas fa-industry"></i>
+                        Automação
+                    </a>
+                  
+                    <div id="quickMenuMore" style="display: none;">
+                        <a href="#" class="sidebar-item" data-filter="mecatronica">
+                            <i class="fas fa-robot"></i>
+                            Mecatrônica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="mecanica">
+                            <i class="fas fa-cogs"></i>
+                            Mecânica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="quimica">
+                            <i class="fas fa-flask"></i>
+                            Química
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="robotica">
+                            <i class="fas fa-microchip"></i>
+                            Robótica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="sistemas">
+                            <i class="fas fa-network-wired"></i>
+                            Sistemas
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="petroquimica">
+                            <i class="fas fa-oil-can"></i>
+                            Petroquímica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="eletronica">
+                            <i class="fas fa-bolt"></i>
+                            Eletrônica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="eletricidade">
+                            <i class="fas fa-plug"></i>
+                            Eletricidade
+                        </a>
+                       
+                    </div>
+                    <button class="btn btn-outline" id="quickMenuShowMore" onclick="toggleQuickMenuMore()" style="margin-top: 8px; width: 100%;">
+                        Ver mais
+                    </button>
+                </div>
+               
+            </div>
+        </aside>
+    </main>
+
+    <!-- Seção Sobre -->
+    <section id="sobre" class="sobre-section" style="display: none;">
+        <div class="sobre-container">
+            <div class="sobre-header">
+                <h2>Sobre a Plataforma</h2>
+               
+            </div>
+
+            <div class="sobre-content">
+                <!-- Sobre a Plataforma -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Sobre a Plataforma</h3>
+                    <p>O briolink é uma plataforma digital que valoriza a criatividade e o conhecimento técnico. Nossa missão é conectar estudantes e entusiastas das mais diversas áreas técnicas, criando um ambiente colaborativo onde ideias podem florescer e projetos podem ganhar vida.</p>
+                </div>
+
+                <!-- Principais Funcionalidades -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Principais Funcionalidades</h3>
+                    <ul class="funcionalidades-list">
+                        <li><i class="fas fa-users"></i> Conexão com profissionais da área</li>
+                        <li><i class="fas fa-bell"></i> Notificações em tempo real</li>
+                        <li><i class="fas fa-search"></i> Busca avançada por categorias</li>
+                        <li><i class="fas fa-trophy"></i> Sistema de ranking e reconhecimento</li>
+                        <li><i class="fas fa-comments"></i> Discussões técnicas e colaborativas</li>
+                        <li><i class="fas fa-share-alt"></i>Compartilhamento de ideias<li>
+                     
+                    </ul>
+                </div>
+
+                <!-- Privacidade e Segurança -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacidade e Segurança</h3>
+                    <p>Sua privacidade é nossa prioridade. Utilizamos as mais avançadas tecnologias de segurança para proteger seus dados pessoais e garantir uma experiência segura na plataforma.</p>
+                    <ul class="seguranca-list ">
+                        <li><i class="fas fa-lock"></i> Dados criptografados</li>
+                        <li><i class="fas fa-user-shield"></i> Controle total sobre suas informações</li>
+                        <li><i class="fas fa-eye-slash"></i> Configurações de privacidade personalizáveis</li>
+                    </ul>
+                </div>
+
+                <!-- Como Funciona o Ranking -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Como Funciona o Ranking</h3>
+                    <p>Nosso sistema de ranking é baseado na valorização de publicações através do botão "Impulsionar". Os usuários podem usar este botão para valorizar publicações que consideram relevantes e úteis. Quanto mais impulsões sua publicação receber, maior será sua posição no ranking da comunidade.</p>
+                    <div class="ranking-factors">
+                        <div class="factor">
+                            <i class="fas fa-fire" style="font-size: 1rem; color: #d6b6f8;"></i>
+                            <span>Impulsões Recebidas</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 0.9rem; color: #cbd5e1;">
+                        <strong>💡 Dica:</strong> Compartilhe projetos inovadores, tutoriais úteis e ideias criativas para receber mais impulsões e subir no ranking!
+                    </p>
+                </div>
+
+                <!-- Tecnologias Utilizadas -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Tecnologias Utilizadas</h3>
+                    <p>O briolink foi desenvolvido com as mais modernas tecnologias web, garantindo performance, segurança e uma experiência de usuário excepcional.</p>
+                    <ul class="tecnologias-list">
+                        <li><i class="fab fa-html5"></i> HTML5 Semântico</li>
+                        <li><i class="fab fa-css3-alt"></i> CSS3 com Flexbox e Grid</li>
+                        <li><i class="fab fa-js"></i> JavaScript ES6+</li>
+                        <li><i class="fas fa-database"></i> Supabase (PostgreSQL)</li>
+                        <li><i class="fas fa-cloud"></i> Storage em Nuvem</li>
+                        <li><i class="fas fa-mobile-alt"></i> Design Responsivo</li>
+                    </ul>
+                </div>
+
+                <!-- Sobre o Desenvolvedor -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Sobre o Desenvolvedor</h3>
+                    
+                    <p>Olá! Sou Joaquim César Francisco Marques, desenvolvedor Front-End apaixonado por criar soluções inovadoras. Este projeto foi desenvolvido com muito carinho e dedicação para conectar estudantes e profissionais da área técnica.</p>
+                    <div class="desenvolvedor-contatos">
+                        <div class="contactos">
+                            <button class="redes">
+                              <a href="https://github.com/JoquimMarques" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a>
+                            </button>
+                            <button class="redes">
+                              <a href="https://www.linkedin.com/in/joaquim-c%C3%A9sar-francisco-marques-2b957a2a7/" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i></a>
+                            </button>
+                            <button class="redes">
+                              <a href="mailto:nelsonmarquesj55@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                            </button>
+                            <button class="redes">
+                                <a href="Joaquim César Francisco Marques | LinkedIn.pdf" download>
+                                  <i class="fa-solid fa-file-pdf"></i>
+                                </a>
+                              </button>
+                              
+                          </div>
+                    </div>
+                    <div class="desenvolvedor-info">
+
+                        <div class="info-item">
+                            <i class="fas fa-briefcase" style="color: #d6b6f8;" title="Portfólio"></i>
+                            <a href="https://devjoaquim.netlify.app/" target="_blank" class="portfolio-link">
+                                <span style="background: linear-gradient(30deg, #5903b5 0%, #9438f7 100%); color: #fff; padding: 6px 76px; border-radius: 8px; font-weight: 600; font-size: 1rem; box-shadow: 0 2px 10px rgba(123,0,255,0.10); transition: background 0.3s, transform 0.2s; display: inline-block; text-decoration: none;">Portfólio</span>
+                            </a>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fas fa-graduation-cap" style="color: #d6b6f8;"></i>
+                            <span>Estudante de Gestão de Sistemas Informáticos</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt" style="color: #d6b6f8;"></i>
+                            <span>Projeto desenvolvido em 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+            
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal para nova publicação -->
+    <div id="publicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #7b00ff;"><i class="fas fa-edit" style="margin-right: 7px;"></i>Criar Publicação</h3> 
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="publicationForm" class="publication-form">
+                <div class="form-group">
+                    <label for="title">Título</label>
+                    <input type="text" id="title" name="title" required class="form-input" >
+                </div>
+                <div class="form-group">
+                    <label for="content">Assunto</label>
+                    <textarea id="content" name="content" rows="8" required class="form-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Categoria</label>
+                    <select id="category" name="category" class="form-select">
+                        <option value="programacao">Programação</option>
+                        <option value="mecanica">Mecânica</option>
+                        <option value="quimica">Química</option>
+                        <option value="mecatronica">Mecatrônica</option>
+                        <option value="robotica">Robótica</option>
+                        <option value="sistemas">Sistemas</option>
+                        <option value="petroquimica">Petroquímica</option>
+                        <option value="eletronica">Eletrônica</option>
+                        <option value="eletricidade">Eletricidade</option>
+                        <option value="automacao">Automação</option>
+                    </select>
+                </div>
+                <!-- Upload de Foto -->
+                <div class="form-group">
+                    <label for="photoUpload" class="custom-file-upload" style="color: white;">
+                        <i class="fas fa-image"></i> Adicionar imagem
+                        <input type="file" id="photoUpload" name="photo" accept="image/*" style="display: none;">
+                    </label>
+                    <div id="photoPreview" class="media-preview" style="display: none;">
+                        <img id="photoPreviewImg" src="" alt="Preview da foto">
+                        <button type="button" class="remove-media-btn" onclick="removePhoto()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload de Vídeo -->
+                <div class="form-group">
+                    <label for="videoUpload" class="custom-file-upload"style="color: white" > 
+                        <i class="fas fa-video"></i> Adicionar vídeo
+                        <input type="file" id="videoUpload" name="video" accept="video/*" style="display: none;">
+                    </label>
+                    <div id="videoPreview" class="media-preview" style="display: none;">
+                        <video controls class="publication-video" id="myPlyrVideo">
+                            <source id="videoPreviewSrc" src="" type="video/mp4">
+                        </video>
+                        <div class="video-info">
+                            <span id="videoDuration">Duração: 0s</span>
+                            <button type="button" class="remove-media-btn" onclick="removeVideo()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Publicar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Perfil -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #7b00ff;"><i class="fas fa-edit" style="margin-right: 7px;"></i>Editar Perfil</h3>
+                <button class="close-btn" onclick="closeEditProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editProfileForm" class="auth-form">
+
+                <div class="form-group">
+            
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div id="avatarPreview" style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #e0c3fc 0%, #a68efc 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 8px rgba(106,27,154,0.08);">
+                            <i class="fas fa-user" style="font-size: 2rem; color: #b39ddb;" id="avatarIcon"></i>
+                            <!-- A imagem de preview será inserida via JS -->
+                        </div>
+                        <label for="editProfileAvatar" style="cursor: pointer; background: linear-gradient(90deg, #7b00ff 0%, #2e025a 100%); color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: 500; font-size: 1rem; box-shadow: 0 2px 8px rgba(41,4,119,0.08); transition: background 0.2s;">
+                            <i class="fas fa-upload" style="margin-right: 7px;"></i> Selecionar foto
+                            <input type="file" id="editProfileAvatar" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                    <small style="color: #888; margin-top: 4px; display: block;">Formatos aceitos: JPG, PNG, até 5MB.</small>
+                   
+
+                </div>
+                <div class="form-group">
+                    <label for="editProfileName">Nome Completo</label>
+                    <input type="text" id="editProfileName" name="name" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileTurma">Turma</label>
+                    <input type="text" id="editProfileTurma" name="turma" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileShortDescription">Profissão ou área</label>
+                    <input type="text" id="editProfileShortDescription" name="short_description" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileDescription">Descrição</label>
+                    <textarea id="editProfileDescription" name="description" rows="3" class="form-textarea" maxlength="100" style="resize: vertical; field-sizing: content; min-height: 1px; border-radius: 10px; max-height: 60px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileWhatsapp">WhatsApp</label>
+                    <input type="text" id="editProfileWhatsapp" name="whatsapp" class="form-input" placeholder="Ex: 900 000 000">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil de Usuário -->
+    <div id="userProfileModal" class="modal">
+        <div class="modal-content" id="userProfileModalContent">
+            <div class="modal-header">
+                <h3 id="userProfileModalName">Perfil do Usuário</h3>
+                <button class="close-btn" onclick="closeUserProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="user-profile-card user-profile-modal-details">
+                <div class="user-avatar-large" id="userProfileModalAvatar">
+                    <i class="fas fa-user"></i>
+                  
+
+                </div>
+                <h4 class="user-full-name" id="userProfileModalFullName">Nome do Usuário</h4>
+                <p class="user-turma" id="userProfileModalTurma">Turma: Não definida</p>
+                <p class="user-description" id="userProfileModalDescription">Sem descrição</p>
+                <p class="user-short-description" id="userProfileModalShortDescription">Profissão ou área</p>
+            </div>
+        </div>
+    </div>
+    <!-- Fim do Modal de Perfil de Usuário -->
+
+    <!-- Scripts -->
+    <script src="src/js/modules/app-utils.js"></script>
+    <script src="src/js/script-corrected.js"></script>
+    <!-- <script type="module" src="./src/js/performance-boost.js"></script> -->
+
+    
+</body>
+</html> 
