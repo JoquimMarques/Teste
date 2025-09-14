@@ -1,6 +1,6 @@
 {
-    "name": "briolink - Rede Social Acadêmica",
-    "short_name": "briolink",
+    "name": "Briolink - Rede Social Acadêmica",
+    "short_name": "Briolink",
     "description": "Plataforma de rede social para estudantes, com publicações, comentários e interações",
     "start_url": "/",
     "display": "standalone",

@@ -3881,6 +3881,18 @@ window.addEventListener('beforeinstallprompt', (e) => {
     showInstallButton();
 });
 
+// Fallback: Mostrar botão após 3 segundos se não aparecer automaticamente
+setTimeout(() => {
+    if (!deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+        showInstallButton();
+        // Mostrar também no menu lateral
+        const menuInstallBtn = document.querySelector('.install-app-btn');
+        if (menuInstallBtn) {
+            menuInstallBtn.style.display = 'block';
+        }
+    }
+}, 3000);
+
 // Mostrar botão de instalação
 function showInstallButton() {
     // Verificar se já está instalado
@@ -3940,12 +3952,12 @@ function showInstallButton() {
         }
     });
     
-    // Auto-remover após 10 segundos
+    // Auto-remover após 30 segundos (mais tempo para o usuário ver)
     setTimeout(() => {
         if (installButton.parentNode) {
             installButton.remove();
         }
-    }, 10000);
+    }, 30000);
     
     document.body.appendChild(installButton);
 }
