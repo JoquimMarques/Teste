@@ -28,7 +28,8 @@
             'petroquimica': 'Petroquímica',
             'eletronica': 'Eletrônica',
             'eletricidade': 'Eletricidade',
-            'automacao': 'Automação'
+            'automacao': 'Automação',
+            'negocios': 'Negócios'
         };
         return categories[category] || null;
     }

@@ -3200,6 +3200,11 @@ a:hover {
   .sidebar-item[data-filter="eletricidade"] {
     background: linear-gradient(135deg, #232526 0%, #414345 100%);
   }
+
+  /* Negócios - laranja */
+  .sidebar-item[data-filter="negocios"] {
+    background: linear-gradient(135deg, #ff7a18 0%, #ffb347 100%);
+  }
   
   /* opcional: acessibilidade ao focar via teclado */
   .sidebar-item:focus-visible {
