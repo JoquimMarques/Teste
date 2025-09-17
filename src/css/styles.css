@@ -3085,6 +3085,8 @@ a:hover {
     z-index: 10000; /* Já está alto, então ficará acima do overlay */
 }
 
+.pwa-mode .install-app-btn { display: none !important; }
+
 .search-btn {
     display: none;
 }

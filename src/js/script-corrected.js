@@ -3985,10 +3985,9 @@ function detectStandaloneMode() {
         window.navigator.standalone === true) {
         document.body.classList.add('pwa-mode');
         // Ocultar opção de instalar no menu se já estiver instalado
-        const menuInstallBtn = document.querySelector('.install-app-btn');
-        if (menuInstallBtn) {
-            menuInstallBtn.style.display = 'none';
-        }
+        document.querySelectorAll('.install-app-btn').forEach(btn => {
+            btn.style.display = 'none';
+        });
         
         // Adicionar CSS específico para PWA
         const pwaStyles = document.createElement('style');
@@ -4007,9 +4006,9 @@ function detectStandaloneMode() {
 // Atualiza visibilidade do botão de instalar no menu
 function updateInstallUI() {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    const menuInstallBtn = document.querySelector('.install-app-btn');
-    if (!menuInstallBtn) return;
-    menuInstallBtn.style.display = isStandalone ? 'none' : 'block';
+    document.querySelectorAll('.install-app-btn').forEach(btn => {
+        btn.style.display = isStandalone ? 'none' : 'block';
+    });
 }
 
 // Verificar conectividade
