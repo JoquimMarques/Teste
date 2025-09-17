@@ -1,5 +1,5 @@
 // Service Worker para PWA Briolink
-const CACHE_NAME = 'briolink-v1.0.1';
+const CACHE_NAME = 'briolink-v1.0.2';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -59,65 +59,42 @@ self.addEventListener('activate', (event) => {
 
 // Interceptação de requisições
 self.addEventListener('fetch', (event) => {
-    // Estratégia: Cache First para recursos estáticos, Network First para API
-    if (event.request.url.includes('supabase') || event.request.url.includes('api')) {
-        // Para requisições de API, usar Network First
+    const req = event.request;
+
+    // Network-first para páginas HTML (garante atualização de conteúdo)
+    const isDocument = req.mode === 'navigate' || req.destination === 'document' || (req.headers.get('accept') || '').includes('text/html');
+    if (isDocument) {
         event.respondWith(
-            fetch(event.request)
-                .then((response) => {
-                    // Se a rede funcionar, retornar a resposta
-                    return response;
+            fetch(req)
+                .then((networkRes) => {
+                    const resClone = networkRes.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put('/', resClone).catch(() => {}));
+                    return networkRes;
                 })
-                .catch(() => {
-                    // Se a rede falhar, mostrar mensagem offline
-                    return new Response(
-                        JSON.stringify({
-                            error: 'Você está offline. Verifique sua conexão com a internet.',
-                            offline: true
-                        }),
-                        {
-                            status: 503,
-                            headers: { 'Content-Type': 'application/json' }
-                        }
-                    );
-                })
+                .catch(() => caches.match(req).then(r => r || caches.match('/index.html')))
         );
-    } else {
-        // Para recursos estáticos, usar Cache First
-        event.respondWith(
-            caches.match(event.request)
-                .then((response) => {
-                    // Se encontrar no cache, retornar
-                    if (response) {
-                        return response;
-                    }
-                    
-                    // Se não encontrar, buscar na rede
-                    return fetch(event.request).then((response) => {
-                        // Verificar se a resposta é válida
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
-                        
-                        // Clonar a resposta para o cache
-                        const responseToCache = response.clone();
-                        
-                        caches.open(CACHE_NAME)
-                            .then((cache) => {
-                                cache.put(event.request, responseToCache);
-                            });
-                        
-                        return response;
-                    });
-                })
-                .catch(() => {
-                    // Se tudo falhar, retornar página offline para navegação
-                    if (event.request.destination === 'document') {
-                        return caches.match('/index.html');
-                    }
-                })
-        );
+        return;
     }
+
+    // Network-first para APIs (Supabase)
+    if (req.url.includes('supabase') || req.url.includes('api')) {
+        event.respondWith(
+            fetch(req).catch(() => new Response(JSON.stringify({ error: 'offline', offline: true }), { status: 503, headers: { 'Content-Type': 'application/json' } }))
+        );
+        return;
+    }
+
+    // Cache-first para estáticos (CSS/JS/Ícones)
+    event.respondWith(
+        caches.match(req)
+            .then((cacheRes) => cacheRes || fetch(req).then((networkRes) => {
+                if (!networkRes || networkRes.status !== 200 || networkRes.type !== 'basic') return networkRes;
+                const resClone = networkRes.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone).catch(() => {}));
+                return networkRes;
+            }))
+            .catch(() => undefined)
+    );
 });
 
 // Notificações push (opcional - para futuras funcionalidades)
