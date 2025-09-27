@@ -706,6 +706,12 @@ async function loadPublications() {
         // Prefetch dos avatares dos autores para render global
         try { await preloadAuthorsAvatars(publications); } catch (_) {}
         
+        // Mostrar o elemento de criar publicação quando carregar as publicações (se estiver logado)
+        const createPostElement = document.getElementById('createPost');
+        if (createPostElement && currentUser) {
+            createPostElement.style.display = 'block';
+        }
+        
         // Carregar interações do usuário se estiver logado
         if (currentUser) {
             await loadUserInteractions();
@@ -1176,6 +1182,13 @@ function scrollToTop() {
 async function showUsersRanking() {
     try {
         showLoading();
+        
+        // Ocultar o elemento de criar publicação quando estiver no ranking
+        const createPostElement = document.getElementById('createPost');
+        if (createPostElement) {
+            createPostElement.style.display = 'none';
+        }
+        
         const ranking = await PublicationsService.getUsersRanking();
         
         if (ranking.length === 0) {
@@ -1190,7 +1203,7 @@ async function showUsersRanking() {
         }
 
         const rankingHTML = ranking.map((user, index) => `
-            <div class="publication-card" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; margin-right: -60px;">
+            <div class="publication-card" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem;">
                 <div style="font-size: 1.5rem; font-weight: bold; color: ${index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#7c3aed'}; min-width: 2rem; text-align: center;">
                     ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}
                 </div>
@@ -1228,6 +1241,23 @@ async function showUsersRanking() {
     }
 }
 
+// Função auxiliar para atualizar contadores de notificações
+function updateNotificationCounters(count) {
+    // Atualizar contador PC
+    const notificationCount = document.getElementById('notificationCount');
+    if (notificationCount) {
+        notificationCount.textContent = count;
+        notificationCount.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+    
+    // Atualizar contador mobile
+    const mobileNotificationCount = document.getElementById('mobileNotificationCount');
+    if (mobileNotificationCount) {
+        mobileNotificationCount.textContent = count;
+        mobileNotificationCount.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+}
+
 // Função para testar notificações (para debug)
 function testNotification() {
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -1243,11 +1273,7 @@ function testNotification() {
     
     // Testar contador de notificações
     unreadNotificationsCount = 5;
-    const notificationCount = document.getElementById('notificationCount');
-    if (notificationCount) {
-        notificationCount.textContent = unreadNotificationsCount;
-        notificationCount.style.display = 'inline-block';
-    }
+    updateNotificationCounters(unreadNotificationsCount);
     
     // Para dispositivos móveis, testar fallbacks
     if (isMobile) {
@@ -1264,11 +1290,7 @@ function testNotification() {
     // Simular notificação em tempo real
     setTimeout(() => {
         unreadNotificationsCount = 6;
-        const notificationCount = document.getElementById('notificationCount');
-        if (notificationCount) {
-            notificationCount.textContent = unreadNotificationsCount;
-            notificationCount.style.display = 'inline-block';
-        }
+        updateNotificationCounters(unreadNotificationsCount);
         playNotificationSound();
         animateBell();
         showNotification('⚡ Notificação simulada em tempo real!', 'success', 3000);
@@ -1591,47 +1613,67 @@ function setupEventListeners() {
     });
 
     // Event listener para o menu Ranking
-    const rankingLink = document.querySelector('a[href="#ranking"]');
-    if (rankingLink) {
+    const rankingLinks = document.querySelectorAll('a[href="#ranking"]');
+    rankingLinks.forEach(rankingLink => {
         rankingLink.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // Remover classe active de todos os itens do menu
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            // Adicionar classe active ao link de ranking
-            rankingLink.classList.add('active');
-            
-            await showUsersRanking();
+            try {
+                // Remover classe active de todos os itens do menu
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                
+                // Adicionar classe active ao link de ranking
+                rankingLink.classList.add('active');
+                
+                await showUsersRanking();
+            } catch (error) {
+                console.error('Erro ao carregar ranking:', error);
+            }
         });
-    }
+    });
 
     // Event listener para o menu Home
-    const homeLink = document.querySelector('a[href="#home"]');
-    if (homeLink) {
+    const homeLinks = document.querySelectorAll('a[href="#home"]');
+    homeLinks.forEach(homeLink => {
         homeLink.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // Scroll para o topo primeiro
-            scrollToTop();
-            
-            // Remover classe active de todos os itens do menu
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
-            // Adicionar classe active ao link de home
-            homeLink.classList.add('active');
-            
-            // Aguardar um pouco para a animação de scroll
-            setTimeout(async () => {
-                try {
-                    await loadPublications();
-                    clearMediaFilters();
-                } catch (error) {
-                    console.error('Erro ao carregar publicações:', error);
-                }
-            }, 300);
+            try {
+                // Scroll para o topo primeiro
+                scrollToTop();
+                
+                // Remover classe active de todos os itens do menu
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                
+                // Adicionar classe active ao link de home
+                homeLink.classList.add('active');
+                
+                // Aguardar um pouco para a animação de scroll
+                setTimeout(async () => {
+                    try {
+                        // Mostrar o elemento de criar publicação quando voltar ao home
+                        const createPostElement = document.getElementById('createPost');
+                        if (createPostElement && currentUser) {
+                            createPostElement.style.display = 'block';
+                        }
+                        
+                        await loadPublications();
+                        clearMediaFilters();
+                    } catch (error) {
+                        console.error('Erro ao carregar publicações:', error);
+                    }
+                }, 300);
+            } catch (error) {
+                console.error('Erro no evento home:', error);
+            }
         });
     }
+)
+
+    // Formulários de autenticação
+    // O erro ocorre porque estava faltando um parêntese de fechamento após o forEach dos homeLinks.
+    // Agora, aplicando o parêntese corretamente para fechar o forEach:
+    // Remover este fechamento extra, pois o forEach já foi fechado corretamente acima.
 
     // Formulários de autenticação
     if (editProfileForm) {
@@ -1854,6 +1896,7 @@ async function initializeApp() {
     await checkAuthStatus();
     await loadPublications();
     setupEventListeners();
+    setupNotificationListeners(); // Adicionar listeners de notificação
     setupRealtimeSubscriptions();
     unlockAudioOnFirstInteraction();
     
@@ -2468,35 +2511,36 @@ async function atualizarContadorNotificacoes() {
         unreadNotificationsCount = count;
         previousUnreadCount = count;
         
-        const notificationCount = document.getElementById('notificationCount');
-        if (!notificationCount) return;
+        // Usar a função updateNotificationCounters que atualiza tanto desktop quanto mobile
+        updateNotificationCounters(unreadNotificationsCount);
         
-        if (unreadNotificationsCount > 0) {
-            notificationCount.textContent = String(unreadNotificationsCount);
-            notificationCount.style.display = 'inline-block';
+        // Para dispositivos móveis, adicionar efeito visual extra
+        if (unreadNotificationsCount > 0 && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            const notificationCount = document.getElementById('notificationCount');
+            const mobileNotificationCount = document.getElementById('mobileNotificationCount');
             
-            // Para dispositivos móveis, adicionar efeito visual extra
-            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                notificationCount.style.animation = 'none';
-                notificationCount.offsetHeight; // Trigger reflow
-                notificationCount.style.animation = 'notificationPulse 0.6s ease-in-out';
-                
-                // Adicionar CSS da animação se não existir
-                if (!document.getElementById('notification-pulse-style')) {
-                    const style = document.createElement('style');
-                    style.id = 'notification-pulse-style';
-                    style.textContent = `
-                        @keyframes notificationPulse {
-                            0% { transform: scale(1); }
-                            50% { transform: scale(1.3); background-color: #ff4444; }
-                            100% { transform: scale(1); }
-                        }
-                    `;
-                    document.head.appendChild(style);
+            // Adicionar animação para ambos os contadores
+            [notificationCount, mobileNotificationCount].forEach(counter => {
+                if (counter) {
+                    counter.style.animation = 'none';
+                    counter.offsetHeight; // Trigger reflow
+                    counter.style.animation = 'notificationPulse 0.6s ease-in-out';
                 }
+            });
+            
+            // Adicionar CSS da animação se não existir
+            if (!document.getElementById('notification-pulse-style')) {
+                const style = document.createElement('style');
+                style.id = 'notification-pulse-style';
+                style.textContent = `
+                    @keyframes notificationPulse {
+                        0% { transform: scale(1); }
+                        50% { transform: scale(1.3); background-color: #ff4444; }
+                        100% { transform: scale(1); }
+                    }
+                `;
+                document.head.appendChild(style);
             }
-        } else {
-            notificationCount.style.display = 'none';
         }
     } catch (error) {
         console.error('Erro ao atualizar contador de notificações:', error);
@@ -2509,19 +2553,87 @@ async function atualizarContadorNotificacoes() {
     }
 }
 
-document.getElementById('notificationBell').addEventListener('click', async function(e) {
-    e.preventDefault();
-    await mostrarPainelNotificacoes();
+// Event listener para notificações será adicionado quando o elemento existir
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para notificações mobile
+    const notificationBellMobile = document.getElementById('mobileNotificationBell');
+    if (notificationBellMobile) {
+        notificationBellMobile.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            await mostrarPainelNotificacoes();
+        });
+    }
+    
+    // Event listener para notificações PC
+    const notificationBellPC = document.getElementById('notificationBell');
+    if (notificationBellPC) {
+        notificationBellPC.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            await mostrarPainelNotificacoes();
+        });
+    }
 });
+
+// Adicionar event listeners adicionais para garantir que funcione no desktop
+function setupNotificationListeners() {
+    // Event listener usando delegação de eventos para garantir que funcione
+    document.addEventListener('click', async function(e) {
+        // Verificar se o clique foi no botão de notificação desktop
+        if (e.target.closest('#notificationBell')) {
+            e.preventDefault();
+            e.stopPropagation();
+            await mostrarPainelNotificacoes();
+            return;
+        }
+        
+        // Verificar se o clique foi no botão de notificação mobile
+        if (e.target.closest('#mobileNotificationBell')) {
+            e.preventDefault();
+            e.stopPropagation();
+            await mostrarPainelNotificacoes();
+            return;
+        }
+    });
+    
+    // Garantir que os botões sejam clicáveis após o DOM estar carregado
+    setTimeout(() => {
+        const notificationBellPC = document.getElementById('notificationBell');
+        const notificationBellMobile = document.getElementById('mobileNotificationBell');
+        
+        if (notificationBellPC) {
+            // Garantir que o botão desktop seja clicável
+            notificationBellPC.style.cursor = 'pointer';
+            notificationBellPC.style.pointerEvents = 'auto';
+            notificationBellPC.style.zIndex = '1000';
+            notificationBellPC.style.position = 'relative';
+        }
+        
+        if (notificationBellMobile) {
+            // Garantir que o botão mobile seja clicável
+            notificationBellMobile.style.cursor = 'pointer';
+            notificationBellMobile.style.pointerEvents = 'auto';
+        }
+    }, 500);
+}
 
 async function mostrarPainelNotificacoes() {
     if (!currentUser) return;
+    
     const painel = document.getElementById('notificationPanel');
     const overlay = document.getElementById('notificationOverlay');
-    const lista = document.getElementById('notificationList');
     const isOpen = painel.style.display === 'block';
-    painel.style.display = isOpen ? 'none' : 'block';
-    if (overlay) overlay.style.display = isOpen ? 'none' : 'block';
+    
+    if (isOpen) {
+        // Fechar painel
+        painel.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
+    } else {
+        // Abrir painel
+        painel.style.display = 'block';
+        if (overlay) overlay.style.display = 'block';
+    }
 
     if (painel.style.display === 'block') {
         // Adiciona o botão de fechar e filtros no topo do painel de notificações
@@ -2599,14 +2711,14 @@ window.fecharPainelNotificacoes = function() {
 document.addEventListener('click', function(e) {
     const painel = document.getElementById('notificationPanel');
     const overlay = document.getElementById('notificationOverlay');
-    const bell = document.getElementById('notificationBell');
+    const bell = document.getElementById('mobileNotificationBell');
     
     // Não fechar se clicar nos botões de filtro
     if (e.target.closest('.notification-filter-btn')) {
         return;
     }
     
-    if (painel && painel.style.display === 'block' && !painel.contains(e.target) && !bell.contains(e.target)) {
+    if (painel && painel.style.display === 'block' && !painel.contains(e.target) && bell && !bell.contains(e.target)) {
         painel.style.display = 'none';
         if (overlay) overlay.style.display = 'none';
     }
@@ -2630,15 +2742,8 @@ window.abrirPublicacaoNotificacao = async function(publicationId, notificationId
     // Decremento otimista do contador
     if (unreadNotificationsCount > 0) {
         unreadNotificationsCount -= 1;
-        const notificationCount = document.getElementById('notificationCount');
-        if (notificationCount) {
-            if (unreadNotificationsCount > 0) {
-                notificationCount.textContent = unreadNotificationsCount;
-                notificationCount.style.display = 'inline-block';
-            } else {
-                notificationCount.style.display = 'none';
-            }
-        }
+        // Usar a função updateNotificationCounters para atualizar ambos os contadores
+        updateNotificationCounters(unreadNotificationsCount);
     }
 
     // Fechar painel e overlay
@@ -2692,15 +2797,8 @@ window.apagarNotificacao = async function(notificationId, wasUnread = false) {
     // Atualiza o contador (otimista se era não lida)
     if (wasUnread && unreadNotificationsCount > 0) {
         unreadNotificationsCount -= 1;
-        const notificationCount = document.getElementById('notificationCount');
-        if (notificationCount) {
-            if (unreadNotificationsCount > 0) {
-                notificationCount.textContent = unreadNotificationsCount;
-                notificationCount.style.display = 'inline-block';
-            } else {
-                notificationCount.style.display = 'none';
-            }
-        }
+        // Usar a função updateNotificationCounters para atualizar ambos os contadores
+        updateNotificationCounters(unreadNotificationsCount);
     } else {
         atualizarContadorNotificacoes();
     }
@@ -2793,11 +2891,8 @@ function setupRealtimeNotifications() {
             (payload) => {
                 // Atualização imediata do contador sem aguardar nova consulta
                 unreadNotificationsCount = Math.max((unreadNotificationsCount || 0) + 1, 1);
-                const notificationCount = document.getElementById('notificationCount');
-                if (notificationCount) {
-                    notificationCount.textContent = unreadNotificationsCount;
-                    notificationCount.style.display = 'inline-block';
-                }
+                // Usar a função updateNotificationCounters para atualizar ambos os contadores
+                updateNotificationCounters(unreadNotificationsCount);
                 
                 // Tocar som e animar sino
                 playNotificationSound();
@@ -2851,19 +2946,19 @@ function startNotificationsPolling() {
             
             // Atualiza badge rapidamente sem nova query
             unreadNotificationsCount = count;
-            const notificationCount = document.getElementById('notificationCount');
-            if (notificationCount) {
-                if (unreadNotificationsCount > 0) {
-                    notificationCount.textContent = String(unreadNotificationsCount);
-                    notificationCount.style.display = 'inline-block';
-                    
-                    // Para dispositivos móveis, adicionar efeito visual
-                    if (isMobile) {
-                        notificationCount.style.animation = 'notificationPulse 0.6s ease-in-out';
+            // Usar a função updateNotificationCounters para atualizar ambos os contadores
+            updateNotificationCounters(unreadNotificationsCount);
+            
+            // Para dispositivos móveis, adicionar efeito visual
+            if (isMobile && unreadNotificationsCount > 0) {
+                const notificationCount = document.getElementById('notificationCount');
+                const mobileNotificationCount = document.getElementById('mobileNotificationCount');
+                
+                [notificationCount, mobileNotificationCount].forEach(counter => {
+                    if (counter) {
+                        counter.style.animation = 'notificationPulse 0.6s ease-in-out';
                     }
-                } else {
-                    notificationCount.style.display = 'none';
-                }
+                });
             }
         } catch (error) {
             console.error('Erro no polling de notificações:', error);
@@ -3010,7 +3105,7 @@ function showMobileNotificationFallback() {
 }
 
 function animateBell() {
-    const bell = document.getElementById('notificationBell');
+    const bell = document.getElementById('mobileNotificationBell');
     if (!bell) return;
     
     // Encontrar o ícone dentro do sino
@@ -3509,18 +3604,41 @@ function showSection(sectionId) {
     // Ocultar todas as seções
     const mainContent = document.querySelector('.main');
     const sobreSection = document.getElementById('sobre');
+    const createPostElement = document.getElementById('createPost');
     
     if (sectionId === 'sobre') {
         // Mostrar seção Sobre
         mainContent.style.display = 'none';
         sobreSection.style.display = 'block';
         
+        // Ocultar elemento de criar publicação na seção sobre
+        if (createPostElement) {
+            createPostElement.style.display = 'none';
+        }
+        
         // Atualizar navegação ativa
         updateActiveNavigation('sobre');
+    } else if (sectionId === 'ranking') {
+        // Mostrar conteúdo principal (ranking)
+        mainContent.style.display = 'grid';
+        sobreSection.style.display = 'none';
+        
+        // Ocultar elemento de criar publicação no ranking
+        if (createPostElement) {
+            createPostElement.style.display = 'none';
+        }
+        
+        // Atualizar navegação ativa
+        updateActiveNavigation('ranking');
     } else {
         // Mostrar conteúdo principal (publicações)
         mainContent.style.display = 'grid';
         sobreSection.style.display = 'none';
+        
+        // Mostrar elemento de criar publicação no home (se estiver logado)
+        if (createPostElement && currentUser) {
+            createPostElement.style.display = 'block';
+        }
         
         // Atualizar navegação ativa
         updateActiveNavigation('home');

@@ -28,12 +28,53 @@
 
 /* ... existing code ...
 
+
+/* Esconder botões mobile por padrão */
+.mobile-nav-buttons {
+    display: none !important;
+}
+
+/* Estilos para desktop - garantir que mobile não afete PC */
+@media (min-width: 769px) {
+    .mobile-nav-buttons {
+        display: none !important;
+    }
+    
+    .mobile-menu-btn {
+        display: none !important;
+    }
+    
+    /* Mostrar todos os botões do menu no PC */
+    .nav .nav-link {
+        display: flex !important;
+    }
+}
+
 /* Reset e configurações básicas */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     /* background:#ff6b35 ; */
+}
+
+/* Prevenir overflow horizontal em toda a aplicação */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* Garantir que todos os containers não causem overflow */
+.main, .feed-container, .publications-grid {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Garantir que o ranking não cause overflow horizontal */
+.publication-card {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 /* Desabilitar zoom automático em dispositivos móveis */
@@ -123,7 +164,8 @@ body {
     min-height: 72px;
 }
 
-.header-left {
+
+    .header-left {
     justify-self: start;
 }
 
@@ -180,6 +222,10 @@ body {
     gap: 8px;
     background: rgba(70, 7, 163, 0.527);
     backdrop-filter: blur(10px);
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 10;
+    position: relative;
 }
 
 .nav-link:hover,
@@ -188,6 +234,102 @@ body {
     color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Garantir que o botão de notificação seja clicável */
+#notificationBell,
+#mobileNotificationBell {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 100 !important;
+    position: relative !important;
+}
+
+#notificationBell:hover,
+#mobileNotificationBell:hover {
+    background: #6506cafe !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Garantir que não há elementos sobrepondo o botão de notificação */
+#notificationBell *,
+#mobileNotificationBell * {
+    pointer-events: none !important;
+}
+
+#notificationBell,
+#mobileNotificationBell {
+    pointer-events: auto !important;
+}
+
+/* Garantir que o botão de notificação seja sempre clicável */
+#notificationBell,
+#mobileNotificationBell {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 1000 !important;
+    position: relative !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+/* Garantir que os ícones dentro do botão não interfiram */
+#notificationBell i,
+#mobileNotificationBell i {
+    pointer-events: none !important;
+}
+
+/* Garantir que o contador de notificação não interfira */
+#notificationBell .notification-count,
+#mobileNotificationBell .notification-count {
+    pointer-events: none !important;
+}
+
+/* Garantir que o botão de notificação seja sempre clicável em desktop */
+@media (min-width: 769px) {
+    #notificationBell {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        z-index: 1000 !important;
+        position: relative !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+    }
+    
+    #notificationBell:hover {
+        background: #6506cafe !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* Garantir que não há elementos sobrepondo o botão */
+    #notificationBell::before,
+    #notificationBell::after {
+        display: none !important;
+    }
+    
+    /* Garantir que o botão seja sempre clicável */
+    #notificationBell {
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    /* Garantir que o botão seja sempre clicável em desktop */
+    #notificationBell {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        z-index: 1000 !important;
+        position: relative !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+    }
 }
 
 .nav-link i {
@@ -1285,19 +1427,105 @@ body {
     }
 
     .header-content {
-        padding: 0 12px;
+        padding: 0 16px;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 16px;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .mobile-nav-buttons {
+        display: flex;
+        order: 2;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex: 1;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 20%;
+        transform: translate(-50%, -50%);
+   
+    }
+
+    .mobile-nav-link {
+        background: linear-gradient(135deg, rgba(139, 12, 213, 0.843) 0%, rgba(80, 2, 154, 0.538) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.169);
+        border-radius: 12px;
+        color: white;
+        padding: 0 2px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        height: 48px;
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        margin: 0 6px;
+        gap: 8px;
+    }
+
+    .mobile-nav-link:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+        border-color: rgba(119, 16, 255, 0.5);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .mobile-nav-link:active {
+        transform:none;
+    }
+
+    .mobile-nav-link.active {
+        background: linear-gradient(135deg, rgba(92, 4, 143, 0.343) 0%, rgba(103, 2, 197, 0.318) 100%);
+        border-color: rgba(255, 255, 255, 0.429);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .mobile-menu-btn {
         display: block;
-        order: 3;
+        order: 1;
+        position: absolute;
+        left: 16px;
     }
 
+    /* Esconder o logo no mobile */
     .logo {
-        font-size: 2rem;
-        order: 1;
+        display: none !important;
+    }
+
+    /* Mostrar os botões de navegação mobile */
+    .mobile-nav-buttons {
+        display: flex !important;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+
+    /* Esconder botões do menu principal no mobile, exceto informações */
+    .nav .nav-link {
+        display: none;
+    }
+    
+    /* Mostrar apenas o botão de informações no menu mobile */
+    .nav .nav-link[href="#sobre"] {
+        display: flex !important;
     }
 
     .logo i {
@@ -1572,6 +1800,13 @@ body {
     .header-content {
         padding: 0 8px;
         gap: 8px;
+    }
+
+    .mobile-nav-buttons .nav-link {
+        font-size: 1.2rem;
+        margin: 0;
+        width: 44px;
+        height: 44px;
     }
 
     .mobile-menu-btn {
@@ -2605,20 +2840,6 @@ a:hover {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .notification-panel {
-        position: fixed !important;
-        width: 390px;
-    
-        border-radius: 20px;
-        z-index: 10000;
-        height: 100%;
-        overflow: hidden;
-        padding: 0;
-        animation: slideDownNotif 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(10px);
-    
-         position:relative; top:15px !important; right:8px !important; margin-left: -3px; background:#ffffff; box-shadow:0 2px 12px rgba(0,0,0,0.15); border-radius:10px; z-index:10000; overflow-y:auto;
-      }
       
 
     .mobile-menu-btn.active, #mobileMenuBtn.active {
@@ -2660,6 +2881,19 @@ a:hover {
         to {
             transform: translateX(0);
         }
+    }
+    
+    /* Painel de notificações específico para mobile */
+    .notification-panel {
+        top: 15px !important;
+        right: 8px !important;
+        left: 8px !important;
+        width: auto !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
+        border-radius: 10px !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
     }
 
     .menu-overlay, #menuOverlay {
@@ -2737,8 +2971,10 @@ a:hover {
 .notification-panel {
     position: fixed !important;
     top: 10px;
-    right: 3px;
-   
+    right: 20px;
+    width: 400px;
+    height: 95vh;
+    max-height: 95vh;
     background: #ffffff;
     box-shadow: 
       0 20px 40px rgba(44, 62, 80, 0.15),
@@ -2746,13 +2982,12 @@ a:hover {
       0 0 0 1px rgba(0, 0, 0, 0.05);
     border-radius: 20px;
     z-index: 10000;
-    height: 95%;
-    overflow: hidden;
+    overflow-y: auto;
     padding: 0;
+    display: none;
     animation: slideDownNotif 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(10px);
-
-     position:absolute;  right:20px; width:400px;margin-left: -2px; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,0.15); border-radius:10px; z-index:10000; overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Animação de entrada */
@@ -3601,7 +3836,6 @@ body.intro-active > *:not(#introContainer) {
 @media (max-width: 768px) {
     .ranking-header {
         padding: 1rem;
-    
         margin-bottom: 1rem;
     }
     
