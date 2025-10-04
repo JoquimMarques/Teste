@@ -1283,9 +1283,7 @@ function testNotification() {
     
     // Para dispositivos móveis, testar fallbacks
     if (isMobile) {
-        setTimeout(() => {
-            showMobileNotificationFallback();
-        }, 1000);
+        // Removido: showMobileNotificationFallback();
         
         // Testar vibração se disponível
         if (navigator.vibrate) {
@@ -1303,7 +1301,7 @@ function testNotification() {
         
         // Para dispositivos móveis, notificação visual extra
         if (isMobile) {
-            showMobileNotificationFallback();
+            // Removido: showMobileNotificationFallback();
         }
     }, 2000);
 }
@@ -1892,7 +1890,7 @@ function testMobileAudio() {
 function applyMobileAudioFallbacks() {
     // Substituir função de som por notificação visual
     window.playNotificationSound = function() {
-        showMobileNotificationFallback();
+        // Removido: showMobileNotificationFallback();
     };
     
 }
@@ -2906,7 +2904,7 @@ function setupRealtimeNotifications() {
                 
                 // Para dispositivos móveis, mostrar notificação visual extra
                 if (isMobile) {
-                    showMobileNotificationFallback();
+                    // Removido: showMobileNotificationFallback();
                 }
                 
                 // Atualiza com o valor real em background
@@ -2944,7 +2942,7 @@ function startNotificationsPolling() {
                 
                 // Para dispositivos móveis, mostrar notificação visual extra
                 if (isMobile) {
-                    showMobileNotificationFallback();
+                    // Removido: showMobileNotificationFallback();
                 }
             }
             
@@ -3039,8 +3037,8 @@ function playNotificationSound() {
                             // Última tentativa com caminho alternativo
                             audio.src = fallbackPath;
                             audio.play().catch(() => {
-                                // Fallback visual para mobile
-                                showMobileNotificationFallback();
+                            // Fallback visual para mobile
+                            // Removido: showMobileNotificationFallback();
                             });
                         });
                     } else {
@@ -3054,7 +3052,7 @@ function playNotificationSound() {
     } catch (error) {
         // Fallback visual para mobile
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-            showMobileNotificationFallback();
+            // Removido: showMobileNotificationFallback();
         }
     }
 }
