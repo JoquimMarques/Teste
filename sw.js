@@ -1,5 +1,5 @@
 // Service Worker para PWA Briolink
-const CACHE_NAME = 'briolink-v1.0.2';
+const CACHE_NAME = 'briolink-v1.0.3-force-update';
 const urlsToCache = [
     '/',
     '/index.html',

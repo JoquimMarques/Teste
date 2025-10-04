@@ -3970,6 +3970,9 @@ async function registerServiceWorker() {
         try {
             const registration = await navigator.serviceWorker.register('/sw.js');
             
+            // Verificar se há nova versão disponível
+            checkForUpdates(registration);
+            
             // Verificar atualizações
             registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
@@ -3987,11 +3990,109 @@ async function registerServiceWorker() {
     }
 }
 
+// Verificar se há atualizações disponíveis
+function checkForUpdates(registration) {
+    // Forçar verificação de atualização
+    registration.update();
+    
+    // Verificar se a versão no localStorage é diferente da atual
+    const currentVersion = 'v1.0.3-force-update';
+    const storedVersion = localStorage.getItem('app-version');
+    
+    if (storedVersion !== currentVersion) {
+        console.log('Nova versão detectada:', currentVersion);
+        showUpdateAvailable();
+    }
+    
+    // Salvar versão atual
+    localStorage.setItem('app-version', currentVersion);
+}
+
 // Mostrar notificação de atualização disponível
 function showUpdateAvailable() {
-    if (confirm('Nova versão do Briolink disponível! Deseja atualizar agora?')) {
-        window.location.reload();
+    showNotification('Nova versão disponível! Clique no botão de atualização para aplicar.', 'info');
+    
+    // Mostrar botão de atualização forçada
+    showForceUpdateButton();
+}
+
+// Mostrar botão de atualização forçada
+function showForceUpdateButton() {
+    // Verificar se o botão já existe
+    if (document.querySelector('.force-update-notification')) {
+        return;
     }
+    
+    // Criar notificação de atualização
+    const updateNotification = document.createElement('div');
+    updateNotification.className = 'force-update-notification';
+    updateNotification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        max-width: 300px;
+    `;
+    
+    updateNotification.innerHTML = `
+        <i class="fas fa-sync-alt" style="font-size: 1.2rem; animation: spin 2s linear infinite;"></i>
+        <div>
+            <div style="font-size: 14px; font-weight: 700;">Nova Versão!</div>
+            <div style="font-size: 12px; opacity: 0.9;">Clique para atualizar</div>
+        </div>
+        <button style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px; border-radius: 6px; cursor: pointer; margin-left: auto;">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Adicionar animação CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .force-update-notification:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(245, 158, 11, 0.4);
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Eventos
+    updateNotification.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+            // Clicou na notificação (não no X)
+            forceAppUpdate();
+        }
+    });
+    
+    // Botão fechar
+    const closeBtn = updateNotification.querySelector('button');
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateNotification.remove();
+    });
+    
+    // Auto-remover após 30 segundos
+    setTimeout(() => {
+        if (updateNotification.parentNode) {
+            updateNotification.remove();
+        }
+    }, 30000);
+    
+    document.body.appendChild(updateNotification);
 }
 
 // Prompt de instalação do PWA
