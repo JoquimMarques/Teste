@@ -1371,6 +1371,14 @@ body {
     transition: all 0.3s ease;
 }
 
+.mobile-menu-btn i {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-btn.rotated i {
+    transform: rotate(180deg);
+}
+
 .mobile-menu-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: scale(1.1);

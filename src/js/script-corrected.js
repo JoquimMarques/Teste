@@ -383,13 +383,16 @@ function toggleMobileMenu() {
     const nav = document.getElementById('nav');
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const overlay = document.getElementById('menuOverlay');
+    const icon = mobileMenuBtn.querySelector('i');
     
     if (nav.classList.contains('active')) {
         closeMobileMenu();
     } else {
         nav.classList.add('active');
         if (overlay) overlay.classList.add('active');
-        mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+        // Adicionar rotação ao ícone
+        icon.style.transform = 'rotate(180deg)';
+        mobileMenuBtn.classList.add('rotated');
     }
 }
 
@@ -397,10 +400,13 @@ function closeMobileMenu() {
     const nav = document.getElementById('nav');
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const overlay = document.getElementById('menuOverlay');
+    const icon = mobileMenuBtn.querySelector('i');
     
     nav.classList.remove('active');
     if (overlay) overlay.classList.remove('active');
-    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    // Voltar à posição original
+    icon.style.transform = 'rotate(0deg)';
+    mobileMenuBtn.classList.remove('rotated');
 }
 
 function toggleSearch() {
@@ -4020,14 +4026,23 @@ function showInstallButton() {
         return; // Já está instalado
     }
     
+    // Criar container para os botões
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1000;
+    `;
+    
     // Criar botão de instalação
     const installButton = document.createElement('button');
     installButton.innerHTML = '<i class="fas fa-download"></i> Instalar App';
     installButton.className = 'install-pwa-btn';
     installButton.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
         background: linear-gradient(135deg, #371669, #5e2d91);
         color: white;
         border: none;
@@ -4037,14 +4052,35 @@ function showInstallButton() {
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(55, 22, 105, 0.3);
-        z-index: 1000;
         display: flex;
         align-items: center;
         gap: 8px;
         transition: all 0.3s ease;
+        white-space: nowrap;
     `;
     
-    // Adicionar hover effect
+    // Criar botão de atualização forçada
+    const forceUpdateButton = document.createElement('button');
+    forceUpdateButton.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar App';
+    forceUpdateButton.className = 'force-update-btn';
+    forceUpdateButton.style.cssText = `
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    `;
+    
+    // Adicionar hover effects
     installButton.addEventListener('mouseenter', () => {
         installButton.style.transform = 'translateY(-2px)';
         installButton.style.boxShadow = '0 6px 16px rgba(55, 22, 105, 0.4)';
@@ -4055,7 +4091,17 @@ function showInstallButton() {
         installButton.style.boxShadow = '0 4px 12px rgba(55, 22, 105, 0.3)';
     });
     
-    // Evento de clique
+    forceUpdateButton.addEventListener('mouseenter', () => {
+        forceUpdateButton.style.transform = 'translateY(-2px)';
+        forceUpdateButton.style.boxShadow = '0 6px 16px rgba(220, 38, 38, 0.4)';
+    });
+    
+    forceUpdateButton.addEventListener('mouseleave', () => {
+        forceUpdateButton.style.transform = 'translateY(0)';
+        forceUpdateButton.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)';
+    });
+    
+    // Evento de clique do botão de instalação
     installButton.addEventListener('click', async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -4067,28 +4113,108 @@ function showInstallButton() {
             }
             
             deferredPrompt = null;
-            installButton.remove();
+            buttonContainer.remove();
         }
     });
     
+    // Evento de clique do botão de atualização forçada
+    forceUpdateButton.addEventListener('click', () => {
+        if (confirm('Tem certeza? Esta ação irá limpar todos os dados locais e forçar o logout. Você precisará fazer login novamente.')) {
+            forceAppUpdate();
+        }
+    });
+    
+    // Adicionar botões ao container
+    buttonContainer.appendChild(installButton);
+    buttonContainer.appendChild(forceUpdateButton);
+    
     // Auto-remover após 30 segundos (mais tempo para o usuário ver)
     setTimeout(() => {
-        if (installButton.parentNode) {
-            installButton.remove();
+        if (buttonContainer.parentNode) {
+            buttonContainer.remove();
         }
     }, 30000);
     
-    document.body.appendChild(installButton);
+    document.body.appendChild(buttonContainer);
+}
+
+// Função para forçar atualização do app
+async function forceAppUpdate() {
+    try {
+        // Remover botões de instalação/atualização
+        const buttonContainer = document.querySelector('.install-pwa-btn')?.parentNode;
+        if (buttonContainer) {
+            buttonContainer.remove();
+        }
+        
+        // Limpar todos os dados locais
+        console.log('Limpando dados locais...');
+        
+        // Limpar localStorage
+        localStorage.clear();
+        
+        // Limpar sessionStorage
+        sessionStorage.clear();
+        
+        // Limpar IndexedDB se existir
+        if ('indexedDB' in window) {
+            try {
+                const databases = await indexedDB.databases();
+                for (const db of databases) {
+                    indexedDB.deleteDatabase(db.name);
+                }
+            } catch (e) {
+                console.log('Erro ao limpar IndexedDB:', e);
+            }
+        }
+        
+        // Limpar Cache API
+        if ('caches' in window) {
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => caches.delete(cacheName))
+                );
+            } catch (e) {
+                console.log('Erro ao limpar cache:', e);
+            }
+        }
+        
+        // Fazer logout do Supabase
+        if (window.supabase && window.supabase.auth) {
+            try {
+                await window.supabase.auth.signOut();
+            } catch (e) {
+                console.log('Erro ao fazer logout do Supabase:', e);
+            }
+        }
+        
+        // Mostrar notificação
+        showNotification('Dados limpos! Recarregando a página...', 'success');
+        
+        // Aguardar um pouco antes de recarregar
+        setTimeout(() => {
+            // Forçar recarregamento completo da página
+            window.location.reload(true);
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Erro ao forçar atualização:', error);
+        showNotification('Erro ao atualizar. Tentando recarregar...', 'error');
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 2000);
+    }
 }
 
 // Detectar quando o PWA é instalado
 window.addEventListener('appinstalled', () => {
     showNotification('App instalado com sucesso!', 'success');
     
-    // Remover botão de instalação se existir
-    const installBtn = document.querySelector('.install-pwa-btn');
-    if (installBtn) {
-        installBtn.remove();
+    // Remover container de botões se existir
+    const buttonContainer = document.querySelector('.install-pwa-btn')?.parentNode;
+    if (buttonContainer) {
+        buttonContainer.remove();
     }
     // Ocultar opção de instalar no menu lateral
     const menuInstallBtn = document.querySelector('.install-app-btn');
