@@ -460,7 +460,7 @@ form.addEventListener('submit', async (e) => {
   const novaSenha = formData.get('password').trim();
 
   try {
-    const response = await fetch('/api/reset-password', { // URL relativa
+    const response = await fetch('./api/reset-password.js', { // URL relativa
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, novaSenha }),
@@ -470,7 +470,7 @@ form.addEventListener('submit', async (e) => {
 
     if (response.ok) {
       alert('✅ Senha redefinida com sucesso!');
-      window.location.href = '/login.html';
+      window.location.href = './html/login.html';
     } else {
       alert(`❌ ${data.message}`);
     }
