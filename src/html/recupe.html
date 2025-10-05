@@ -449,38 +449,57 @@
     
 
     <script>
-
-const form = document.getElementById('loginForm');
+  const form = document.getElementById('loginForm');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const formData = new FormData(form);
-  const email = formData.get('name').trim(); // se você quiser usar nome ou email
+  const name = formData.get('name').trim();
   const novaSenha = formData.get('password').trim();
 
   try {
-    const response = await fetch('/api/reset-password', { // SEM .js
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, novaSenha }),
-});
+    const response = await fetch('/api/reset-password', { // 🔥 Caminho relativo — mesmo domínio
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, novaSenha }),
+    });
 
-const data = await response.json();
-alert(`✅ ${data.message}`);
+    const text = await response.text();
+    console.log('Resposta da API:', text);
 
-
-    if (response.ok) {
-      alert('✅ Senha redefinida com sucesso!');
-      window.location.href = './html/login.html';
-    } else {
-      alert(`❌ ${data.message}`);
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error('Resposta inválida: ' + text);
     }
+
+    if (!response.ok) {
+      alert('❌ ' + (data.error || 'Erro ao redefinir senha.'));
+      return;
+    }
+
+    alert('✅ ' + data.message);
+    window.location.href = 'login.html';
   } catch (err) {
     console.error('Erro na requisição:', err);
-    alert('⚠️ Erro ao redefinir senha.');
+    alert('⚠️ ' + err.message);
   }
 });
+
+// Mostrar/ocultar senha
+function togglePassword() {
+  const input = document.getElementById('password');
+  const icon = document.getElementById('togglePassword');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}
 
 // Função para mostrar/ocultar senha
 function togglePassword() {
