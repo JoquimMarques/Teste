@@ -460,13 +460,15 @@ form.addEventListener('submit', async (e) => {
   const novaSenha = formData.get('password').trim();
 
   try {
-    const response = await fetch('/api/reset-password', { // URL relativa
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, novaSenha }),
-    });
+    const response = await fetch('/api/reset-password', { // SEM .js
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, novaSenha }),
+});
 
-    const data = await response.json();
+const data = await response.json();
+alert(`✅ ${data.message}`);
+
 
     if (response.ok) {
       alert('✅ Senha redefinida com sucesso!');
