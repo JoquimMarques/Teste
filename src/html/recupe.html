@@ -259,7 +259,7 @@
         .register-link {
             text-align: center;
             margin-top: 30px;
-            margin-bottom: 7px;
+            margin-bottom: -10px;
             color: #ffffff;
             font-size: 0.9rem;
             font-family: 'Audiowide', sans-serif;
@@ -414,7 +414,7 @@
       
 
         <div class="login-header">
-            <h1>Entrar</h1>
+            <h1>Recuperação</h1>
             <p id="typewriter"></p>
         </div>
 
@@ -428,187 +428,75 @@
             </div>
             
             <div class="form-group">
-                <label for="password">Senha</label>
+                <label for="password"> Nova Senha</label>
                 <div class="password-wrapper">
                   <input type="password" id="password" name="password" class="form-input" autocomplete="current-password" required>
                   <i class="fa-solid fa-eye toggle-password" id="togglePassword" onclick="togglePassword()"></i>
                 </div>
               </div>
-
-              <div class="register-link">
-                Esqueceu sua senha? <a href="recupe.html">Recuperar senha !</a>
-            </div>
             
             <button type="submit" class="submit-btn" id="submitBtn">
                 <i class="fas fa-sign-in-alt"></i>
-                <span>Entrar</span>
+                <span>Recuperar</span>
             </button>
         </form>
 
         <div class="register-link">
-            Não tem uma conta? <a href="register.html">Criar conta</a>
+            Lembrou da senha? <a href="login.html">Fazer Login</a>
         </div>
     </div>
     <script src="../js/canvas.js"></script>
+    
 
     <script>
-        const SUPABASE_URL = 'https://nvswucwnvshvklqgojcw.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elementos do DOM
-        const loginForm = document.getElementById('loginForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const typewriterElement = document.getElementById('typewriter');
+const form = document.getElementById('loginForm');
 
-        // Função para mostrar mensagens
-        function showMessage(message, type = 'error') {
-            if (type === 'error') {
-                errorMessage.textContent = message;
-                errorMessage.style.display = 'block';
-                successMessage.style.display = 'none';
-            } else {
-                successMessage.textContent = message;
-                successMessage.style.display = 'block';
-                errorMessage.style.display = 'none';
-            }
-        }
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-        // Função para esconder mensagens
-        function hideMessages() {
-            errorMessage.style.display = 'none';
-            successMessage.style.display = 'none';
-        }
+  const formData = new FormData(form);
+  const email = formData.get('name').trim(); // se você quiser usar nome ou email
+  const novaSenha = formData.get('password').trim();
 
-        // Função para fazer login
-        async function loginUser(name, password) {
-            try {
-                // Converter nome em email (mesmo formato usado no registro)
-                const email = `${name.toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
-                    .replace(/[^a-z0-9\s]/g, '') // Remove caracteres especiais
-                    .replace(/\s+/g, '.')}@briolink.com`;
-                
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) {
-                    throw error;
-                }
-                
-                return data;
-            } catch (error) {
-                throw error;
-            }
-        }
+  try {
+    const response = await fetch('/api/reset-password', { // URL relativa
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, novaSenha }),
+    });
 
-        // Event listener para o formulário
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            hideMessages();
-            console.log('Iniciando processo de login...');
+    const data = await response.json();
 
-            const formData = new FormData(loginForm);
-            const name = formData.get('name').trim();
-            const password = formData.get('password');
+    if (response.ok) {
+      alert('✅ Senha redefinida com sucesso!');
+      window.location.href = '/login.html';
+    } else {
+      alert(`❌ ${data.message}`);
+    }
+  } catch (err) {
+    console.error('Erro na requisição:', err);
+    alert('⚠️ Erro ao redefinir senha.');
+  }
+});
 
-            console.log('Tentando login com nome:', name);
-            console.log('Email gerado:', `${name.toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9\s]/g, '')
-                .replace(/\s+/g, '.')}@linkdireto.com`);
-
-            if (!name || !password) {
-                showMessage('Por favor, preencha todos os campos');
-                return;
-            }
-
-            // Desabilitar botão
-            submitBtn.disabled = true;
-            submitBtn.querySelector('span').textContent = 'Entrando...';
-
-            try {
-                console.log('Chamando função loginUser...');
-                const result = await loginUser(name, password);
-                console.log('Login bem-sucedido:', result);
-                
-                showMessage('Login realizado com sucesso! Redirecionando...', 'success');
-                
-                // Redirecionar imediatamente após login bem-sucedido
-                console.log('URL atual:', window.location.href);
-                console.log('Caminho atual:', window.location.pathname);
-                console.log('Redirecionando para index.html...');
-                
-                // Usar setTimeout para garantir que o redirecionamento aconteça
-                setTimeout(() => {
-                    window.location.replace('/index.html');
-                }, 500);
-                
-            } catch (error) {
-                console.error('Erro no login:', error);
-                
-                let errorMsg = 'Erro ao fazer login';
-                if (error.message.includes('Invalid login credentials')) {
-                    errorMsg = 'Nome ou senha incorretos';
-                } else if (error.message.includes('Email not confirmed')) {
-                    errorMsg = 'Por favor, confirme seu email antes de fazer login';
-                } else if (error.message.includes('User not found')) {
-                    errorMsg = 'Usuário não encontrado. Verifique o nome ou crie uma conta.';
-                } else {
-                    errorMsg = `Erro: ${error.message}`;
-                }
-                
-                showMessage(errorMsg, 'error');
-            } finally {
-                // Reabilitar botão
-                submitBtn.disabled = false;
-                submitBtn.querySelector('span').textContent = 'Entrar';
-            }
-        });
-
-        const texto = "Bem-vindo de Volta!";
-        const elemento = document.getElementById("typewriter");
-        let i = 0;
-
-        function typeWriter() {
-            if (i < texto.length) {
-                elemento.innerHTML += texto.charAt(i);
-                i++;
-                setTimeout(typeWriter, 40); // velocidade da digitação
-            }
-        }
-        typeWriter();
-
-        // Recarrega a página após 30 segundos
-        setTimeout(() => {
-            window.location.reload();
-        }, 100000); // 30000 milissegundos = 30 segundos
-
-
-
-        function togglePassword() {
-  const password = document.getElementById("password");
-  const toggle = document.getElementById("togglePassword");
-
-  if (password.type === "password") {
-    password.type = "text";
-    toggle.classList.remove("fa-eye");
-    toggle.classList.add("fa-eye-slash");
+// Função para mostrar/ocultar senha
+function togglePassword() {
+  const passwordInput = document.getElementById('password');
+  const toggleIcon = document.getElementById('togglePassword');
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleIcon.classList.remove('fa-eye');
+    toggleIcon.classList.add('fa-eye-slash');
   } else {
-    password.type = "password";
-    toggle.classList.remove("fa-eye-slash");
-    toggle.classList.add("fa-eye");
+    passwordInput.type = 'password';
+    toggleIcon.classList.remove('fa-eye-slash');
+    toggleIcon.classList.add('fa-eye');
   }
 }
 
-
     </script>
+        
+        
 </body>
 </html> 
