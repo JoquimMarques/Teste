@@ -1241,6 +1241,7 @@ body {
         max-width: 550px;
         padding: 25px 5px;
         margin-left: -20px;
+        
     
         /* Para *ocultar* a barra de rolagem horizontal */
         overflow-x: hidden;
@@ -3191,6 +3192,7 @@ a:hover {
         z-index: 9999; /* sempre por cima */
     }
     
+    
     /* estilo de cada notificação */
   
     /* animação de entrada e saída */
@@ -3217,6 +3219,21 @@ a:hover {
         letter-spacing: -0.5px;
     }
 
+    #userProfileModal .modal-content {
+        width: 90%;
+        max-width: 550px;
+        padding: 25px 5px;
+       
+        /* Para *ocultar* a barra de rolagem horizontal */
+        overflow-x: hidden;
+        /* Removido background-color: red; */
+        
+    }
+
+    #userProfileModal .user-profile-modal-details {
+       
+        width: 200% !important;
+    }
     .search-container {
         
        
@@ -3989,6 +4006,8 @@ a:hover {
 }
 
 @media (max-width: 900px) {
+
+
     .search-btn {
         display: inline-flex;
         align-items: center;
@@ -5915,15 +5934,8 @@ body.intro-active > *:not(#introContainer) {
     }
 
     /* Centralizar modal de perfil em telas pequenas */
-    #userProfileModal .modal-content {
-        width: 100%;
-        max-width: 400px;
-        margin: 5% auto;
-        left: 50% !important;
-        background-color: #ffffff;
-        transform: translateX(-50%);
-        padding: 40px;
-    }
+ 
+
 }
 
 @media (max-width: 480px) {
@@ -5975,12 +5987,12 @@ body.intro-active > *:not(#introContainer) {
 
     /* Centralizar modal de perfil em telas muito pequenas */
     #userProfileModal .modal-content {
-        width: 96%;
+        width: 75%;
         max-width: 370px;
-        margin-left: 205px;
-        left: 50% !important;
-        transform: translateX(-50%);
-        padding: 10px;
+        position: absolute;
+        right: 50px;
+     
+        padding: 7px;
     }
 
     /* Ajustar seção de estatísticas para mobile */
@@ -6019,7 +6031,7 @@ body.intro-active > *:not(#introContainer) {
     /* Ajustar texto do modal para mobile */
     .user-profile-modal-details .user-full-name {
         font-size: 1rem;
-        margin-bottom: 6px;
+        margin-bottom: 10px;
     }
 
     .user-profile-modal-details .user-turma {
@@ -6292,8 +6304,7 @@ body.intro-active > *:not(#introContainer) {
 /* Modal de perfil de outros usuários - tema azul */
 #userProfileModal .user-profile-modal-details {
     background: rgba(255, 255, 255, 0.98);
- 
-  margin-left: 30px;
+
 }
 
 #userProfileModal .user-full-name {
