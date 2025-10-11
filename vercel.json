@@ -1,11 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "src/html/**/*.html", "use": "@vercel/static" },
-    { "src": "js/**/*.js", "use": "@vercel/static" },
-    { "src": "css/**/*.css", "use": "@vercel/static" }
-  ],
   "routes": [
-    { "src": "/(.*)", "dest": "/src/html/$1" }
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
