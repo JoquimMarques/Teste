@@ -302,7 +302,7 @@
 /* Responsividade para autenticação */
 @media (max-width: 768px) {
 
-    .user-profile-card {
+    .user-profile-card{
         background: rgba(255, 255, 255, 0.95);
         border-radius: 16px;
         padding: 22px 7px !important;
@@ -310,10 +310,12 @@
         box-shadow: 0 8px 24px rgba(55, 22, 105, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
-        width: 270px;
+        width: 280px !important;
         -webkit-backdrop-filter: blur(10px); /* Safari */
      
     }
+
+
 
 
     

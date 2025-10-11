@@ -19,6 +19,23 @@
 }
 
 /* Responsivo para botões de filtro */
+/* Tablet Landscape */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .notification-filter-btn {
+        padding: 6px 12px !important;
+        font-size: 0.8em !important;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) and (min-width: 481px) {
+    .notification-filter-btn {
+        padding: 5px 10px !important;
+        font-size: 0.75em !important;
+    }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
     .notification-filter-btn {
         padding: 4px 8px !important;
@@ -591,6 +608,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     
 }
+
 .sidebar-section:nth-child(1) {
 
     border-radius: 16px;
@@ -1164,14 +1182,16 @@ body {
     background: #ffffff;
     border-radius: 16px;
     padding: 0;
-    max-width: 500px;
-    width: 90%;
+    max-width: 550px;
+    width: 100%;
     max-height: 90vh;
+    
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     transform: translateY(-20px);
     transition: all 0.3s ease;
 }
+
 
 .modal.active .modal-content {
     transform: translateY(0);
@@ -1212,6 +1232,75 @@ body {
     background: rgba(51, 1, 98, 0.8);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(51, 1, 98, 0.4);
+}
+
+/* Estilos específicos para desktop - Modal de perfil */
+@media (min-width: 1025px) {
+    #userProfileModal .modal-content {
+        width: 90%;
+        max-width: 550px;
+        padding: 25px 5px;
+        margin-left: -20px;
+    
+        /* Para *ocultar* a barra de rolagem horizontal */
+        overflow-x: hidden;
+        /* Removido background-color: red; */
+        
+    }
+  
+
+    .user-profile-modal-details {
+        padding: 20px;
+       
+        text-align: center;
+    }
+
+    .user-profile-modal-details .user-avatar-large {
+        width: 85px;
+        height: 85px;
+        font-size: 1.8rem;
+        margin-bottom: 18px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        color: #666;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        color: #555;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.95rem;
+        color: #777;
+        font-weight: 500;
+    }
+
+    .modal-header {
+        padding: 28px 28px 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        font-size: 1.6rem;
+        width: 40px;
+        height: 40px;
+    }
 }
 .close-notification-panel-btn {
     background: rgb(51, 1, 98);
@@ -1398,6 +1487,564 @@ body {
 
     .header-content {
         padding: 0 16px;
+    }
+}
+
+/* ===== RESPONSIVIDADE PARA TABLETS ===== */
+/* Tablet Landscape (1024px - 768px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .main {
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        padding: 24px 20px;
+        max-width: 100%;
+    }
+
+    .right-sidebar {
+        display: none;
+    }
+
+    .left-sidebar {
+        width: 280px;
+        min-width: 280px;
+        max-width: 320px;
+    }
+
+    .logo {
+        font-size: 2.2rem;
+    }
+
+    .logo i {
+        font-size: 2.2rem;
+    }
+
+    /* Ajustar cards de publicação para tablets */
+    .publication-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .publication-header {
+        margin-bottom: 16px;
+    }
+
+    .publication-content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .publication-actions {
+        padding: 16px 0;
+        gap: 16px;
+    }
+
+    .publication-action {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar botões de criar publicação */
+    .create-post {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .create-post-actions {
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .create-post-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar sidebar esquerda */
+    .sidebar-section {
+        margin-bottom: 20px;
+        padding: 16px;
+    }
+
+    .user-profile-card {
+        padding: 16px;
+    }
+
+    .quick-menu-desktop {
+        gap: 8px;
+    }
+
+    .sidebar-item {
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar header */
+    .header-content {
+        padding: 0 20px;
+    }
+
+    .search-container {
+        max-width: 300px;
+    }
+
+    .search-input {
+        font-size: 0.9rem;
+        padding: 10px 40px 10px 16px;
+    }
+
+    /* Ajustar modais para tablets */
+    .modal-content {
+        width: 90%;
+        max-width: 600px;
+        margin: 5% auto;
+        padding: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    /* Modal de perfil específico para tablets landscape */
+    #userProfileModal .modal-content {
+        width: 85%;
+        max-width: 500px;
+        padding: 20px;
+    }
+
+    .user-profile-modal-details {
+        padding: 16px;
+        text-align: center;
+    }
+
+    .user-profile-modal-details .user-avatar-large {
+        width: 70px;
+        height: 70px;
+        font-size: 1.6rem;
+        margin-bottom: 14px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar seção sobre */
+    .sobre-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .sobre-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sobre-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+
+    .sobre-card p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Ajustar ranking */
+    .ranking-container {
+        padding: 20px;
+    }
+
+    .ranking-header {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .ranking-item {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    /* Ajustar navegação para tablets landscape */
+    .mobile-nav-buttons {
+        display: none !important;
+    }
+
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    .nav {
+        display: flex !important;
+    }
+
+    .nav .nav-link {
+        display: flex !important;
+        padding: 12px 18px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar header para tablets landscape */
+    .header {
+        padding: 12px 0;
+    }
+
+    .header-content {
+        height: 60px;
+    }
+
+    /* Ajustar botões de autenticação */
+    .auth-buttons {
+        gap: 16px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar mídias para tablets landscape */
+    .publication-image,
+    .publication-video {
+        max-height: 320px;
+        border-radius: 8px;
+    }
+
+    .media-preview img,
+    .media-preview video {
+        max-height: 180px;
+        width: 60%;
+    }
+
+    .video-info {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar menu rápido para tablets landscape */
+    .quick-menu-desktop {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .sidebar-item {
+        justify-content: center;
+        text-align: center;
+    }
+
+    #quickMenuSectionInNav {
+        padding: 12px 0;
+    }
+
+    #quickMenuSectionInNav h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+}
+
+/* Tablet Portrait (768px - 481px) */
+@media (max-width: 768px) and (min-width: 481px) {
+    .main {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px 16px;
+        margin-top: 100px;
+    }
+
+    .left-sidebar {
+        position: static;
+        order: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
+    }
+
+    .feed-container {
+        order: 1;
+    }
+
+    .right-sidebar {
+        display: none;
+    }
+
+    /* Ajustar cards de publicação */
+    .publication-card {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .publication-header {
+        margin-bottom: 14px;
+    }
+
+    .publication-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .publication-actions {
+        padding: 14px 0;
+        gap: 14px;
+    }
+
+    .publication-action {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar botões de criar publicação */
+    .create-post {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .create-post-actions {
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .create-post-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar sidebar */
+    .sidebar-section {
+        margin-bottom: 18px;
+        padding: 14px;
+    }
+
+    .user-profile-card {
+        padding: 14px;
+    }
+
+    .quick-menu-desktop {
+        gap: 6px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .sidebar-item {
+        padding: 10px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    /* Ajustar header */
+    .header-content {
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    .search-container {
+        max-width: 250px;
+    }
+
+    .search-input {
+        font-size: 0.85rem;
+        padding: 8px 36px 8px 14px;
+    }
+
+    /* Ajustar modais */
+    .modal-content {
+        width: 95%;
+        max-width: 500px;
+        margin: 10% auto;
+        padding: 20px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    /* Modal de perfil específico para tablets portrait */
+    #userProfileModal .modal-content {
+        width: 90%;
+        max-width: 450px;
+        padding: 18px;
+    }
+
+    .user-profile-modal-details {
+        padding: 14px;
+        text-align: center;
+    }
+
+    .user-profile-modal-details .user-avatar-large {
+        width: 65px;
+        height: 65px;
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.8rem;
+    }
+
+    /* Ajustar seção sobre */
+    .sobre-container {
+        padding: 16px;
+    }
+
+    .sobre-card {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .sobre-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    /* Ajustar ranking */
+    .ranking-container {
+        padding: 16px;
+    }
+
+    .ranking-header {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .ranking-item {
+        padding: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Ajustar navegação para tablets portrait */
+    .mobile-nav-buttons {
+        display: flex !important;
+        gap: 16px;
+    }
+
+    .mobile-nav-buttons .nav-link {
+        font-size: 1.1rem;
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+    }
+
+    .mobile-menu-btn {
+        display: block !important;
+        font-size: 1.2rem;
+        padding: 8px;
+    }
+
+    .nav {
+        display: none;
+    }
+
+    /* Ajustar header para tablets portrait */
+    .header {
+        padding: 10px 0;
+    }
+
+    .header-content {
+        height: 55px;
+    }
+
+    /* Ajustar botões de autenticação para tablets portrait */
+    .auth-buttons {
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .tituI {
+        font-size: 1.8rem;
+    }
+
+    .titLogin {
+        font-size: 1.1rem;
+    }
+
+    .tituPara {
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar mídias para tablets portrait */
+    .publication-image,
+    .publication-video {
+        max-height: 280px;
+        border-radius: 6px;
+    }
+
+    .media-preview img,
+    .media-preview video {
+        max-height: 160px;
+        width: 70%;
+    }
+
+    .video-info {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar menu rápido para tablets portrait */
+    #quickMenuSectionInNav {
+        padding: 10px 0;
+        margin-top: 8px;
+    }
+
+    #quickMenuSectionInNav h2 {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .quick-menu-desktop {
+        gap: 4px;
+    }
+
+    .sidebar-item {
+        padding: 8px;
+        font-size: 0.75rem;
+        min-height: 36px;
     }
 }
 
@@ -2384,6 +3031,13 @@ body {
     position: relative;
     background: #000; /* Fundo para imagens horizontais/verticais não ficarem "voando" */
     border-radius: 8px; /* opcional, deixa mais bonito */
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.publication-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(123, 0, 255, 0.3);
 }
 /* Para imagens que podem ser cortadas mas ficam bonitas no card */
 .publication-image.cover {
@@ -3402,7 +4056,24 @@ a:hover {
     height: 100%;
     color: white;
   }
-  
+  @keyframes btn-info-blink {
+    0%, 100% {
+      box-shadow: 0 0 0px 0 #fff8;
+      filter: brightness(1);
+    }
+    50% {
+      box-shadow: 0 0 20px 6px #7001d192, 0 0 30px 16px #4c019c77;
+      filter: brightness(1.2) saturate(2);
+    }
+  }
+  .btn-info {
+    background-color: #5719d2;
+    margin-left: 27px;
+    animation: btn-info-blink 8s ease-in-out infinite;
+    transition: box-shadow 6s, filter 5s;
+    position: relative;
+    z-index: 1;
+  }
   
   /* cores por filtro (iguais às que você usava) */
   .sidebar-item[data-filter="all"] {
@@ -4985,5 +5656,889 @@ body.intro-active > *:not(#introContainer) {
         width: 30px !important;
         height: 30px !important;
         font-size: 1.1rem !important;
+    }
+}
+
+/* ===== VISUALIZADOR DE IMAGENS EM TELA CHEIA ===== */
+.image-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 2, 79, 0.95);
+    display: none;
+    z-index: 3000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-viewer.active {
+    display: flex;
+    opacity: 1;
+}
+
+.image-viewer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.image-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.image-viewer-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(30, 2, 79, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 10;
+}
+
+.image-viewer-close {
+    background: rgba(255, 255, 255, 0.904);
+    border: none;
+    color: rgb(112, 15, 230);
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.image-viewer-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.image-viewer-info {
+    color: rgb(117, 0, 241);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.image-viewer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.image-viewer-action {
+    background: rgba(255, 255, 255, 0.954);
+    border: none;
+    color: rgb(112, 15, 230);
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.image-viewer-action:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.image-viewer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.image-viewer-main {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-viewer-main img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+    cursor: grab;
+}
+
+.image-viewer-main img:active {
+    cursor: grabbing;
+}
+
+.image-viewer-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.image-viewer-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.image-viewer-prev {
+    left: 20px;
+}
+
+.image-viewer-next {
+    right: 20px;
+}
+
+.image-viewer-zoom-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 25px;
+    z-index: 10;
+}
+
+.zoom-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 1rem;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Estados de zoom */
+.image-viewer-main.zoomed img {
+    cursor: grab;
+}
+
+.image-viewer-main.zoomed img:active {
+    cursor: grabbing;
+}
+
+/* Responsividade para o visualizador de imagens */
+@media (max-width: 768px) {
+    .image-viewer-header {
+        height: 50px;
+        padding: 0 15px;
+    }
+
+    .image-viewer-close,
+    .image-viewer-action {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+
+    .image-viewer-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .image-viewer-prev {
+        left: 10px;
+    }
+
+    .image-viewer-next {
+        right: 10px;
+    }
+
+    .image-viewer-zoom-controls {
+        bottom: 15px;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .zoom-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .image-viewer-info {
+        font-size: 0.9rem;
+    }
+
+    /* Centralizar modal de perfil em telas pequenas */
+    #userProfileModal .modal-content {
+        width: 100%;
+        max-width: 400px;
+        margin: 5% auto;
+        left: 50% !important;
+        background-color: #ffffff;
+        transform: translateX(-50%);
+        padding: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .image-viewer-container {
+        padding: 10px;
+    }
+
+    .image-viewer-header {
+        height: 45px;
+        padding: 0 10px;
+    }
+
+    .image-viewer-close,
+    .image-viewer-action {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .image-viewer-nav {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .image-viewer-prev {
+        left: 5px;
+    }
+
+    .image-viewer-next {
+        right: 5px;
+    }
+
+    .image-viewer-zoom-controls {
+        bottom: 10px;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .zoom-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .image-viewer-info {
+        font-size: 0.8rem;
+    }
+
+    /* Centralizar modal de perfil em telas muito pequenas */
+    #userProfileModal .modal-content {
+        width: 96%;
+        max-width: 370px;
+        margin-left: 205px;
+        left: 50% !important;
+        transform: translateX(-50%);
+        padding: 10px;
+    }
+
+    /* Ajustar seção de estatísticas para mobile */
+    .user-stats-section {
+        margin-top: 10px;
+        padding: 8px;
+    }
+
+    .user-stats-grid {
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .user-stat-item {
+        padding: 5px;
+    }
+
+    .user-stat-number {
+        font-size: 1rem;
+    }
+
+    .user-stat-label {
+        font-size: 0.7rem;
+    }
+
+    .contribution-label {
+        font-size: 0.75rem;
+        margin-bottom: 3px;
+        line-height: 1.2;
+    }
+
+    .contribution-percentage {
+        font-size: 0.65rem;
+    }
+
+    /* Ajustar texto do modal para mobile */
+    .user-profile-modal-details .user-full-name {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.75rem;
+        margin-bottom: 6px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.7rem;
+    }
+}
+
+/* ===== AVATARES DE COMENTÁRIOS ===== */
+.comment-item .user-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgb(215, 195, 254);
+}
+
+/* Fallback para quando não há imagem */
+.comment-item .user-avatar-img:not([src]) {
+    display: none;
+}
+
+.comment-item .user-avatar-img[src=""] {
+    display: none;
+}
+
+/* Estilos para avatares de comentários em diferentes tamanhos */
+@media (max-width: 768px) {
+    .comment-item div[style*="min-width: 36px"] {
+        min-width: 32px !important;
+        min-height: 32px !important;
+        width: 32px !important;
+        height: 32px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .comment-item div[style*="min-width: 36px"] {
+        min-width: 28px !important;
+        min-height: 28px !important;
+        width: 28px !important;
+        height: 28px !important;
+    }
+}
+
+/* ===== ESTATÍSTICAS DO PERFIL ===== */
+.user-stats-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8f4ff 0%, #e8d5ff 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(123, 0, 255, 0.1);
+}
+
+/* ===== SISTEMA DE HASHTAGS E MENCÕES ===== */
+
+/* Estilos para hashtags e menções */
+.hashtag, .mention {
+    display: inline-block;
+    background: linear-gradient(135deg, #7b00ff 0%, #9d4edd 100%);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-decoration: none;
+    margin: 0 1px;
+    box-shadow: 0 1px 3px rgba(123, 0, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.hashtag:hover, .mention:hover {
+    background: linear-gradient(135deg, #9d4edd 0%, #7b00ff 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(123, 0, 255, 0.4);
+}
+
+/* Estilos específicos para hashtags */
+.hashtag {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    box-shadow: 0 1px 3px rgba(255, 107, 53, 0.3);
+}
+
+.hashtag:hover {
+    background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
+}
+
+/* Estilos específicos para menções (@) */
+.mention {
+    background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+    box-shadow: 0 1px 3px rgba(25, 118, 210, 0.3);
+}
+
+.mention:hover {
+    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.4);
+}
+
+/* Preview em tempo real no formulário */
+.form-input, .form-textarea {
+    position: relative;
+}
+
+.hashtag-preview, .mention-preview {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 2px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+}
+
+/* ===== CORREÇÕES DE SCROLL EM MOBILE ===== */
+
+/* Correções globais para problemas de scroll em mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Corrigir problemas específicos de iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    body {
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    .main {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Corrigir problemas de scroll em dispositivos Android */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .left-sidebar,
+    .right-sidebar {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* Corrigir problemas de scroll "colado" em dispositivos móveis */
+@media (max-width: 768px) {
+    /* Remover position sticky que causa problemas em mobile */
+    .left-sidebar {
+        position: static !important;
+        top: auto !important;
+        -webkit-transform: none !important;
+        transform: none !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    
+    .right-sidebar {
+        position: static !important;
+        top: auto !important;
+    }
+    
+    /* Corrigir problemas de scroll com elementos fixos */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Melhorar performance de scroll em mobile */
+    .main {
+        will-change: auto;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Corrigir problemas com elementos que "colam" durante o scroll */
+    .header {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Garantir que modais não causem problemas de scroll */
+    .modal {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .modal-content {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* Correções adicionais para telas muito pequenas */
+@media (max-width: 480px) {
+    /* Forçar scroll suave em mobile */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Corrigir problemas específicos de iOS */
+    .left-sidebar,
+    .right-sidebar,
+    .main {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    
+    /* Melhorar performance de scroll */
+    .publication-card,
+    .sidebar-section,
+    .user-profile-card {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        will-change: auto;
+    }
+}
+
+/* ===== DIFERENCIAÇÃO ENTRE PERFIL PRINCIPAL E MODAL ===== */
+
+/* Estilos específicos para o modal de perfil de outros usuários */
+
+
+#userProfileModal .user-stat-number {
+    color: #6c19d2;
+}
+
+#userProfileModal .contribution-fill {
+    background: linear-gradient(90deg, #6c19d2 0%, #8442f5 100%);
+}
+
+#userProfileModal .contribution-percentage {
+    color: #000000;
+}
+
+/* Estilos específicos para o perfil principal na sidebar */
+#userProfileSection .user-stats-section {
+    background: linear-gradient(135deg, #f8f4ff 0%, #e8d5ff 100%);
+    border: 1px solid rgba(123, 0, 255, 0.1);
+}
+
+#userProfileSection .user-stat-number {
+    color: #7b00ff;
+    
+}
+
+#userProfileSection .contribution-fill {
+    background: linear-gradient(90deg, #7b00ff 0%, #8211e4 100%);
+}
+
+#userProfileSection .contribution-percentage {
+    color: #7b00ff;
+}
+
+/* Diferenciação adicional de cores e estilos */
+
+/* Modal de perfil de outros usuários - tema azul */
+#userProfileModal .user-profile-modal-details {
+    background: rgba(255, 255, 255, 0.98);
+ 
+  margin-left: 30px;
+}
+
+#userProfileModal .user-full-name {
+    color: #000000;
+}
+
+#userProfileModal .user-turma {
+    color: #000000;
+}
+
+#userProfileModal .user-description {
+    color: #424242;
+}
+
+#userProfileModal .user-short-description {
+    color: #5719d2;
+    font-weight: 600;
+}
+
+#userProfileModal .modal-header h3 {
+    color: #530488;
+}
+
+
+
+/* Perfil principal na sidebar - tema roxo */
+#userProfileSection .user-profile-card {
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid rgba(123, 0, 255, 0.2);
+}
+
+#userProfileSection .user-full-name {
+    color: #7b00ff;
+}
+
+#userProfileSection .user-turma {
+    color: #6a1b9a;
+}
+
+#userProfileSection .user-description {
+    color: #424242;
+}
+
+#userProfileSection .user-short-description {
+    color: #7b00ff;
+    font-weight: 600;
+}
+
+.user-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.user-stat-item {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    border: 1px solid rgba(102, 12, 198, 0.556);
+}
+
+.user-stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #7b00ff;
+    margin-bottom: 4px;
+}
+
+.user-stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.user-contribution-bar {
+    margin-top: 12px;
+}
+
+.contribution-label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.contribution-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(123, 0, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.contribution-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7b00ff 0%, #9d4edd 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.contribution-percentage {
+    font-size: 0.8rem;
+    color: #7b00ff;
+    font-weight: 600;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* Responsividade para estatísticas */
+@media (max-width: 768px) {
+    .user-stats-section {
+        margin-top: 16px;
+        padding: 12px;
+    }
+
+    .user-stats-grid {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .user-stat-item {
+        padding: 10px;
+    }
+
+    .user-stat-number {
+        font-size: 1.3rem;
+    }
+
+    .user-stat-label {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-stats-section {
+        margin-top: 12px;
+        padding: 10px;
+    }
+
+    .user-stats-grid {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .user-stat-item {
+        padding: 8px;
+    }
+
+    .user-stat-number {
+        font-size: 1.2rem;
+    }
+
+    .user-stat-label {
+        font-size: 0.75rem;
+    }
+
+    .contribution-label {
+        font-size: 0.85rem;
+    }
+
+    .contribution-percentage {
+        font-size: 0.75rem;
+    }
+}
+
+/* Estilos para telas muito pequenas (menos de 360px) */
+@media (max-width: 360px) {
+    /* Modal de perfil para telas muito pequenas */
+    #userProfileModal .modal-content {
+        width: 95%;
+        max-width: 300px;
+        margin: 0.5% auto;
+        left: 50% !important;
+        transform: translateX(-50%);
+        padding: 8px;
+    }
+
+    /* Ajustar seção de estatísticas para telas muito pequenas */
+    .user-stats-section {
+        margin-top: 8px;
+        padding: 6px;
+    }
+
+    .user-stats-grid {
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+
+    .user-stat-item {
+        padding: 4px;
+    }
+
+    .user-stat-number {
+        font-size: 0.9rem;
+    }
+
+    .user-stat-label {
+        font-size: 0.65rem;
+    }
+
+    .contribution-label {
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+        line-height: 1.1;
+    }
+
+    .contribution-percentage {
+        font-size: 0.6rem;
+    }
+
+    /* Ajustar texto do modal para telas muito pequenas */
+    .user-profile-modal-details .user-full-name {
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.7rem;
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.65rem;
+    }
+
+    /* Ajustar header do modal */
+    .modal-header {
+        padding: 12px 8px 8px;
+    }
+
+    .modal-header h3 {
+        font-size: 1rem;
+    }
+
+    .close-btn {
+        font-size: 1.2rem;
+        width: 28px;
+        height: 28px;
     }
 }

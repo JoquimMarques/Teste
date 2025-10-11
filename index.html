@@ -107,8 +107,8 @@
                     <span class="notification-count" id="notificationCount" style="display:none;">0</span>
                     <span class="nav-text"></span>
                 </a>
-                <a href="#sobre" class="nav-link" onclick="showSection('sobre')">
-                    <i class="fas fa-info-circle"></i>
+                <a href="#sobre" class="nav-link btn-info" onclick="showSection('sobre')">
+                    <i class="fas fa-tools"></i>
                     <span class="nav-text"></span>
                 </a>
                 <!-- Adicionado o menu suspenso do quick-menu-mobile dentro do menu principal -->
@@ -670,21 +670,85 @@
             <div class="user-profile-card user-profile-modal-details">
                 <div class="user-avatar-large" id="userProfileModalAvatar">
                     <i class="fas fa-user"></i>
-                  
-
                 </div>
                 <h4 class="user-full-name" id="userProfileModalFullName">Nome do Usuário</h4>
                 <p class="user-turma" id="userProfileModalTurma">Turma: Não definida</p>
                 <p class="user-description" id="userProfileModalDescription">Sem descrição</p>
                 <p class="user-short-description" id="userProfileModalShortDescription">Profissão ou área</p>
+                
+                <!-- Seção de Estatísticas -->
+                <div class="user-stats-section" id="userStatsSection">
+                    <div class="user-stats-grid">
+                        <div class="user-stat-item">
+                            <div class="user-stat-number" id="userPublicationsCount">0</div>
+                            <div class="user-stat-label">Publicações</div>
+                        </div>
+                        <div class="user-stat-item">
+                            <div class="user-stat-number" id="userTotalImpulses">0</div>
+                            <div class="user-stat-label">Impulsões</div>
+                        </div>
+                    </div>
+                    <div class="user-contribution-bar">
+                        <div class="contribution-label">Contribuição para a plataforma</div>
+                        <div class="contribution-progress">
+                            <div class="contribution-fill" id="contributionFill" style="width: 0%"></div>
+                        </div>
+                        <div class="contribution-percentage" id="contributionPercentage">0%</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <!-- Fim do Modal de Perfil de Usuário -->
 
+    <!-- Visualizador de Imagens em Tela Cheia -->
+    <div id="imageViewer" class="image-viewer">
+        <div class="image-viewer-overlay" onclick="closeImageViewer()"></div>
+        <div class="image-viewer-container">
+            <div class="image-viewer-header">
+                <button class="image-viewer-close" onclick="closeImageViewer()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="image-viewer-info">
+                    <span id="imageViewerCounter">1 / 1</span>
+                </div>
+                <div class="image-viewer-actions">
+                    <button class="image-viewer-action" onclick="downloadImage()" title="Baixar imagem">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    
+                </div>
+            </div>
+            <div class="image-viewer-content">
+                <button class="image-viewer-nav image-viewer-prev" onclick="previousImage()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="image-viewer-main">
+                    <img id="imageViewerImg" src="" alt="Imagem em visualização">
+                    <div class="image-viewer-zoom-controls">
+                        <button class="zoom-btn" onclick="zoomOut()" title="Diminuir zoom">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="zoom-btn" onclick="resetZoom()" title="Zoom padrão">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button class="zoom-btn" onclick="zoomIn()" title="Aumentar zoom">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="image-viewer-nav image-viewer-next" onclick="nextImage()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="src/js/modules/app-utils.js"></script>
+    <script src="src/js/modules/image-viewer.js"></script>
     <script src="src/js/script-corrected.js"></script>
+    <script src="src/js/modules/hashtag-system.js"></script>
     <!-- <script type="module" src="./src/js/performance-boost.js"></script> -->
 
     
