@@ -608,7 +608,6 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     
 }
-
 .sidebar-section:nth-child(1) {
 
     border-radius: 16px;
@@ -1182,16 +1181,14 @@ body {
     background: #ffffff;
     border-radius: 16px;
     padding: 0;
-    max-width: 550px;
-    width: 100%;
+    max-width: 500px;
+    width: 90%;
     max-height: 90vh;
-    
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     transform: translateY(-20px);
     transition: all 0.3s ease;
 }
-
 
 .modal.active .modal-content {
     transform: translateY(0);
@@ -1237,18 +1234,10 @@ body {
 /* Estilos específicos para desktop - Modal de perfil */
 @media (min-width: 1025px) {
     #userProfileModal .modal-content {
-        width: 90%;
+        width: 85%;
         max-width: 550px;
-        padding: 25px 5px;
-        margin-left: -20px;
-        
-    
-        /* Para *ocultar* a barra de rolagem horizontal */
-        overflow-x: hidden;
-        /* Removido background-color: red; */
-        
+        padding: 28px;
     }
-  
 
     .user-profile-modal-details {
         padding: 20px;
@@ -3192,7 +3181,6 @@ a:hover {
         z-index: 9999; /* sempre por cima */
     }
     
-    
     /* estilo de cada notificação */
   
     /* animação de entrada e saída */
@@ -3219,21 +3207,6 @@ a:hover {
         letter-spacing: -0.5px;
     }
 
-    #userProfileModal .modal-content {
-        width: 90%;
-        max-width: 550px;
-        padding: 25px 5px;
-       
-        /* Para *ocultar* a barra de rolagem horizontal */
-        overflow-x: hidden;
-        /* Removido background-color: red; */
-        
-    }
-
-    #userProfileModal .user-profile-modal-details {
-       
-        width: 200% !important;
-    }
     .search-container {
         
        
@@ -4006,8 +3979,6 @@ a:hover {
 }
 
 @media (max-width: 900px) {
-
-
     .search-btn {
         display: inline-flex;
         align-items: center;
@@ -4075,24 +4046,7 @@ a:hover {
     height: 100%;
     color: white;
   }
-  @keyframes btn-info-blink {
-    0%, 100% {
-      box-shadow: 0 0 0px 0 #fff8;
-      filter: brightness(1);
-    }
-    50% {
-      box-shadow: 0 0 20px 6px #7001d192, 0 0 30px 16px #4c019c77;
-      filter: brightness(1.2) saturate(2);
-    }
-  }
-  .btn-info {
-    background-color: #5719d2;
-    margin-left: 27px;
-    animation: btn-info-blink 8s ease-in-out infinite;
-    transition: box-shadow 6s, filter 5s;
-    position: relative;
-    z-index: 1;
-  }
+  
   
   /* cores por filtro (iguais às que você usava) */
   .sidebar-item[data-filter="all"] {
@@ -5934,8 +5888,15 @@ body.intro-active > *:not(#introContainer) {
     }
 
     /* Centralizar modal de perfil em telas pequenas */
- 
-
+    #userProfileModal .modal-content {
+        width: 100%;
+        max-width: 400px;
+        margin: 5% auto;
+        left: 50% !important;
+        background-color: #ffffff;
+        transform: translateX(-50%);
+        padding: 40px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -5987,12 +5948,12 @@ body.intro-active > *:not(#introContainer) {
 
     /* Centralizar modal de perfil em telas muito pequenas */
     #userProfileModal .modal-content {
-        width: 75%;
+        width: 96%;
         max-width: 370px;
-        position: absolute;
-        right: 50px;
-     
-        padding: 7px;
+        margin-left: 205px;
+        left: 50% !important;
+        transform: translateX(-50%);
+        padding: 10px;
     }
 
     /* Ajustar seção de estatísticas para mobile */
@@ -6031,7 +5992,7 @@ body.intro-active > *:not(#introContainer) {
     /* Ajustar texto do modal para mobile */
     .user-profile-modal-details .user-full-name {
         font-size: 1rem;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
 
     .user-profile-modal-details .user-turma {
@@ -6304,7 +6265,8 @@ body.intro-active > *:not(#introContainer) {
 /* Modal de perfil de outros usuários - tema azul */
 #userProfileModal .user-profile-modal-details {
     background: rgba(255, 255, 255, 0.98);
-
+ 
+  margin-left: 30px;
 }
 
 #userProfileModal .user-full-name {
