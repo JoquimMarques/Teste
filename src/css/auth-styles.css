@@ -307,6 +307,7 @@
         border-radius: 16px;
         padding: 22px 7px !important;
         text-align: center;
+        margin-left: 4px !important;
         box-shadow: 0 8px 24px rgba(55, 22, 105, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
@@ -482,11 +483,7 @@
     .login-card p {
         font-size: 0.9rem;
     }
-    
-    .user-profile-card {
-        padding: 20px;
-      
-    }
+  
     
     .user-avatar-large {
         width: 70px;
