@@ -621,8 +621,8 @@ async function createPublicationCard(publication) {
                 </button>
                 
                 <button class="publication-action" onclick="shareOnWhatsApp('${publication.author_id}')">
-                    <i class="fab fa-whatsapp" style="color:rgba(1, 227, 5, 0.8);"></i>
-                    <span class="action-text">Whatsapp</span>
+                    <i class="fas fa-comments" style="color:rgba(1, 227, 5, 0.8);"></i>
+                    <span class="action-text">Conversar</span>
                 </button>
                 ${currentUser && publication.author_id === currentUser.id ? 
                     `<button class="publication-action delete-btn" onclick="deletePublication('${publication.id}')" style="color: #e74c3c; margin-left: 10px">
@@ -2475,22 +2475,20 @@ async function uploadFileToStorage(file, folder) {
 // sanitizeFileName agora está em src/js/app-utils.js
 
 async function shareOnWhatsApp(authorId) {
-    // Buscar o perfil do autor
-    const { data, error } = await supabase
-        .from('profiles')
-        .select('whatsapp')
-        .eq('id', authorId)
-        .single();
-
-    if (error || !data || !data.whatsapp) {
-        showNotification('O usuário não cadastrou o WhatsApp.', 'warning');
+    // Verificar se o usuário está logado
+    if (!currentUser) {
+        showNotification('Você precisa estar logado para iniciar uma conversa.', 'warning');
         return;
     }
 
-    // Limpar o número (remover espaços, parênteses, traços)
-    const phone = data.whatsapp.replace(/\D/g, '');
-    const url = `https://wa.me/${phone}`;
-    location.href = url;
+    // Verificar se não está tentando conversar consigo mesmo
+    if (authorId === currentUser.id) {
+        showNotification('Você não pode conversar consigo mesmo.', 'warning');
+        return;
+    }
+
+    // Usar o novo sistema de conversas
+    openPrivateChat(authorId);
 }
 
 function toggleQuickMenuMore() {
@@ -3749,15 +3747,19 @@ function scrollToSection(sectionId) {
 }
 
 function showSection(sectionId) {
+    console.log('🔍 showSection chamado com:', sectionId);
+    
     // Ocultar todas as seções
     const mainContent = document.querySelector('.main');
     const sobreSection = document.getElementById('sobre');
+    const conversasSection = document.getElementById('conversas');
     const createPostElement = document.getElementById('createPost');
     
     if (sectionId === 'sobre') {
         // Mostrar seção Sobre
         mainContent.style.display = 'none';
         sobreSection.style.display = 'block';
+        if (conversasSection) conversasSection.style.display = 'none';
         
         // Ocultar elemento de criar publicação na seção sobre
         if (createPostElement) {
@@ -3766,10 +3768,26 @@ function showSection(sectionId) {
         
         // Atualizar navegação ativa
         updateActiveNavigation('sobre');
+    } else if (sectionId === 'conversas') {
+        // Mostrar seção Conversas
+        mainContent.style.display = 'none';
+        sobreSection.style.display = 'none';
+        if (conversasSection) conversasSection.style.display = 'block';
+        
+        // Ocultar elemento de criar publicação
+        if (createPostElement) {
+            createPostElement.style.display = 'none';
+        }
+        
+        // Atualizar navegação ativa
+        updateActiveNavigation('conversas');
+        
+        console.log('✅ Seção de conversas mostrada');
     } else if (sectionId === 'ranking') {
         // Mostrar conteúdo principal (ranking)
         mainContent.style.display = 'grid';
         sobreSection.style.display = 'none';
+        if (conversasSection) conversasSection.style.display = 'none';
         
         // Ocultar elemento de criar publicação no ranking
         if (createPostElement) {
@@ -3782,6 +3800,7 @@ function showSection(sectionId) {
         // Mostrar conteúdo principal (publicações)
         mainContent.style.display = 'grid';
         sobreSection.style.display = 'none';
+        if (conversasSection) conversasSection.style.display = 'none';
         
         // Mostrar elemento de criar publicação no home (se estiver logado)
         if (createPostElement && currentUser) {

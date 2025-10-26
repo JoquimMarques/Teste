@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>briolinke-Chat</title>
+   <style>
+    :root {
+    /* Paleta moderna e suave */
+    --bg-primary: #0f0f23;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --accent-hover: #7c3aed;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #334155;
+    --success: #10b981;
+    --error: #ef4444;
+    --online: #22c55e;
+    --offline: #6b7280;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 100%);
+    min-height: 100vh;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+.container {
+    width: 95%;
+    max-width: 1200px;
+    height: 90vh;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* Configuração Inicial */
+.setup-screen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: var(--bg-primary);
+}
+
+.setup-box {
+    background: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid var(--border-color);
+}
+
+.setup-box h2 {
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border 0.3s;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    background: var(--bg-tertiary);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+}
+
+.sidebar-header h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.user-status {
+    font-size: 12px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--online);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.users-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.user-item {
+    padding: 12px;
+    margin-bottom: 6px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+}
+
+.user-item:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    transform: translateX(4px);
+}
+
+.user-item.active {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.user-item.active .user-avatar,
+.user-item:hover .user-avatar {
+    background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-hover) 100%);
+}
+
+.user-online-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: var(--online);
+    border: 2px solid var(--bg-secondary);
+    border-radius: 50%;
+}
+
+.user-online-indicator.offline {
+    background: var(--offline);
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+}
+
+.user-item.active .user-name {
+    color: white;
+}
+
+.user-last-seen {
+    font-size: 11px;
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-muted);
+}
+
+.user-item.active .user-last-seen {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.notification-badge {
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+
+.user-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.user-preview-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.last-message-preview {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.user-item.active .last-message-preview {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+}
+
+.chat-header {
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-header h3 {
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--bg-primary);
+}
+
+.message {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.sent {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.message-content {
+    max-width: 60%;
+}
+
+.message-bubble {
+    padding: 10px 16px;
+    border-radius: 18px;
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.5;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.message.sent .message-bubble {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    border: none;
+}
+
+.message-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 0 5px;
+}
+
+.message.sent .message-info {
+    justify-content: flex-end;
+}
+
+.message-file {
+    margin-top: 8px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.message.sent .message-file {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary);
+    border-radius: 8px;
+    font-size: 20px;
+    color: white;
+}
+
+.file-info {
+    flex: 1;
+}
+
+.file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.file-size {
+    font-size: 11px;
+    opacity: 0.7;
+    color: var(--text-secondary);
+}
+
+.message-image {
+    margin-top: 8px;
+    max-width: 300px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.audio-player {
+    margin-top: 8px;
+    width: 100%;
+}
+
+/* Input Area */
+.input-area {
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.file-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+.file-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.file-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+    transform: scale(1.05);
+    border-color: var(--accent-primary);
+}
+
+.message-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 14px;
+    resize: none;
+    font-family: inherit;
+    max-height: 100px;
+    min-height: 40px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    transition: border 0.3s;
+}
+
+.message-input::placeholder {
+    color: var(--text-muted);
+}
+
+.message-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.send-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+}
+
+.send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-tertiary);
+}
+
+.typing-indicator {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.empty-chat-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.error-message {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.publication-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+}
+
+.publication-avatar .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.default-avatar {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chatHeaderAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--accent-primary);
+}
+
+#chatHeaderAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .sidebar {
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .container {
+        width: 100%;
+        height: 100vh;
+        max-width: 100%;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 80px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 30;
+        border-bottom: 1px solid var(--border-color);
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        border-right: none;
+    }
+    .publication-avatar .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+
+  
+}
+
+.publication-avatar{
+    margin-top: -5px !important;
+
+} 
+
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .users-list {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .users-list::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .user-item {
+        min-width: 65px;
+        flex-direction: column;
+        padding: 10px;
+        margin-bottom: 0;
+        border-radius: 12px;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 140px);
+        margin-top: 80px;
+        margin-bottom: 60px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .messages-container {
+        flex: 1;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 12px;
+        margin-bottom: 45px;
+       
+        scroll-behavior: smooth;
+    }
+
+    .message-content {
+        max-width: 80%;
+        overflow: visible !important;
+    }
+
+    .message-bubble {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .chat-header {
+        padding: 2px;
+        background: var(--bg-tertiary);
+    }
+
+    .input-area {
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border-color);
+        z-index: 20;
+        padding: 12px;
+    }
+
+    .file-inputs {
+        display: none;
+    }
+
+    .message-input {
+        font-size: 16px;
+    }
+
+    .last-message-preview {
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        height: 75px;
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+
+    .message-content {
+        max-width: 85%;
+    }
+
+    .send-btn,
+    .file-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .chat-header h3 {
+        font-size: 16px;
+    }
+
+    .notification-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    .empty-chat-icon {
+        font-size: 48px;
+    }
+
+    .empty-chat {
+        font-size: 13px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .setup-box {
+        padding: 20px;
+    }
+
+    .chat-header {
+        padding: 10px;
+    }
+
+    .input-area {
+        padding: 8px;
+    }
+
+    .messages-container {
+        padding: 10px;
+    }
+}
+
+
+   </style>
+</head>
+<body>
+  
+    <div class="container">
+      
+        
+        <!-- Tela de Configuração -->
+        <div class="setup-screen" id="setupScreen" style="display:none;">
+            <div class="setup-box">
+                <h2>🔐 Login Necessário</h2>
+                <div class="error-message" id="setupError" style="display:block;">
+                    Você precisa estar logado no Supabase para usar o chat.
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="login.html" class="btn-primary" style="display:inline-block; text-decoration:none;">
+                        Ir para Login
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" style="display:none;" id="sidebar">
+            <div class="sidebar-header">
+                <h3 id="currentUserName">Usuário</h3>
+                <div class="user-status">
+                    <span class="status-dot"></span>
+                    Online
+                </div>
+            </div>
+            <div class="users-list" id="usersList"></div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area" style="display:none;" id="chatArea">
+            <div class="chat-header">
+                <div class="user-avatar" id="chatHeaderAvatar"></div>
+                <div>
+                    <h3 id="chatHeaderName"></h3>
+                    <div class="user-last-seen" id="chatHeaderStatus"></div>
+                </div>
+            </div>
+            <div class="messages-container" id="messagesContainer">
+                <div class="empty-chat">
+                    <div class="empty-chat-icon">💬</div>
+                    <p>Selecione alguém para começar a conversar</p>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator" style="display:none;"></div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <div class="file-inputs">
+                        <button class="file-btn" onclick="document.getElementById('imageInput').click()" title="Enviar Foto">
+                            📷
+                        </button>
+                        <input type="file" id="imageInput" accept="image/*">
+                        
+                        <button class="file-btn" onclick="document.getElementById('pdfInput').click()" title="Enviar PDF">
+                            📄
+                        </button>
+                        <input type="file" id="pdfInput" accept=".pdf">
+                        
+                        <button class="file-btn" onclick="document.getElementById('audioInput').click()" title="Enviar Áudio">
+                            🎵
+                        </button>
+                        <input type="file" id="audioInput" accept="audio/*">
+                    </div>
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Digite sua mensagem..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module">
+        // Configuração Supabase
+        const supabaseUrl = 'https://nvswucwnvshvklqgojcw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUser = null;
+        let selectedUser = null;
+        let currentConversationId = null;
+        let messagesSubscription = null;
+        let allUsers = [];
+
+        // Inicializar ao carregar
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                console.log('Inicializando chat...');
+                
+                // Verificar se está logado no Supabase
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session) {
+                    // console.log('Usuário não está logado');
+                    document.getElementById('setupScreen').style.display = 'flex';
+                    return;
+                }
+
+                // console.log('Usuário logado:', session.user.email);
+
+                // Obter dados do usuário logado
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id, name, email')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (profile) {
+                    currentUser = {
+                        id: profile.id,
+                        name: profile.name || profile.email.split('@')[0],
+                        email: profile.email,
+                        avatar: (profile.name || profile.email).charAt(0).toUpperCase()
+                    };
+
+                    // console.log('Usuário atual:', currentUser);
+
+                    // Esconder setup e mostrar chat
+                    document.getElementById('setupScreen').style.display = 'none';
+                    document.getElementById('sidebar').style.display = 'flex';
+                    document.getElementById('chatArea').style.display = 'flex';
+                    document.getElementById('currentUserName').textContent = currentUser.name;
+
+                    loadUsersFromSupabase();
+                }
+            } catch (error) {
+                console.error('Erro ao inicializar:', error);
+                document.getElementById('setupScreen').style.display = 'flex';
+            }
+        });
+
+        // Carregar conversas do Supabase
+ // Helper para montar o HTML do avatar (usa avatar_url quando existir, senão inicial)
+function createAvatarHTML(user) {
+    const name = user.name || (user.email || '').split('@')[0] || '';
+    const initial = name ? name.charAt(0).toUpperCase() : '?';
+
+    // Se avatar_url existe e parece ser uma URL absoluta, usa diretamente
+    if (user.avatar_url && (user.avatar_url.startsWith('http://') || user.avatar_url.startsWith('https://'))) {
+        return `<div class="publication-avatar" data-author-id="${user.id}">
+                    <img class="avatar-img" src="${user.avatar_url}" alt="${name}" onerror="this.style.display='none'">
+                </div>`;
+    }
+
+    // Se avatar_url existe e parece ser um path (ex: storage path), tenta gerar publicUrl via supabase storage
+    if (user.avatar_url && !user.avatar_url.startsWith('http')) {
+        try {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(user.avatar_url);
+            if (data?.publicUrl) {
+                return `<div class="publication-avatar" data-author-id="${user.id}">
+                            <img class="avatar-img" src="${data.publicUrl}" alt="${name}" onerror="this.style.display='none'">
+                        </div>`;
+            }
+        } catch (err) {
+            console.warn('Não foi possível obter publicUrl do storage para', user.id, err);
+        }
+    }
+
+    // Fallback: inicial dentro de um circle
+    return `<div class="publication-avatar default-avatar" data-author-id="${user.id}">
+                <div class="default-avatar-initial">${initial}</div>
+            </div>`;
+}
+
+// Nova versão de loadUsersFromSupabase que prioriza conversas com mensagens
+async function loadUsersFromSupabase() {
+    try {
+        const usersList = document.getElementById('usersList');
+        usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Carregando...</div>';
+
+        // 1️⃣ Buscar conversas do usuário atual
+        const { data: conversations, error: convError } = await supabase
+            .from('conversations')
+            .select('id, user1_id, user2_id, updated_at')
+            .or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`)
+            .order('updated_at', { ascending: false });
+
+        if (convError) throw convError;
+
+        // Extrair IDs dos usuários com quem já há conversa
+        const conversationUserIds = new Set();
+        conversations?.forEach(conv => {
+            const otherId = conv.user1_id === currentUser.id ? conv.user2_id : conv.user1_id;
+            conversationUserIds.add(otherId);
+        });
+
+        // 2️⃣ Buscar todos os perfis (menos o atual)
+        const { data: allUsers, error: usersError } = await supabase
+            .from('profiles')
+            .select('id, name, email, avatar_url')
+            .neq('id', currentUser.id);
+
+        if (usersError) throw usersError;
+
+        // 3️⃣ Dividir usuários em dois grupos
+        const usersWithMessages = [];
+        const usersWithoutMessages = [];
+
+        allUsers.forEach(u => {
+            if (conversationUserIds.has(u.id)) {
+                usersWithMessages.push(u);
+            } else {
+                usersWithoutMessages.push(u);
+            }
+        });
+
+        // 4️⃣ Ordenar os que têm mensagens pela data da conversa
+        usersWithMessages.sort((a, b) => {
+            const convA = conversations.find(c => c.user1_id === a.id || c.user2_id === a.id);
+            const convB = conversations.find(c => c.user1_id === b.id || c.user2_id === b.id);
+            return new Date(convB.updated_at) - new Date(convA.updated_at);
+        });
+
+        // 5️⃣ Juntar os dois grupos (mensagens primeiro)
+        const sortedUsers = [...usersWithMessages, ...usersWithoutMessages];
+
+        // 6️⃣ Renderizar lista
+        usersList.innerHTML = '';
+
+        if (sortedUsers.length === 0) {
+            usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Nenhum usuário encontrado</div>';
+            return;
+        }
+
+        for (const user of sortedUsers) {
+            const userData = {
+                id: user.id,
+                name: user.name || (user.email || '').split('@')[0],
+                email: user.email,
+                avatar_url: user.avatar_url
+            };
+
+            const userItem = document.createElement('div');
+            userItem.className = 'user-item';
+            if (selectedUser && selectedUser.id === user.id) userItem.classList.add('active');
+
+            const avatarHTML = createAvatarHTML(userData);
+
+            // Mostrar preview se houver conversa
+            let lastMsgText = 'Clique para conversar';
+            const lastConv = conversations.find(c => c.user1_id === user.id || c.user2_id === user.id);
+            if (lastConv) {
+                const { data: lastMsg } = await supabase
+                    .from('messages')
+                    .select('message_text, created_at')
+                    .eq('conversation_id', lastConv.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (lastMsg?.message_text) {
+                    lastMsgText = lastMsg.message_text.length > 30
+                        ? lastMsg.message_text.slice(0, 30) + '...'
+                        : lastMsg.message_text;
+                }
+            }
+
+            userItem.innerHTML = `
+                ${avatarHTML}
+                <div class="user-info">
+                    <div class="user-name">${userData.name}</div>
+                    <div class="last-message-preview">${lastMsgText}</div>
+                </div>
+            `;
+
+            userItem.onclick = async () => {
+                const { data: existing, error: convError } = await supabase
+                    .from('conversations')
+                    .select('id')
+                    .or(`and(user1_id.eq.${currentUser.id},user2_id.eq.${userData.id}),and(user1_id.eq.${userData.id},user2_id.eq.${currentUser.id})`)
+                    .maybeSingle();
+
+                let conversationId = existing?.id;
+
+                if (!conversationId) {
+                    const { data: newConv, error: createError } = await supabase
+                        .from('conversations')
+                        .insert({
+                            user1_id: currentUser.id,
+                            user2_id: userData.id,
+                            updated_at: new Date().toISOString()
+                        })
+                        .select('id')
+                        .single();
+
+                    if (createError) {
+                        console.error('❌ Erro ao criar conversa:', createError);
+                        alert('Erro ao iniciar conversa.');
+                        return;
+                    }
+                    conversationId = newConv.id;
+                }
+
+                selectedUser = userData;
+                currentConversationId = conversationId;
+                document.getElementById('chatHeaderAvatar').innerHTML = createAvatarHTML(userData);
+                document.getElementById('chatHeaderName').textContent = userData.name;
+                document.getElementById('chatHeaderStatus').textContent = 'Online Inativo';
+                document.getElementById('sendBtn').disabled = false;
+                await loadMessages();
+            };
+
+            usersList.appendChild(userItem);
+        }
+
+        console.log(`✅ Lista carregada: ${sortedUsers.length} usuários (mensagens primeiro).`);
+    } catch (error) {
+        console.error('❌ Erro ao carregar lista de usuários:', error);
+        document.getElementById('usersList').innerHTML =
+            '<div style="padding: 20px; text-align: center; color: #888;">Erro ao carregar usuários</div>';
+    }
+}
+
+
+        // Selecionar usuário
+        async function selectUser(userId, userData) {
+            selectedUser = userData;
+            currentConversationId = userData.conversationId;
+            
+            document.getElementById('chatHeaderAvatar').textContent = userData.avatar;
+            document.getElementById('chatHeaderName').textContent = userData.name;
+            document.getElementById('chatHeaderStatus').textContent = 'Online';
+            document.getElementById('sendBtn').disabled = false;
+
+            // Marcar mensagens como lidas
+            if (userData.conversationId) {
+                await markMessagesAsRead(userData.conversationId);
+            }
+
+            await loadMessages();
+            loadUsersFromSupabase(); // Atualizar lista com contador zerado
+        }
+
+        // Carregar mensagens do Supabase
+        async function loadMessages() {
+            if (!currentConversationId) return;
+
+            console.log('📥 Carregando mensagens...');
+
+            const container = document.getElementById('messagesContainer');
+            if (!container) {
+                console.error('❌ Container não encontrado');
+                return;
+            }
+
+            container.innerHTML = 'Carregando...';
+
+            // Carregar mensagens existentes
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('conversation_id', currentConversationId)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('❌ Erro ao carregar mensagens:', error);
+                container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Erro ao carregar mensagens</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (messages && messages.length > 0) {
+                messages.forEach(message => {
+                    displayMessage({
+                        senderId: message.sender_id,
+                        senderName: message.sender_id === currentUser.id ? currentUser.name : selectedUser.name,
+                        text: message.message_text,
+                        timestamp: new Date(message.created_at).getTime(),
+                        type: message.message_type,
+                        fileUrl: message.file_url,
+                        fileName: message.file_name,
+                        fileSize: message.file_size
+                    });
+                });
+            } else {
+                container.innerHTML = `
+                    <div class="empty-chat">
+                        <div class="empty-chat-icon">💬</div>
+                        <p>Nenhuma mensagem ainda. Comece a conversar!</p>
+                    </div>
+                `;
+            }
+
+            container.scrollTop = container.scrollHeight;
+
+            // Inscrever em novas mensagens
+            if (messagesSubscription) {
+                console.log('🔌 Desinscrevendo subscription anterior...');
+                await messagesSubscription.unsubscribe();
+            }
+
+            console.log('🔌 Criando nova subscription para conversa:', currentConversationId);
+            
+            messagesSubscription = supabase
+                .channel(`messages:${currentConversationId}`, {
+                    config: {
+                        broadcast: { self: true }
+                    }
+                })
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `conversation_id=eq.${currentConversationId}`
+                }, (payload) => {
+                    console.log('🔔 Nova mensagem recebida via Realtime:', payload);
+                    displayMessage({
+                        senderId: payload.new.sender_id,
+                        senderName: payload.new.sender_id === currentUser.id ? currentUser.name : selectedUser.name,
+                        text: payload.new.message_text,
+                        timestamp: new Date(payload.new.created_at).getTime(),
+                        type: payload.new.message_type,
+                        fileUrl: payload.new.file_url,
+                        fileName: payload.new.file_name,
+                        fileSize: payload.new.file_size
+                    });
+                    container.scrollTop = container.scrollHeight;
+                    loadUsersFromSupabase(); // Atualizar contador
+                })
+                .subscribe((status) => {
+                    console.log('🔌 Status da subscription:', status);
+                    if (status === 'SUBSCRIBED') {
+                        console.log('✅ Subscription ativa! Realtime funcionando');
+                    } else if (status === 'CHANNEL_ERROR') {
+                        console.error('❌ Erro na subscription');
+                    }
+                });
+        }
+
+        // Marcar mensagens como lidas
+        async function markMessagesAsRead(conversationId) {
+            // Por enquanto, apenas atualizar a conversa
+            // Você pode implementar a tabela message_read_status se quiser
+            await supabase
+                .from('conversations')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', conversationId);
+        }
+
+        // Exibir mensagem - ESTILO WHATSAPP
+        function displayMessage(message) {
+            console.log('💬 Exibindo mensagem:', message);
+            const container = document.getElementById('messagesContainer');
+            const isSent = message.senderId === currentUser.id;
+            
+            const messageWrapper = document.createElement('div');
+            messageWrapper.style.cssText = `
+                display: flex;
+                margin-bottom: 8px;
+                padding: 4px 12px;
+                ${isSent ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
+            `;
+
+            const messageContent = document.createElement('div');
+            messageContent.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                max-width: 70%;
+                ${isSent ? 'align-items: flex-end;' : 'align-items: flex-start;'}
+            `;
+
+            // Nome do remetente (só para mensagens recebidas)
+            if (!isSent && message.senderName) {
+                const senderName = document.createElement('div');
+                senderName.style.cssText = `
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 4px;
+                    font-weight: 600;
+                `;
+                senderName.textContent = message.senderName;
+                messageContent.appendChild(senderName);
+            }
+
+            // Bolha da mensagem estilo WhatsApp
+            const bubble = document.createElement('div');
+            bubble.style.cssText = `
+                padding: 8px 12px;
+                border-radius: ${isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
+                word-break: break-word;
+                white-space: pre-line;
+                max-width: 440px;
+                width: fit-content;
+                background: ${isSent ? 'rgba(113, 3, 232, 0.912)' : 'white'};
+                color: ${isSent ? 'white' : '#333'};
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                display: inline-block;
+                line-height: 1.4;
+            `;
+            
+            // Conteúdo da mensagem
+            let content = message.text || '';
+            
+            // Se tiver arquivo
+            if (message.fileUrl) {
+                if (message.type === 'image') {
+                    content += `<img src="${message.fileUrl}" style="max-width: 100%; border-radius: 8px; margin-top: 8px; display: block;" onclick="window.open('${message.fileUrl}', '_blank')">`;
+                } else if (message.type === 'pdf') {
+                    content += `
+                        <div style="margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.05); border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                            <div style="font-size: 24px;">📄</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600;">${message.fileName || 'documento.pdf'}</div>
+                                <div style="font-size: 11px; color: #666;">${formatFileSize(message.fileSize)}</div>
+                            </div>
+                            <a href="${message.fileUrl}" target="_blank" style="color: inherit; text-decoration: none;">📥</a>
+                        </div>
+                    `;
+                } else if (message.type === 'audio') {
+                    content += `<audio controls style="margin-top: 8px; width: 100%;"><source src="${message.fileUrl}" type="audio/mpeg"></audio>`;
+                }
+            }
+            
+            bubble.innerHTML = content;
+
+            // Timestamp estilo WhatsApp
+            const time = document.createElement('div');
+            time.style.cssText = `
+                font-size: 11px;
+                color: #667781;
+                margin-top: 4px;
+                text-align: ${isSent ? 'right' : 'left'};
+                padding: 0 8px;
+                opacity: 0.7;
+            `;
+            
+            const timestamp = new Date(message.timestamp);
+            const timeStr = timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
+            // Adicionar check para mensagens enviadas
+            if (isSent) {
+                time.innerHTML = `<i class="fas fa-check-double" style="color: #4fc3f7; margin-right: 4px;"></i> ${timeStr}`;
+            } else {
+                time.textContent = timeStr;
+            }
+
+            messageContent.appendChild(bubble);
+            messageContent.appendChild(time);
+            messageWrapper.appendChild(messageContent);
+            container.appendChild(messageWrapper);
+            
+            console.log('✅ Mensagem exibida');
+        }
+
+        // Enviar mensagem - MELHORADA
+        async function sendMessage(text, file = null, type = 'text') {
+            if (!selectedUser) {
+                console.log('⚠️ Nenhum usuário selecionado');
+                return;
+            }
+
+            if (!text && !file) {
+                console.log('⚠️ Nenhuma mensagem para enviar');
+                return;
+            }
+
+            try {
+                if (!currentConversationId) {
+                    console.error('❌ Conversa não encontrada');
+                    return;
+                }
+
+                console.log('📤 Enviando mensagem...');
+                
+                const messageData = {
+                    conversation_id: currentConversationId,
+                    sender_id: currentUser.id,
+                    message_text: text || '',
+                    message_type: type || 'text'
+                };
+
+                // Se tiver arquivo, fazer upload
+                if (file) {
+                    const fileName = `${Date.now()}_${file.name}`;
+                    const filePath = `${currentConversationId}/${fileName}`;
+                    
+                    try {
+                        const { error: uploadError } = await supabase.storage
+                            .from('chat-files')
+                            .upload(filePath, file);
+
+                        if (uploadError) throw uploadError;
+
+                        const { data: { publicUrl } } = supabase.storage
+                            .from('chat-files')
+                            .getPublicUrl(filePath);
+                        
+                        messageData.file_url = publicUrl;
+                        messageData.file_name = file.name;
+                        messageData.file_size = file.size;
+                        console.log('✅ Arquivo enviado:', publicUrl);
+                    } catch (error) {
+                        console.error('❌ Erro ao enviar arquivo:', error);
+                        alert('Erro ao enviar arquivo. Tente novamente.');
+                        return;
+                    }
+                }
+
+                const { error } = await supabase
+                    .from('messages')
+                    .insert(messageData);
+
+                if (error) {
+                    console.error('❌ Erro ao enviar mensagem:', error);
+                    alert('Erro ao enviar mensagem: ' + error.message);
+                    return;
+                }
+
+                console.log('✅ Mensagem enviada!');
+                
+                // Atualizar conversa
+                await supabase
+                    .from('conversations')
+                    .update({ updated_at: new Date().toISOString() })
+                    .eq('id', currentConversationId);
+                
+                // Scroll
+                setTimeout(() => {
+                    const container = document.getElementById('messagesContainer');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('❌ Erro ao enviar mensagem:', error);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                sendMessage(text);
+                input.value = '';
+                input.style.height = 'auto';
+            }
+        });
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('sendBtn').click();
+            }
+        });
+
+        document.getElementById('messageInput').addEventListener('input', (e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+        });
+
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                sendMessage('', file, 'image');
+                e.target.value = '';
+            }
+        });
+
+        document.getElementById('pdfInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                sendMessage('', file, 'pdf');
+                e.target.value = '';
+            }
+        });
+
+        document.getElementById('audioInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                sendMessage('', file, 'audio');
+                e.target.value = '';
+            }
+        });
+
+        // Funções auxiliares
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+    </script>
+</body>
+</html>
