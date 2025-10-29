@@ -953,12 +953,12 @@ body {
     
     color: #2d1b0e;
     line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    word-wrap: normal;
+    overflow-wrap: break-word; /* quebra entre palavras quando necessário, não no meio */
     white-space: pre-wrap;
     max-width: 100%;
     overflow: hidden;
-    word-break: break-all;
+    word-break: normal; /* evita cortar palavras ao meio */
     position: relative;
     clear: both; /* Garante que sempre fique abaixo de imagens flutuadas */
     display: block;
@@ -979,13 +979,22 @@ body {
 
 .publication-content p {
     margin: 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    word-wrap: normal;
+    overflow-wrap: break-word; /* mantém palavras inteiras */
     white-space: pre-line;
     line-height: 1.6;
     margin-top: -30px;
     max-width: 100%;
-    word-break: break-all;
+    word-break: normal; /* não quebrar dentro da palavra */
+}
+
+/* Exibir apenas duas linhas e cortar o restante (para o "ver mais") */
+.clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
 }
 .incury p{
  
@@ -997,7 +1006,8 @@ body {
 .publication-content p a {
     color: var(--primary-purple);
     text-decoration: underline;
-    word-break: break-all;
+    word-break: break-word; /* URLs podem quebrar ao fim da linha */
+    overflow-wrap: anywhere; /* permite quebrar URLs longas sem layout estourar */
     transition: color 0.3s ease;
 }
 
@@ -6904,23 +6914,98 @@ body.intro-active > *:not(#introContainer) {
 
 /* Responsividade das Conversas */
 @media (max-width: 768px) {
+    /* Estilo WhatsApp: conteúdo vertical */
     .conversas-content {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-        height: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        height: 100vh;
+        padding: 0;
     }
     
+    /* Lista de conversas ocupa toda a tela */
     .conversas-list {
-        height: 200px;
-        margin-bottom: 20px;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-primary);
     }
     
-    .active-chat {
-        height: calc(100vh - 300px);
+    /* Items de conversa estilo WhatsApp */
+    .conversation-item {
+        width: 100%;
+        padding: 15px 20px;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: transparent;
+    }
+    
+    .conversation-item:active {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Área de chat - começa escondida */
+    .chat-area-container {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 1001;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        background: var(--bg-primary);
+    }
+    
+    /* Área de chat ativa (deslizando para dentro) */
+    .chat-area-container.active {
+        transform: translateX(0);
+    }
+    
+    /* Botão voltar */
+    .close-chat-btn {
+        display: flex !important;
+        width: 44px;
+        height: 44px;
+        font-size: 24px;
+    }
+    
+    /* Header da área de chat */
+    .chat-header-active {
+        padding: 12px 16px !important;
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Input do chat fixo no fundo */
+    .chat-input-container {
+        position: fixed !important;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 12px;
+    }
+    
+    /* Mensagens com espaço para input fixo */
+    #chatMessagesContainer {
+        padding-bottom: 70px !important;
+    }
+    
+    /* Ocultar "no chat selected" em mobile */
+    #noChatSelected {
+        display: none !important;
     }
     
     .conversas-header h2 {
         font-size: 2rem;
+    }
+    
+    /* Esconder lista quando chat está ativo */
+    .conversas-list.hidden {
+        display: none;
     }
 }
 

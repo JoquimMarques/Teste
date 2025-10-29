@@ -407,7 +407,7 @@
     <a href="/index.html" class="logo-link">
 
     
-        <h1 class="logo">briolinke</h1>
+        <h1 class="logo">briolink</h1>
     </a>
     
     <div class="login-container">
@@ -536,7 +536,7 @@
 
             try {
     console.log('Chamando função loginUser...');
-    const { user } = (await loginUser(name, password)).data; // <– pega o usuário direto
+    const { user } = await loginUser(name, password); // retorna diretamente o objeto data
 
     if (!user) throw new Error("Usuário não retornado pelo Supabase");
 
@@ -547,11 +547,12 @@
     localStorage.setItem("user_email", user.email);
 
     showMessage('Login realizado com sucesso! Redirecionando...', 'success');
-
-    // Aguarda meio segundo e redireciona
+    // evita duplo clique enquanto redireciona
+    submitBtn.disabled = true;
+    // Redireciona após pequeno delay
     setTimeout(() => {
-        window.location.replace("/index.html");
-    }, 500);
+        window.location.replace('/index.html');
+    }, 600);
 }catch (error) {
                 console.error('Erro no login:', error);
                 
@@ -587,10 +588,7 @@
         }
         typeWriter();
 
-        // Recarrega a página após 30 segundos
-        setTimeout(() => {
-            window.location.reload();
-        }, 100000); // 30000 milissegundos = 30 segundos
+        // Removido auto-reload para não interromper login/redirect
 
 
 

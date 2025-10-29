@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/styles.css">
-    <title>briolinke-Chat</title>
+    <title>briolink-Chat</title>
    <style>
     :root {
     /* Paleta moderna e suave */
@@ -215,6 +215,30 @@ body {
     background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
     color: white;
     border-color: var(--accent-primary);
+}
+
+/* Estado não lido (mobile e desktop) */
+.user-item.unread {
+    background: rgba(123, 0, 255, 0.12);
+    border-color: var(--accent-primary);
+}
+
+.user-item.unread .user-name {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.user-item.unread .last-message-preview {
+    color: var(--text-primary);
+}
+
+.unread-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 0 3px rgba(123,0,255,0.15);
 }
 
 .user-avatar {
@@ -490,6 +514,7 @@ body {
     display: flex;
     gap: 10px;
     align-items: flex-end;
+    position: relative;
 }
 
 .file-inputs {
@@ -567,6 +592,90 @@ body {
 .send-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: var(--bg-tertiary);
+}
+
+/* Botão + estilizado (não empurra o input) */
+.attach-toggle {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 6px 18px rgba(99,102,241,0.35);
+}
+
+.attach-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(99,102,241,0.45);
+}
+
+.attach-toggle.open {
+    transform: rotate(45deg) scale(1.02);
+}
+
+/* Menu sobreposto com animação */
+.attach-menu {
+    position: absolute;
+    bottom: 56px;
+    left: 0;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(26, 26, 46, 0.98);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px;
+    z-index: 1200;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.98);
+    transform-origin: bottom left;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.attach-menu::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    bottom: -8px;
+    width: 16px;
+    height: 16px;
+    background: rgba(26, 26, 46, 0.98);
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    transform: rotate(45deg);
+}
+
+.attach-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.attach-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text-primary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.attach-item:hover {
     background: var(--bg-tertiary);
 }
 
@@ -702,59 +811,86 @@ input[type="file"] {
         border-radius: 0;
     }
 
+    /* Sidebar estilo WhatsApp: lista vertical */
     .sidebar {
         width: 100%;
-        height: 80px;
+        height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 30;
-        border-bottom: 1px solid var(--border-color);
-        background: rgba(26, 26, 46, 0.95);
-        backdrop-filter: blur(20px);
+        z-index: 100;
         border-right: none;
+        background: var(--bg-primary);
     }
-    .publication-avatar .avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-
-  
-}
-
-.publication-avatar{
-    margin-top: -5px !important;
-
-} 
-
-
+    
     .sidebar-header {
-        display: none;
+        padding: 15px 20px;
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+        display: flex !important;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .sidebar-header h3 {
+        font-size: 18px;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .user-status {
+        font-size: 12px;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--online);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
     }
 
     .users-list {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .users-list::-webkit-scrollbar {
-        height: 4px;
+        display: block;
+        flex-direction: column;
+        flex: 1;               /* ocupa o resto da altura */
+        min-height: 0;         /* permite scroll dentro do flex container */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 35px;
+        padding: 0;
+        padding-bottom: max(16px, env(safe-area-inset-bottom)); /* não cortar último item */
     }
 
     .user-item {
-        min-width: 65px;
-        flex-direction: column;
-        padding: 10px;
+        width: 100%;
+        min-width: auto;
+        flex-direction: row;
+        padding: 12px 20px;
         margin-bottom: 0;
-        border-radius: 12px;
+        border-radius: 0;
+        border-bottom: 1px solid var(--border-color);
+        border-left: none;
+        border-right: none;
+    }
+    
+    .user-item:hover {
+        background: var(--bg-tertiary);
+        transform: none;
+    }
+    
+    .user-item.active {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
     }
 
     .user-info {
-        display: none;
+        display: block;
+        flex: 1;
     }
 
     .user-avatar {
@@ -763,15 +899,59 @@ input[type="file"] {
         font-size: 20px;
     }
 
+    .user-name {
+        font-size: 16px;
+    }
+    
+    .last-message-preview {
+        max-width: 100%;
+        font-size: 14px;
+    }
+
+    /* Chat Area: só aparece quando uma conversa está aberta */
     .chat-area {
-        flex: 1;
-        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 100;
+        background: var(--bg-primary);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        display: flex !important;
         flex-direction: column;
-        height: calc(100vh - 140px);
-        margin-top: 80px;
-        margin-bottom: 60px;
-        overflow: hidden;
-        position: relative;
+        overflow: visible !important;
+    }
+    
+    .chat-area.active {
+        transform: translateX(0);
+        z-index: 100;
+    }
+    
+    /* Garantir que o input-area fique sempre visível quando chat está ativo */
+    .chat-area.active .input-area {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 999 !important;
+        display: flex !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Botão de voltar na conversa */
+    .back-button {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
     }
 
     .messages-container {
@@ -779,9 +959,9 @@ input[type="file"] {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
         padding: 12px;
-        margin-bottom: 45px;
-       
+        padding-bottom: 80px !important;
         scroll-behavior: smooth;
+        margin-bottom: 70px;
     }
 
     .message-content {
@@ -795,20 +975,43 @@ input[type="file"] {
     }
 
     .chat-header {
-        padding: 2px;
+        padding: 15px 20px;
         background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+    }
+    
+    .back-button {
+        display: flex !important;
+        font-size: 28px;
     }
 
     .input-area {
         width: 100%;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        background: rgba(26, 26, 46, 0.95);
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 1px;
+        background: transparent !important;
         backdrop-filter: blur(20px);
-        border-top: 1px solid var(--border-color);
-        z-index: 20;
+        border-top: 1px solid transparent;
+        z-index: 999 !important;
         padding: 12px;
+        margin-bottom:50px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        transform: translateZ(0) !important;
+    }
+    
+    /* Garantir que o input-wrapper também apareça */
+    .input-wrapper {
+        display: flex !important;
     }
 
     .file-inputs {
@@ -817,22 +1020,49 @@ input[type="file"] {
 
     .message-input {
         font-size: 16px;
+        
+        width: 244px;
     }
 
-    .last-message-preview {
-        max-width: 120px;
+    .publication-avatar .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .publication-avatar {
+        margin-top: -5px !important;
     }
 }
 
 @media (max-width: 480px) {
+    /* MANTER A SIDEBAR EM 100VH - NÃO CORTAR! */
     .sidebar {
-        height: 75px;
+        height: 100vh !important;
+    }
+    
+    /* Header da sidebar um pouco menor */
+    .sidebar-header {
+        padding: 12px 15px !important;
+    }
+    
+    .sidebar-header h3 {
+        font-size: 16px;
     }
 
     .user-avatar {
         width: 45px;
         height: 45px;
         font-size: 18px;
+    }
+    
+    .user-name {
+        font-size: 15px;
+    }
+    
+    .last-message-preview {
+        font-size: 13px;
     }
 
     .message-content {
@@ -860,6 +1090,13 @@ input[type="file"] {
 
     .empty-chat {
         font-size: 13px;
+    }
+    
+    /* Garantir que a lista sempre apareça */
+    .users-list {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 
@@ -911,6 +1148,12 @@ input[type="file"] {
                 <div class="user-status">
                     <span class="status-dot"></span>
                     Online
+                    <a href="/index.html" style="margin-left: 12px; display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 8px; padding: 4px 12px; box-shadow: 0 1px 8px 0 rgba(150,90,255,0.09); color: #7b00ff; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 24 24" style="margin-right: 4px;">
+                            <path d="M3 11.7V19a2 2 0 0 0 2 2h2.5a.5.5 0 0 0 .5-.5V16a2 2 0 1 1 4 0v4.5a.5.5 0 0 0 .5.5H19a2 2 0 0 0 2-2v-7.3a2 2 0 0 0-.77-1.57l-7-5.7a2 2 0 0 0-2.46 0l-7 5.7A2 2 0 0 0 3 11.7Z" fill="#7b00ff"/>
+                        </svg>
+                       
+                    </a>
                 </div>
             </div>
             <div class="users-list" id="usersList"></div>
@@ -919,6 +1162,7 @@ input[type="file"] {
         <!-- Chat Area -->
         <div class="chat-area" style="display:none;" id="chatArea">
             <div class="chat-header">
+                <button class="back-button" id="backButton" style="display:none;">←</button>
                 <div class="user-avatar" id="chatHeaderAvatar"></div>
                 <div>
                     <h3 id="chatHeaderName"></h3>
@@ -934,22 +1178,20 @@ input[type="file"] {
             <div class="typing-indicator" id="typingIndicator" style="display:none;"></div>
             <div class="input-area">
                 <div class="input-wrapper">
-                    <div class="file-inputs">
-                        <button class="file-btn" onclick="document.getElementById('imageInput').click()" title="Enviar Foto">
-                            📷
-                        </button>
-                        <input type="file" id="imageInput" accept="image/*">
-                        
-                        <button class="file-btn" onclick="document.getElementById('pdfInput').click()" title="Enviar PDF">
-                            📄
-                        </button>
-                        <input type="file" id="pdfInput" accept=".pdf">
-                        
-                        <button class="file-btn" onclick="document.getElementById('audioInput').click()" title="Enviar Áudio">
-                            🎵
-                        </button>
-                        <input type="file" id="audioInput" accept="audio/*">
+                    <!-- Botão + -->
+                    <button class="attach-toggle" id="attachToggle" type="button" title="Anexar">＋</button>
+                    
+                    <!-- Menu de anexos -->
+                    <div class="attach-menu" id="attachMenu">
+                        <div class="attach-item" id="attachPhoto">📷 Enviar foto</div>
+                        <div class="attach-item" id="attachPdf">📄 Enviar PDF</div>
+                        <div class="attach-item" id="attachAudio">🎵 Enviar áudio</div>
                     </div>
+
+                    <!-- Inputs (escondidos) -->
+                    <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                    <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+                    <input type="file" id="audioInput" accept="audio/*" style="display:none;">
                     <textarea 
                         class="message-input" 
                         id="messageInput" 
@@ -980,7 +1222,7 @@ input[type="file"] {
         // Inicializar ao carregar
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                console.log('Inicializando chat...');
+              
                 
                 // Verificar se está logado no Supabase
                 const { data: { session } } = await supabase.auth.getSession();
@@ -1012,10 +1254,28 @@ input[type="file"] {
 
                     // Esconder setup e mostrar chat
                     document.getElementById('setupScreen').style.display = 'none';
+                    
+                    // Em desktop: mostrar sidebar e chat juntos
+                    // Em mobile: mostrar só sidebar inicialmente
+                    if (window.innerWidth > 768) {
                     document.getElementById('sidebar').style.display = 'flex';
                     document.getElementById('chatArea').style.display = 'flex';
+                    } else {
+                        document.getElementById('sidebar').style.display = 'flex';
+                        document.getElementById('chatArea').style.display = 'none';
+                        document.getElementById('backButton').style.display = 'none';
+                    }
+                    
                     document.getElementById('currentUserName').textContent = currentUser.name;
 
+                    // Se veio com ?open=<userId>, abrir diretamente essa conversa
+                    const params = new URLSearchParams(location.search);
+                    const openUserId = params.get('open');
+                    if (openUserId) {
+                        await openOrCreateConversationWith(openUserId);
+                    }
+
+                    // Sempre carregar a lista após isso
                     loadUsersFromSupabase();
                 }
             } catch (error) {
@@ -1057,6 +1317,80 @@ function createAvatarHTML(user) {
             </div>`;
 }
 
+// Abre (ou cria) a conversa com um usuário específico e seleciona no chat
+async function openOrCreateConversationWith(otherUserId) {
+    try {
+        if (!otherUserId) return;
+        // Garantir que o perfil do outro usuário exista
+        const { data: user, error: userErr } = await supabase
+            .from('profiles')
+            .select('id, name, email, avatar_url')
+            .eq('id', otherUserId)
+            .single();
+        if (userErr || !user) return;
+
+        // Obter (ou criar) conversa
+        const { data: existing, error: convError } = await supabase
+            .from('conversations')
+            .select('id')
+            .or(`and(user1_id.eq.${currentUser.id},user2_id.eq.${otherUserId}),and(user1_id.eq.${otherUserId},user2_id.eq.${currentUser.id})`)
+            .maybeSingle();
+
+        let conversationId = existing?.id;
+        if (!conversationId) {
+            const { data: newConv, error: createError } = await supabase
+                .from('conversations')
+                .insert({ user1_id: currentUser.id, user2_id: otherUserId, updated_at: new Date().toISOString() })
+                .select('id')
+                .single();
+            if (createError) return;
+            conversationId = newConv.id;
+        }
+
+        selectedUser = {
+            id: user.id,
+            name: user.name || (user.email || '').split('@')[0],
+            email: user.email,
+            avatar_url: user.avatar_url
+        };
+        currentConversationId = conversationId;
+        document.getElementById('chatHeaderAvatar').innerHTML = createAvatarHTML(selectedUser);
+        document.getElementById('chatHeaderName').textContent = selectedUser.name;
+        document.getElementById('chatHeaderStatus').textContent = 'Online Inativo';
+        document.getElementById('sendBtn').disabled = false;
+        
+        // Em mobile: esconder lista e mostrar conversa
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('chatArea').style.display = 'flex';
+            document.getElementById('chatArea').classList.add('active');
+            document.getElementById('backButton').style.display = 'flex';
+            
+            // Garantir que o input-area esteja visível com alto z-index
+            setTimeout(() => {
+                const inputArea = document.querySelector('.input-area');
+                if (inputArea) {
+                    inputArea.style.cssText = `
+                        display: flex !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                        position: fixed !important;
+                        bottom: 0 !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        z-index: 999 !important;
+                        width: 100% !important;
+                    `;
+                }
+            }, 100);
+        }
+        
+        await loadMessages();
+    } catch (e) {
+        console.error('Erro ao abrir conversa direta:', e);
+    }
+}
+
 // Nova versão de loadUsersFromSupabase que prioriza conversas com mensagens
 async function loadUsersFromSupabase() {
     try {
@@ -1079,25 +1413,17 @@ async function loadUsersFromSupabase() {
             conversationUserIds.add(otherId);
         });
 
-        // 2️⃣ Buscar todos os perfis (menos o atual)
-        const { data: allUsers, error: usersError } = await supabase
-            .from('profiles')
-            .select('id, name, email, avatar_url')
-            .neq('id', currentUser.id);
-
-        if (usersError) throw usersError;
-
-        // 3️⃣ Dividir usuários em dois grupos
-        const usersWithMessages = [];
-        const usersWithoutMessages = [];
-
-        allUsers.forEach(u => {
-            if (conversationUserIds.has(u.id)) {
-                usersWithMessages.push(u);
-            } else {
-                usersWithoutMessages.push(u);
-            }
-        });
+        // 2️⃣ Buscar apenas perfis que já possuem conversa com o usuário atual
+        let usersWithMessages = [];
+        if (conversationUserIds.size > 0) {
+            const idsArray = Array.from(conversationUserIds);
+            const { data: onlyUsers, error: usersError } = await supabase
+                .from('profiles')
+                .select('id, name, email, avatar_url')
+                .in('id', idsArray);
+            if (usersError) throw usersError;
+            usersWithMessages = onlyUsers || [];
+        }
 
         // 4️⃣ Ordenar os que têm mensagens pela data da conversa
         usersWithMessages.sort((a, b) => {
@@ -1107,13 +1433,13 @@ async function loadUsersFromSupabase() {
         });
 
         // 5️⃣ Juntar os dois grupos (mensagens primeiro)
-        const sortedUsers = [...usersWithMessages, ...usersWithoutMessages];
+        const sortedUsers = [...usersWithMessages];
 
         // 6️⃣ Renderizar lista
         usersList.innerHTML = '';
 
         if (sortedUsers.length === 0) {
-            usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Nenhum usuário encontrado</div>';
+            usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Sem conversas ainda. Clique em "Conversar" numa publicação para iniciar.</div>';
             return;
         }
 
@@ -1134,29 +1460,44 @@ async function loadUsersFromSupabase() {
             // Mostrar preview se houver conversa
             let lastMsgText = 'Clique para conversar';
             const lastConv = conversations.find(c => c.user1_id === user.id || c.user2_id === user.id);
+            let lastMsgRecord = null;
             if (lastConv) {
                 const { data: lastMsg } = await supabase
                     .from('messages')
-                    .select('message_text, created_at')
+                    .select('message_text, created_at, sender_id')
                     .eq('conversation_id', lastConv.id)
                     .order('created_at', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
 
                 if (lastMsg?.message_text) {
                     lastMsgText = lastMsg.message_text.length > 30
                         ? lastMsg.message_text.slice(0, 30) + '...'
                         : lastMsg.message_text;
                 }
+                lastMsgRecord = lastMsg || null;
+            }
+
+            // Unread calc using localStorage
+            let isUnread = false;
+            if (lastConv && lastMsgRecord) {
+                const lastOpened = Number(localStorage.getItem(`conv_last_open_${lastConv.id}`) || 0);
+                const lastMsgTs = new Date(lastMsgRecord.created_at).getTime();
+                isUnread = lastMsgRecord.sender_id !== currentUser.id && lastMsgTs > lastOpened;
             }
 
             userItem.innerHTML = `
                 ${avatarHTML}
                 <div class="user-info">
-                    <div class="user-name">${userData.name}</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <div class="user-name">${userData.name}</div>
+                        ${isUnread ? '<span class="unread-dot"></span>' : ''}
+                    </div>
                     <div class="last-message-preview">${lastMsgText}</div>
                 </div>
             `;
+
+            if (isUnread) userItem.classList.add('unread');
 
             userItem.onclick = async () => {
                 const { data: existing, error: convError } = await supabase
@@ -1192,6 +1533,35 @@ async function loadUsersFromSupabase() {
                 document.getElementById('chatHeaderName').textContent = userData.name;
                 document.getElementById('chatHeaderStatus').textContent = 'Online Inativo';
                 document.getElementById('sendBtn').disabled = false;
+                // Mark as read locally
+                localStorage.setItem(`conv_last_open_${conversationId}`, Date.now().toString());
+                
+                // Em mobile: esconder lista e mostrar conversa
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').style.display = 'none';
+                    document.getElementById('chatArea').style.display = 'flex';
+                    document.getElementById('chatArea').classList.add('active');
+                    document.getElementById('backButton').style.display = 'flex';
+                    
+                    // Garantir que o input-area esteja visível com alto z-index
+                    setTimeout(() => {
+                        const inputArea = document.querySelector('.input-area');
+                        if (inputArea) {
+                            inputArea.style.cssText = `
+                                display: flex !important;
+                                visibility: visible !important;
+                                opacity: 1 !important;
+                                position: fixed !important;
+                                bottom: 0 !important;
+                                left: 0 !important;
+                                right: 0 !important;
+                                z-index: 999 !important;
+                                width: 100% !important;
+                            `;
+                        }
+                    }, 100);
+                }
+                
                 await loadMessages();
             };
 
@@ -1311,7 +1681,11 @@ async function loadUsersFromSupabase() {
                         fileSize: payload.new.file_size
                     });
                     container.scrollTop = container.scrollHeight;
-                    loadUsersFromSupabase(); // Atualizar contador
+                    // Atualiza a conversa para ordenar no topo
+                    supabase.from('conversations')
+                        .update({ updated_at: new Date().toISOString() })
+                        .eq('id', payload.new.conversation_id)
+                        .then(() => loadUsersFromSupabase());
                 })
                 .subscribe((status) => {
                     console.log('🔌 Status da subscription:', status);
@@ -1523,6 +1897,16 @@ async function loadUsersFromSupabase() {
             }
         }
 
+        // Botão voltar para a lista em mobile
+        document.getElementById('backButton').addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                document.getElementById('chatArea').classList.remove('active');
+                document.getElementById('chatArea').style.display = 'none';
+                document.getElementById('sidebar').style.display = 'flex';
+                document.getElementById('backButton').style.display = 'none';
+            }
+        });
+
         // Event Listeners
         document.getElementById('sendBtn').addEventListener('click', () => {
             const input = document.getElementById('messageInput');
@@ -1555,7 +1939,8 @@ async function loadUsersFromSupabase() {
             }
         });
 
-        document.getElementById('pdfInput').addEventListener('change', (e) => {
+        // Inputs de PDF e Áudio
+        document.getElementById('pdfInput')?.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 sendMessage('', file, 'pdf');
@@ -1563,11 +1948,60 @@ async function loadUsersFromSupabase() {
             }
         });
 
-        document.getElementById('audioInput').addEventListener('change', (e) => {
+        document.getElementById('audioInput')?.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 sendMessage('', file, 'audio');
                 e.target.value = '';
+            }
+        });
+
+        // Toggle do menu de anexos
+        const attachToggle = document.getElementById('attachToggle');
+        const attachMenu = document.getElementById('attachMenu');
+        const imageInputEl = document.getElementById('imageInput');
+        const pdfInputEl = document.getElementById('pdfInput');
+        const audioInputEl = document.getElementById('audioInput');
+
+        function toggleAttachMenu(forceState) {
+            if (!attachMenu || !attachToggle) return;
+            const isShown = attachMenu.classList.contains('show');
+            const willShow = typeof forceState === 'boolean' ? forceState : !isShown;
+            attachMenu.classList.toggle('show', willShow);
+            attachToggle.classList.toggle('open', willShow);
+        }
+
+        attachToggle?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // posiciona menu alinhado ao botão, sem sair da tela
+            const wrapper = attachToggle.closest('.input-wrapper');
+            const btnRect = attachToggle.getBoundingClientRect();
+            const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : { left: 0 };
+            const left = Math.max(0, btnRect.left - wrapperRect.left - 8);
+            attachMenu.style.left = left + 'px';
+            toggleAttachMenu();
+        });
+
+        document.getElementById('attachPhoto')?.addEventListener('click', () => {
+            imageInputEl?.click();
+            toggleAttachMenu(false);
+        });
+        document.getElementById('attachPdf')?.addEventListener('click', () => {
+            pdfInputEl?.click();
+            toggleAttachMenu(false);
+        });
+        document.getElementById('attachAudio')?.addEventListener('click', () => {
+            audioInputEl?.click();
+            toggleAttachMenu(false);
+        });
+
+        // Fechar ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!attachMenu) return;
+            const isShown = attachMenu.classList.contains('show');
+            if (isShown) {
+                const isInside = attachMenu.contains(e.target) || attachToggle?.contains(e.target);
+                if (!isInside) toggleAttachMenu(false);
             }
         });
 

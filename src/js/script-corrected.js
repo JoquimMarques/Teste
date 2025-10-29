@@ -2491,6 +2491,49 @@ async function shareOnWhatsApp(authorId) {
     openPrivateChat(authorId);
 }
 
+// Criar/abrir conversa privada e navegar para o chat
+async function openPrivateChat(otherUserId) {
+    try {
+        if (!currentUser) {
+            showNotification('Você precisa estar logado para conversar.', 'warning');
+            return;
+        }
+        if (!otherUserId || otherUserId === currentUser.id) return;
+
+        // Verifica se já existe conversa
+        const { data: existing, error: findError } = await supabase
+            .from('conversations')
+            .select('id')
+            .or(`and(user1_id.eq.${currentUser.id},user2_id.eq.${otherUserId}),and(user1_id.eq.${otherUserId},user2_id.eq.${currentUser.id})`)
+            .maybeSingle();
+
+        if (findError && findError.code !== 'PGRST116') {
+            console.error('Erro ao buscar conversa:', findError);
+        }
+
+        let conversationId = existing?.id;
+        if (!conversationId) {
+            const { data: newConv, error: createError } = await supabase
+                .from('conversations')
+                .insert({ user1_id: currentUser.id, user2_id: otherUserId, updated_at: new Date().toISOString() })
+                .select('id')
+                .single();
+            if (createError) {
+                console.error('Erro ao criar conversa:', createError);
+                showNotification('Não foi possível iniciar a conversa.', 'error');
+                return;
+            }
+            conversationId = newConv.id;
+        }
+
+        // Redireciona para a tela de chat e já abre o usuário
+        window.location.href = `src/html/chatBrio.html?open=${encodeURIComponent(otherUserId)}`;
+    } catch (e) {
+        console.error('Erro no openPrivateChat:', e);
+        showNotification('Erro ao abrir conversa.', 'error');
+    }
+}
+
 function toggleQuickMenuMore() {
     const more = document.getElementById('quickMenuMore');
     const btn = document.getElementById('quickMenuShowMore');
