@@ -37,12 +37,39 @@ body {
     align-items: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
-    color: var(--text-primary);
-    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 100%);
+    color: var(--text-primary) !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 100%) !important;
     min-height: 100vh;
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
+}
+
+/* ISOLAR CHAT DO DARK MODE DE OUTRAS PÁGINAS */
+body.dark-mode,
+body.dark-mode * {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+body.dark-mode .container {
+    background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .sidebar {
+    background: var(--bg-tertiary) !important;
+}
+
+body.dark-mode .chat-area {
+    background: var(--bg-primary) !important;
+}
+
+body.dark-mode .setup-box {
+    background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .messages-container {
+    background: var(--bg-primary) !important;
 }
 
 .container {
@@ -1184,14 +1211,10 @@ input[type="file"] {
                     <!-- Menu de anexos -->
                     <div class="attach-menu" id="attachMenu">
                         <div class="attach-item" id="attachPhoto">📷 Enviar foto</div>
-                        <div class="attach-item" id="attachPdf">📄 Enviar PDF</div>
-                        <div class="attach-item" id="attachAudio">🎵 Enviar áudio</div>
                     </div>
 
                     <!-- Inputs (escondidos) -->
                     <input type="file" id="imageInput" accept="image/*" style="display:none;">
-                    <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
-                    <input type="file" id="audioInput" accept="audio/*" style="display:none;">
                     <textarea 
                         class="message-input" 
                         id="messageInput" 
@@ -1425,25 +1448,8 @@ async function loadUsersFromSupabase() {
             usersWithMessages = onlyUsers || [];
         }
 
-        // 4️⃣ Ordenar os que têm mensagens pela data da conversa
-        usersWithMessages.sort((a, b) => {
-            const convA = conversations.find(c => c.user1_id === a.id || c.user2_id === a.id);
-            const convB = conversations.find(c => c.user1_id === b.id || c.user2_id === b.id);
-            return new Date(convB.updated_at) - new Date(convA.updated_at);
-        });
-
-        // 5️⃣ Juntar os dois grupos (mensagens primeiro)
-        const sortedUsers = [...usersWithMessages];
-
-        // 6️⃣ Renderizar lista
-        usersList.innerHTML = '';
-
-        if (sortedUsers.length === 0) {
-            usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Sem conversas ainda. Clique em "Conversar" numa publicação para iniciar.</div>';
-            return;
-        }
-
-        for (const user of sortedUsers) {
+        // 4️⃣ Processar cada usuário para determinar se tem mensagens não lidas
+        const usersWithUnreadInfo = await Promise.all(usersWithMessages.map(async (user) => {
             const userData = {
                 id: user.id,
                 name: user.name || (user.email || '').split('@')[0],
@@ -1451,16 +1457,10 @@ async function loadUsersFromSupabase() {
                 avatar_url: user.avatar_url
             };
 
-            const userItem = document.createElement('div');
-            userItem.className = 'user-item';
-            if (selectedUser && selectedUser.id === user.id) userItem.classList.add('active');
-
-            const avatarHTML = createAvatarHTML(userData);
-
-            // Mostrar preview se houver conversa
-            let lastMsgText = 'Clique para conversar';
             const lastConv = conversations.find(c => c.user1_id === user.id || c.user2_id === user.id);
             let lastMsgRecord = null;
+            let isUnread = false;
+            
             if (lastConv) {
                 const { data: lastMsg } = await supabase
                     .from('messages')
@@ -1471,19 +1471,68 @@ async function loadUsersFromSupabase() {
                     .maybeSingle();
 
                 if (lastMsg?.message_text) {
-                    lastMsgText = lastMsg.message_text.length > 30
-                        ? lastMsg.message_text.slice(0, 30) + '...'
-                        : lastMsg.message_text;
+                    lastMsgRecord = lastMsg;
                 }
-                lastMsgRecord = lastMsg || null;
+                
+                // Verificar se tem mensagem não lida
+                if (lastMsgRecord) {
+                    const lastOpened = Number(localStorage.getItem(`conv_last_open_${lastConv.id}`) || 0);
+                    const lastMsgTs = new Date(lastMsgRecord.created_at).getTime();
+                    isUnread = lastMsgRecord.sender_id !== currentUser.id && lastMsgTs > lastOpened;
+                }
             }
 
-            // Unread calc using localStorage
-            let isUnread = false;
-            if (lastConv && lastMsgRecord) {
-                const lastOpened = Number(localStorage.getItem(`conv_last_open_${lastConv.id}`) || 0);
-                const lastMsgTs = new Date(lastMsgRecord.created_at).getTime();
-                isUnread = lastMsgRecord.sender_id !== currentUser.id && lastMsgTs > lastOpened;
+            return {
+                user: userData,
+                conversation: lastConv,
+                lastMsg: lastMsgRecord,
+                isUnread: isUnread,
+                updatedAt: lastConv ? new Date(lastConv.updated_at).getTime() : 0
+            };
+        }));
+
+        // 5️⃣ Ordenar: primeiro conversas com mensagens (não lidas primeiro), depois por data de atualização
+        usersWithUnreadInfo.sort((a, b) => {
+            // Prioridade 1: Mensagens não lidas primeiro
+            if (a.isUnread && !b.isUnread) return -1;
+            if (!a.isUnread && b.isUnread) return 1;
+            
+            // Prioridade 2: Conversas com mensagens aparecem antes de conversas sem mensagens
+            const aHasMessage = a.lastMsg !== null;
+            const bHasMessage = b.lastMsg !== null;
+            if (aHasMessage && !bHasMessage) return -1;
+            if (!aHasMessage && bHasMessage) return 1;
+            
+            // Prioridade 3: Se ambos têm mensagens ou ambos não têm, ordenar por data de atualização
+            return b.updatedAt - a.updatedAt;
+        });
+
+        // 6️⃣ Renderizar lista
+        usersList.innerHTML = '';
+
+        if (usersWithUnreadInfo.length === 0) {
+            usersList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Sem conversas ainda. Clique em "Conversar" numa publicação para iniciar.</div>';
+            return;
+        }
+
+        for (const userInfo of usersWithUnreadInfo) {
+            const userData = userInfo.user;
+            const lastConv = userInfo.conversation;
+            const lastMsgRecord = userInfo.lastMsg;
+            const isUnread = userInfo.isUnread;
+
+            const userItem = document.createElement('div');
+            userItem.className = 'user-item';
+            if (selectedUser && selectedUser.id === userData.id) userItem.classList.add('active');
+
+            const avatarHTML = createAvatarHTML(userData);
+
+            // Mostrar preview se houver conversa
+            let lastMsgText = 'Clique para conversar';
+            if (lastMsgRecord?.message_text) {
+                lastMsgText = lastMsgRecord.message_text.length > 30
+                    ? lastMsgRecord.message_text.slice(0, 30) + '...'
+                    : lastMsgRecord.message_text;
             }
 
             userItem.innerHTML = `
@@ -1568,7 +1617,7 @@ async function loadUsersFromSupabase() {
             usersList.appendChild(userItem);
         }
 
-        console.log(`✅ Lista carregada: ${sortedUsers.length} usuários (mensagens primeiro).`);
+        console.log(`✅ Lista carregada: ${usersWithUnreadInfo.length} usuários (não lidas primeiro).`);
     } catch (error) {
         console.error('❌ Erro ao carregar lista de usuários:', error);
         document.getElementById('usersList').innerHTML =
@@ -1841,18 +1890,42 @@ async function loadUsersFromSupabase() {
 
                 // Se tiver arquivo, fazer upload
                 if (file) {
-                    const fileName = `${Date.now()}_${file.name}`;
-                    const filePath = `${currentConversationId}/${fileName}`;
+                    // Validar tipo e tamanho para imagens
+                    if (type === 'image') {
+                        if (!file.type.startsWith('image/')) {
+                            alert('Por favor, selecione uma imagem válida.');
+                            return;
+                        }
+                        // Limitar tamanho (até 5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('A imagem deve ter no máximo 5MB.');
+                            return;
+                        }
+                    }
+                    
+                    // Usar o mesmo storage das publicações para fotos
+                    const sanitizeFileName = window.sanitizeFileName || ((name) => name.replace(/[^a-zA-Z0-9.-]/g, '_'));
+                    const fileName = `${Date.now()}_${sanitizeFileName(file.name)}`;
+                    let bucket = 'publications-media';
+                    let folder = 'photos';
+                    
+                    // Para imagens: usar publications-media/photos (mesmo das publicações)
+                    // Para outros tipos: usar publications-media/chat-files
+                    if (type !== 'image') {
+                        folder = 'chat-files';
+                    }
+                    
+                    const filePath = `${folder}/${fileName}`;
                     
                     try {
                         const { error: uploadError } = await supabase.storage
-                            .from('chat-files')
+                            .from(bucket)
                             .upload(filePath, file);
 
                         if (uploadError) throw uploadError;
 
                         const { data: { publicUrl } } = supabase.storage
-                            .from('chat-files')
+                            .from(bucket)
                             .getPublicUrl(filePath);
                         
                         messageData.file_url = publicUrl;
@@ -1934,24 +2007,19 @@ async function loadUsersFromSupabase() {
         document.getElementById('imageInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                // Validar tipo
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor, selecione uma imagem válida.');
+                    e.target.value = '';
+                    return;
+                }
+                // Validar tamanho (até 5MB - mesmo limite das publicações)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('A imagem deve ter no máximo 5MB.');
+                    e.target.value = '';
+                    return;
+                }
                 sendMessage('', file, 'image');
-                e.target.value = '';
-            }
-        });
-
-        // Inputs de PDF e Áudio
-        document.getElementById('pdfInput')?.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                sendMessage('', file, 'pdf');
-                e.target.value = '';
-            }
-        });
-
-        document.getElementById('audioInput')?.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                sendMessage('', file, 'audio');
                 e.target.value = '';
             }
         });
@@ -1960,8 +2028,6 @@ async function loadUsersFromSupabase() {
         const attachToggle = document.getElementById('attachToggle');
         const attachMenu = document.getElementById('attachMenu');
         const imageInputEl = document.getElementById('imageInput');
-        const pdfInputEl = document.getElementById('pdfInput');
-        const audioInputEl = document.getElementById('audioInput');
 
         function toggleAttachMenu(forceState) {
             if (!attachMenu || !attachToggle) return;
@@ -1984,14 +2050,6 @@ async function loadUsersFromSupabase() {
 
         document.getElementById('attachPhoto')?.addEventListener('click', () => {
             imageInputEl?.click();
-            toggleAttachMenu(false);
-        });
-        document.getElementById('attachPdf')?.addEventListener('click', () => {
-            pdfInputEl?.click();
-            toggleAttachMenu(false);
-        });
-        document.getElementById('attachAudio')?.addEventListener('click', () => {
-            audioInputEl?.click();
             toggleAttachMenu(false);
         });
 

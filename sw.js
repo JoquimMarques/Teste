@@ -1,5 +1,6 @@
 // Service Worker para PWA Briolink
-const CACHE_NAME = 'briolink-v1.0.3-force-update';
+const CACHE_NAME = 'briolink-v1.0.0';
+const APP_VERSION = '1.0.0'; // Atualizar este número a cada deploy
 const urlsToCache = [
     '/',
     '/index.html',
@@ -20,7 +21,8 @@ const urlsToCache = [
 
 // Instalação do Service Worker
 self.addEventListener('install', (event) => {
-    console.log('Service Worker: Instalando...');
+    console.log('Service Worker: Instalando versão', APP_VERSION);
+    // Forçar instalação imediata, sem esperar outros service workers
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
@@ -29,12 +31,20 @@ self.addEventListener('install', (event) => {
             })
             .then(() => {
                 console.log('Service Worker: Cache populado com sucesso');
+                // Ativar imediatamente, sem esperar
                 return self.skipWaiting();
             })
             .catch((error) => {
                 console.error('Service Worker: Erro ao popular cache:', error);
             })
     );
+});
+
+// Listener para mensagens do cliente (para forçar atualização)
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'skipWaiting') {
+        self.skipWaiting();
+    }
 });
 
 // Ativação do Service Worker

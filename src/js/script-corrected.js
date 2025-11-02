@@ -59,15 +59,15 @@ let selectedVideo = null;
 
 // Serviços de publicações (definido primeiro para evitar erros)
 const PublicationsService = {
-    // Buscar todas as publicações
+    // Buscar todas as publicações - OTIMIZADO com limite
     async getAllPublications() {
         try {
             const { data, error } = await supabase
                 .from('publications')
                 .select('*')
                 .order('impulses_count', { ascending: false })
-                .order('created_at', { ascending: false });
-            
+                .order('created_at', { ascending: false })
+                .limit(50); // Limitar a 50 publicações para melhor performance
             
             if (error) throw error;
             return data || [];
@@ -640,7 +640,7 @@ async function createPublicationCard(publication) {
     `;
 }
 
-// Função para renderizar as publicações
+// Função para renderizar as publicações - OTIMIZADA
 async function renderPublications(publicationsToRender = publications) {
     if (publicationsToRender.length === 0) {
         publicationsGrid.innerHTML = `
@@ -653,22 +653,25 @@ async function renderPublications(publicationsToRender = publications) {
         return;
     }
 
-    // Criar cards de forma assíncrona
+    // Renderizar cards primeiro (sem esperar comentários)
     const cardPromises = publicationsToRender.map(createPublicationCard);
     const cards = await Promise.all(cardPromises);
     publicationsGrid.innerHTML = cards.join('');
     setupUserProfileClickEvents();
 
-    // Carregar contadores de comentários para todas as publicações
-    await loadCommentCounts(publicationsToRender);
+    // Carregar contadores de comentários em paralelo (sem bloquear renderização)
+    loadCommentCounts(publicationsToRender).catch(err => console.error('Erro ao carregar comentários:', err));
 
-    // Inicializar Plyr em todos os vídeos de publicação
+    // Inicializar Plyr em todos os vídeos de publicação (lazy)
     if (window.Plyr) {
-        document.querySelectorAll('.publication-video').forEach(video => {
-            if (!video.classList.contains('plyr-initialized')) {
-                new Plyr(video, {});
-                video.classList.add('plyr-initialized');
-            }
+        // Usar requestAnimationFrame para não bloquear
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.publication-video').forEach(video => {
+                if (!video.classList.contains('plyr-initialized')) {
+                    new Plyr(video, {});
+                    video.classList.add('plyr-initialized');
+                }
+            });
         });
     }
 }
@@ -717,8 +720,6 @@ async function loadPublications() {
         }
         
         await renderPublications();
-        // Prefetch dos avatares dos autores para render global
-        try { await preloadAuthorsAvatars(publications); } catch (_) {}
         
         // Mostrar o elemento de criar publicação quando carregar as publicações (se estiver logado)
         const createPostElement = document.getElementById('createPost');
@@ -726,9 +727,14 @@ async function loadPublications() {
             createPostElement.style.display = 'block';
         }
         
-        // Carregar interações do usuário se estiver logado
+        // Carregar interações e avatares em paralelo (sem bloquear)
         if (currentUser) {
-            await loadUserInteractions();
+            Promise.all([
+                loadUserInteractions().catch(err => console.error('Erro ao carregar interações:', err)),
+                preloadAuthorsAvatars(publications).catch(_ => {})
+            ]);
+        } else {
+            preloadAuthorsAvatars(publications).catch(_ => {});
         }
         
     } catch (error) {
@@ -1216,34 +1222,95 @@ async function showUsersRanking() {
             return;
         }
 
-        const rankingHTML = ranking.map((user, index) => `
-            <div class="publication-card" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem;">
-                <div style="font-size: 1.5rem; font-weight: bold; color: ${index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#7c3aed'}; min-width: 2rem; text-align: center;">
+        // Detectar modo escuro
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        
+        const rankingHTML = ranking.map((user, index) => {
+            // Definir cores e bordas vibrantes baseadas na posição
+            let cardBackground, cardBorder, borderColor, positionBg;
+            
+            if (index === 0) {
+                // 1º lugar - Dourado vibrante
+                cardBackground = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                cardBorder = '3px solid #ffb800';
+                borderColor = '#ffb800';
+                positionBg = 'linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 237, 78, 0.4))';
+            } else if (index === 1) {
+                // 2º lugar - Prata vibrante
+                cardBackground = 'linear-gradient(135deg,rgb(211, 209, 209) 0%,rgb(207, 205, 205) 100%)';
+                cardBorder = '3px solid #c0c0c0';
+                borderColor = '#c0c0c0';
+                positionBg = 'linear-gradient(135deg, rgba(192, 192, 192, 0.3), rgba(229, 229, 229, 0.4))';
+            } else if (index === 2) {
+                // 3º lugar - Bronze vibrante
+                cardBackground = 'linear-gradient(135deg, #cd7f32 0%, #e8a55d 100%)';
+                cardBorder = '3px solid #b87333';
+                borderColor = '#b87333';
+                positionBg = 'linear-gradient(135deg, rgba(205, 127, 50, 0.3), rgba(232, 165, 93, 0.4))';
+            } else {
+                // Outros lugares - Ajustar para modo escuro
+                if (isDarkMode) {
+                    cardBackground = 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)';
+                } else {
+                    cardBackground = 'linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)';
+                }
+                cardBorder = '2px solid #7b00ff';
+                borderColor = '#7b00ff';
+                positionBg = 'rgba(123, 0, 255, 0.15)';
+            }
+            
+            // Cores do texto baseadas no modo escuro
+            let nameColor, descColor, turmaColor, pubColor;
+            if (index <= 2) {
+                // Top 3 sempre tem texto escuro (fundo claro)
+                nameColor = '#1a0d33';
+                descColor = '#333';
+                turmaColor = '#555';
+                pubColor = '#555';
+            } else {
+                // Outros lugares ajustam conforme modo escuro
+                if (isDarkMode) {
+                    nameColor = '#e0e0e0';
+                    descColor = '#b0b0b0';
+                    turmaColor = '#b0b0b0';
+                    pubColor = '#b0b0b0';
+                } else {
+                    nameColor = '#2d1b4e';
+                    descColor = '#666';
+                    turmaColor = '#888';
+                    pubColor = '#888';
+                }
+            }
+            
+            return `
+            <div class="publication-card" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: ${cardBackground}; border: ${cardBorder}; border-radius: 16px; box-shadow: 0 4px 20px rgba(${index === 0 ? '255, 215, 0' : index === 1 ? '192, 192, 192' : index === 2 ? '205, 127, 50' : '123, 0, 255'}, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);">
+                <div style="font-size: 1.5rem; font-weight: bold; color: ${index === 0 ? '#ffb800' : index === 1 ? '#9e9e9e' : index === 2 ? '#b87333' : '#7b00ff'}; min-width: 2rem; text-align: center; background: ${positionBg}; border: 2px solid ${borderColor}; border-radius: 12px; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
                     ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}
                 </div>
                 <div class="publication-avatar" onclick="viewUserProfile('${user.id}')" style="cursor: pointer;">
                     ${renderAvatarHTML(user.id, user.name)}
                 </div>
                 <div style="flex: 1; min-width: 0;">
-                    <h3 style="margin: 0; color: #333; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${user.name}</h3>
-                    <p style="margin: 0.25rem 0; color: #666; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${user.short_description}</p>
-                    <p style="margin: 0; color: #888; font-size: 0.75rem;">Turma: ${user.turma}</p>
+                    <h3 style="margin: 0; color: ${nameColor}; font-size: 1rem; font-weight: ${index <= 2 ? '800' : '700'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${user.name}</h3>
+                    <p style="margin: 0.25rem 0; color: ${descColor}; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${user.short_description}</p>
+                    <p style="margin: 0; color: ${turmaColor}; font-size: 0.75rem; font-weight: 600;">Turma: ${user.turma}</p>
                 </div>
                 <div style="text-align: right; min-width: 3rem;">
-                    <div style="font-size: 1.2rem; font-weight: bold; color: #ff6b35; display: flex; align-items: center; gap: 0.25rem; justify-content: flex-end;">
-                        <i class="fas fa-fire" style="font-size: 1rem;"></i> ${user.total_impulses}
+                    <div style="font-size: 1.2rem; font-weight: bold; background: linear-gradient(135deg, #ff6b35, #ff8c42); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: flex; align-items: center; gap: 0.25rem; justify-content: flex-end;">
+                        <i class="fas fa-fire" style="font-size: 1rem; color: #ff6b35; filter: drop-shadow(0 2px 4px rgba(255, 107, 53, 0.4));"></i> ${user.total_impulses}
                     </div>
-                    <div style="font-size: 0.7rem; color: #888; margin-top: 0.25rem;">
+                    <div style="font-size: 0.7rem; color: ${pubColor}; margin-top: 0.25rem; font-weight: 600;">
                         ${user.publications_count} publicação${user.publications_count > 1 ? 's' : ''}
                     </div>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         publicationsGrid.innerHTML = `
-            <div style="text-align: center; margin-bottom: 1.5rem; background: rgb(255, 255, 255); border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);">
-                <h2 style="color:rgba(41, 4, 119, 0.91); margin: 0; font-size: 1.3rem;" >🏆 Ranking de Impulsos</h2>
-                <p style="color: rgba(41, 4, 119, 0.91); margin: 0.5rem 0; font-size: 0.9rem;">Usuários com mais impulsos recebidos</p>
+            <div style="text-align: center; margin-bottom: 1.5rem; background: linear-gradient(135deg, #6c3dd4 0%, #8b5cf6 50%, #a78bfa 100%); border-radius: 16px; padding: 2rem 1.5rem; box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2); border: 2px solid rgba(255, 255, 255, 0.3);">
+                <h2 style="color: #ffffff; margin: 0; font-size: 1.3rem; font-weight: bold; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);" >🏆 Ranking de Impulsos</h2>
+                <p style="color: rgba(255, 255, 255, 0.95); margin: 0.5rem 0; font-size: 0.9rem; font-weight: 500;">Usuários com mais impulsos recebidos</p>
             </div>
             ${rankingHTML}
         `;
@@ -3447,17 +3514,39 @@ async function countComments(publicationId) {
     }
 }
 
-// Carregar contadores de comentários para múltiplas publicações
+// Carregar contadores de comentários para múltiplas publicações - OTIMIZADO
 async function loadCommentCounts(publications) {
     try {
-        const countPromises = publications.map(async (publication) => {
-            const count = await countComments(publication.id);
-            const countElement = document.getElementById(`comment-count-${publication.id}`);
+        if (!publications || publications.length === 0) return;
+        
+        // Buscar todos os contadores de uma vez usando GROUP BY
+        const publicationIds = publications.map(p => p.id).filter(Boolean);
+        if (publicationIds.length === 0) return;
+        
+        // Uma única query para buscar contadores de todas as publicações
+        const { data, error } = await supabase
+            .from('comments')
+            .select('publication_id')
+            .in('publication_id', publicationIds);
+        
+        if (error) {
+            console.error('Erro ao buscar contadores de comentários:', error);
+            return;
+        }
+        
+        // Agrupar e contar comentários por publicação
+        const counts = {};
+        (data || []).forEach(comment => {
+            counts[comment.publication_id] = (counts[comment.publication_id] || 0) + 1;
+        });
+        
+        // Atualizar contadores na interface
+        publicationIds.forEach(id => {
+            const countElement = document.getElementById(`comment-count-${id}`);
             if (countElement) {
-                countElement.textContent = count;
+                countElement.textContent = counts[id] || 0;
             }
         });
-        await Promise.all(countPromises);
     } catch (error) {
         console.error('Erro ao carregar contadores de comentários:', error);
     }
@@ -4174,19 +4263,22 @@ async function registerServiceWorker() {
         try {
             const registration = await navigator.serviceWorker.register('/sw.js');
             
-            // Verificar se há nova versão disponível
-            checkForUpdates(registration);
-            
-            // Verificar atualizações
+            // Verificar atualizações do service worker
             registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        // Nova versão disponível
-                        showUpdateAvailable();
+                        // Nova versão do service worker disponível
+                        console.log('🔄 Nova versão do Service Worker detectada');
+                        // Ativar imediatamente e recarregar
+                        newWorker.postMessage({ action: 'skipWaiting' });
+                        window.location.reload();
                     }
                 });
             });
+            
+            // Verificar atualizações periodicamente (versão e service worker)
+            checkForUpdates(registration);
             
         } catch (error) {
             console.error('Erro ao registrar Service Worker:', error);
@@ -4194,22 +4286,92 @@ async function registerServiceWorker() {
     }
 }
 
+// Sistema de Versionamento e Atualização Forçada
+const APP_VERSION = '1.0.0'; // Atualizar este número a cada deploy
+const VERSION_CHECK_INTERVAL = 5 * 60 * 1000; // Verificar a cada 5 minutos
+const VERSION_FILE = '/version.json';
+
 // Verificar se há atualizações disponíveis
 function checkForUpdates(registration) {
-    // Forçar verificação de atualização
-    registration.update();
-    
-    // Verificar se a versão no localStorage é diferente da atual
-    const currentVersion = 'v1.0.3-force-update';
-    const storedVersion = localStorage.getItem('app-version');
-    
-    if (storedVersion !== currentVersion) {
-        console.log('Nova versão detectada:', currentVersion);
-        showUpdateAvailable();
+    // Forçar verificação de atualização do service worker
+    if (registration) {
+        registration.update();
     }
     
-    // Salvar versão atual
-    localStorage.setItem('app-version', currentVersion);
+    // Verificar versão do arquivo version.json
+    checkVersionFile();
+    
+    // Configurar verificação periódica
+    setInterval(() => {
+        checkVersionFile();
+        if (registration) {
+            registration.update();
+        }
+    }, VERSION_CHECK_INTERVAL);
+}
+
+// Verificar versão no arquivo version.json
+async function checkVersionFile() {
+    try {
+        // Adicionar timestamp para evitar cache
+        const response = await fetch(`${VERSION_FILE}?t=${Date.now()}`, {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
+        });
+        
+        if (!response.ok) {
+            console.warn('Não foi possível verificar versão');
+            return;
+        }
+        
+        const data = await response.json();
+        const remoteVersion = data.version || data.build;
+        const currentVersion = APP_VERSION;
+        
+        // Comparar versões
+        if (remoteVersion !== currentVersion) {
+            console.log(`🔄 Nova versão detectada: ${remoteVersion} (atual: ${currentVersion})`);
+            forceUpdate();
+        }
+    } catch (error) {
+        console.error('Erro ao verificar versão:', error);
+    }
+}
+
+// Forçar atualização da aplicação
+function forceUpdate() {
+    // Limpar todos os caches
+    if ('caches' in window) {
+        caches.keys().then((cacheNames) => {
+            cacheNames.forEach((cacheName) => {
+                caches.delete(cacheName);
+            });
+        });
+    }
+    
+    // Mostrar mensagem ao usuário
+    if (confirm('Uma nova versão está disponível! A página será recarregada para aplicar as atualizações.')) {
+        // Unregister service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                registrations.forEach((registration) => {
+                    registration.unregister();
+                });
+            });
+        }
+        
+        // Limpar localStorage (opcional - comentado para não perder dados)
+        // localStorage.clear();
+        
+        // Forçar reload sem cache
+        window.location.reload(true);
+    } else {
+        // Se cancelar, tentar novamente em 30 segundos
+        setTimeout(forceUpdate, 30000);
+    }
 }
 
 // Mostrar notificação de atualização disponível

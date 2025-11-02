@@ -38,8 +38,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-</script>
-
 
 </head>
 
@@ -64,7 +62,6 @@
         </div>
     </div>
 </div>
-<div class="particles" id="particles"></div>
 
     
 <div id="notification-container"></div>
@@ -132,6 +129,15 @@
                         <button type="button" class="search-btn bthp" aria-label="Abrir pesquisa"><i class="fas fa-search"></i></button>
                 
                     </div>
+                    <button class="btn btn-outline" onclick="toggleDarkMode()" style="margin-top: 8px; width: 100%;" title="Alternar tema">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                        <span>Modo Escuro</span>
+                    </button>
+
+                    <a href="#sobre" class="nav-link btn-infor" onclick="showSection('sobre')">
+                        <i class="fas fa-tools"></i>
+                        <span class="nav-text"></span>
+                    </a>
                    
 
                     <h2 style="text-align: center; color: white; margin-bottom: 9px;">Menu Rápido</h2>
@@ -188,10 +194,8 @@
                       <a href="#" class="sidebar-item" data-filter="eletricidade">
                         <i class="fas fa-plug"></i>
                       </a>
-                      <a href="#sobre" class="nav-link btn-infor" onclick="showSection('sobre')">
-                        <i class="fas fa-tools"></i>
-                        <span class="nav-text"></span>
-                    </a>
+                     
+                    
                     </div>
                   </div>
             </nav>
@@ -286,12 +290,17 @@
                             <i class="fas fa-edit"></i>
                             
                         </button>
-                   
+                        
                         <button class="btn btn-outline btn-outline1" id="hideProfileBtn" onclick="toggleUserProfileDetails()">
                             <i class="fas fa-chevron-up"></i>
                             
                         </button>
                     </div>
+                    <button class="btn btn-outline" onclick="toggleDarkMode()" style="margin-top: 8px; width: 100%;" title="Alternar tema">
+                        <i class="fas fa-moon" id="darkModeIcon"></i>
+                        <span>Modo Escuro</span>
+                    </button>
+               
                 </div>
                 <!-- Fim do bloco de perfil -->
                 <div class="user-profile-header" id="userProfileHeader" style="display: none;">
@@ -517,7 +526,7 @@
                         <li><i class="fas fa-search"></i> Busca avançada por categorias</li>
                         <li><i class="fas fa-trophy"></i> Sistema de ranking e reconhecimento</li>
                         <li><i class="fas fa-comments"></i> Discussões técnicas e colaborativas</li>
-                        <li><i class="fas fa-share-alt"></i>Compartilhamento de ideias<li>
+                        <li><i class="fas fa-share-alt"></i>Compartilhamento de ideias</li>
                      
                     </ul>
                 </div>
@@ -899,9 +908,43 @@
     <script src="src/js/modules/image-viewer.js"></script>
     <script src="src/js/script-corrected.js"></script>
     <script src="src/js/modules/hashtag-system.js"></script>
-    <script src="src/js/firebase-config.js"></script>
-    <script src="src/js/conversations-manager.js"></script>
     <script src="src/js/supabase-config.js"></script>
+    
+    <!-- Dark Mode Toggle Script -->
+    <script>
+        // Função para alternar dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            const isDark = body.classList.toggle('dark-mode');
+            
+            // Salvar preferência
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            
+            // Atualizar ícone
+            if (isDark) {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+            } else {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+            }
+        }
+        
+        // Carregar preferência salva ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                if (darkModeIcon) {
+                    darkModeIcon.classList.remove('fa-moon');
+                    darkModeIcon.classList.add('fa-sun');
+                }
+            }
+        });
+    </script>
     <!-- <script type="module" src="./src/js/performance-boost.js"></script> -->
 
     <!-- Firebase Database CDN -->
