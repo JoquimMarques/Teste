@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Correções</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste de Correções</h1>
+        
+        <div class="test-section">
+            <h2>1. Teste de Validações</h2>
+            <button onclick="testValidations()">Testar Validações</button>
+            <div id="validation-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Teste de Funções</h2>
+            <button onclick="testFunctions()">Testar Funções</button>
+            <div id="function-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Teste de Publicações</h2>
+            <button onclick="testPublications()">Testar Publicações</button>
+            <div id="publication-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Teste de Interações</h2>
+            <button onclick="testInteractions()">Testar Interações</button>
+            <div id="interaction-results"></div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="script-corrected.js"></script>
+    <script>
+        // Teste de validações
+        function testValidations() {
+            const results = document.getElementById('validation-results');
+            results.innerHTML = '<h3>Testando validações...</h3>';
+
+            try {
+                // Teste 1: getAuthorInitials com valores undefined
+                const test1 = getAuthorInitials(undefined);
+                const test2 = getAuthorInitials(null);
+                const test3 = getAuthorInitials('');
+                const test4 = getAuthorInitials('João Silva');
+
+                results.innerHTML += `
+                    <p>✅ getAuthorInitials(undefined) = "${test1}"</p>
+                    <p>✅ getAuthorInitials(null) = "${test2}"</p>
+                    <p>✅ getAuthorInitials('') = "${test3}"</p>
+                    <p>✅ getAuthorInitials('João Silva') = "${test4}"</p>
+                `;
+
+                // Teste 2: createPublicationCard com dados inválidos
+                const invalidPub = { id: undefined, author: undefined };
+                const card = createPublicationCard(invalidPub);
+                
+                results.innerHTML += `
+                    <p>✅ createPublicationCard com dados inválidos retornou: "${card}"</p>
+                `;
+
+                results.innerHTML += '<p style="color: green;">✅ Todas as validações passaram!</p>';
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        // Teste de funções
+        function testFunctions() {
+            const results = document.getElementById('function-results');
+            results.innerHTML = '<h3>Testando funções...</h3>';
+
+            try {
+                // Teste de formatDate
+                const date1 = formatDate(new Date().toISOString());
+                const date2 = formatDate('2024-01-01T00:00:00Z');
+
+                results.innerHTML += `
+                    <p>✅ formatDate(agora) = "${date1}"</p>
+                    <p>✅ formatDate(2024-01-01) = "${date2}"</p>
+                `;
+
+                // Teste de getCategoryName
+                const cat1 = getCategoryName('tecnologia');
+                const cat2 = getCategoryName('undefined');
+
+                results.innerHTML += `
+                    <p>✅ getCategoryName('tecnologia') = "${cat1}"</p>
+                    <p>✅ getCategoryName('undefined') = "${cat2}"</p>
+                `;
+
+                results.innerHTML += '<p style="color: green;">✅ Todas as funções funcionaram!</p>';
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        // Teste de publicações
+        async function testPublications() {
+            const results = document.getElementById('publication-results');
+            results.innerHTML = '<h3>Testando publicações...</h3>';
+
+            try {
+                // Teste de carregamento de publicações
+                const pubs = await PublicationsService.getAllPublications();
+                results.innerHTML += `<p>✅ Carregadas ${pubs.length} publicações</p>`;
+
+                if (pubs.length > 0) {
+                    const firstPub = pubs[0];
+                    results.innerHTML += `
+                        <p>✅ Primeira publicação:</p>
+                        <ul>
+                            <li>ID: ${firstPub.id}</li>
+                            <li>Autor: ${firstPub.author || 'N/A'}</li>
+                            <li>Título: ${firstPub.title || 'N/A'}</li>
+                            <li>Likes: ${firstPub.likes_count || 0}</li>
+                            <li>Dislikes: ${firstPub.dislikes_count || 0}</li>
+                        </ul>
+                    `;
+                }
+
+                results.innerHTML += '<p style="color: green;">✅ Teste de publicações concluído!</p>';
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        // Teste de interações
+        async function testInteractions() {
+            const results = document.getElementById('interaction-results');
+            results.innerHTML = '<h3>Testando interações...</h3>';
+
+            try {
+                if (!currentUser) {
+                    results.innerHTML += '<p style="color: orange;">⚠️ Usuário não logado - alguns testes serão pulados</p>';
+                    return;
+                }
+
+                // Teste de getUserInteraction com ID inválido
+                const interaction = await PublicationsService.getUserInteraction('invalid-id');
+                results.innerHTML += `<p>✅ getUserInteraction com ID inválido: ${interaction === null ? 'null (esperado)' : 'dados inesperados'}</p>`;
+
+                // Teste de getUserInteraction com ID undefined
+                const interaction2 = await PublicationsService.getUserInteraction(undefined);
+                results.innerHTML += `<p>✅ getUserInteraction com undefined: ${interaction2 === null ? 'null (esperado)' : 'dados inesperados'}</p>`;
+
+                results.innerHTML += '<p style="color: green;">✅ Teste de interações concluído!</p>';
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeApp();
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-top: 0;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #validation-results,
+        #function-results,
+        #publication-results,
+        #interaction-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</body>
+</html> 

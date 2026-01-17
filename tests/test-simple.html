@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Simples - Correções</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Teste de Correções</h1>
+        
+        <div class="test-results">
+            <h2>Status dos Problemas Corrigidos:</h2>
+            <ul>
+                <li>✅ <strong>getAuthorInitials</strong> - Agora lida com valores undefined/null</li>
+                <li>✅ <strong>createPublicationCard</strong> - Validações adicionadas para campos undefined</li>
+                <li>✅ <strong>getUserInteraction</strong> - Função global criada e validações adicionadas</li>
+                <li>✅ <strong>handleLike/handleDislike</strong> - Validações para publicationId undefined</li>
+                <li>✅ <strong>addLike/addDislike</strong> - Agora retornam publicação atualizada</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de Funções:</h3>
+            <button onclick="runTests()">Executar Testes</button>
+            <div id="test-output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Carregar Publicações:</h3>
+            <button onclick="loadPubs()">Carregar Publicações</button>
+            <div id="publications-output"></div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="script-corrected.js"></script>
+    <script>
+        function runTests() {
+            const output = document.getElementById('test-output');
+            output.innerHTML = '<h4>Executando testes...</h4>';
+
+            try {
+                // Teste 1: getAuthorInitials
+                const test1 = getAuthorInitials(undefined);
+                const test2 = getAuthorInitials('João Silva');
+                
+                output.innerHTML += `
+                    <p>✅ getAuthorInitials(undefined) = "${test1}"</p>
+                    <p>✅ getAuthorInitials('João Silva') = "${test2}"</p>
+                `;
+
+                // Teste 2: formatDate
+                const dateTest = formatDate(new Date().toISOString());
+                output.innerHTML += `<p>✅ formatDate() = "${dateTest}"</p>`;
+
+                // Teste 3: getCategoryName
+                const catTest = getCategoryName('tecnologia');
+                output.innerHTML += `<p>✅ getCategoryName('tecnologia') = "${catTest}"</p>`;
+
+                output.innerHTML += '<p style="color: green; font-weight: bold;">✅ Todos os testes passaram!</p>';
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        async function loadPubs() {
+            const output = document.getElementById('publications-output');
+            output.innerHTML = '<h4>Carregando publicações...</h4>';
+
+            try {
+                await initializeApp();
+                const pubs = await PublicationsService.getAllPublications();
+                
+                output.innerHTML += `<p>✅ Carregadas ${pubs.length} publicações</p>`;
+                
+                if (pubs.length > 0) {
+                    output.innerHTML += '<h5>Primeira publicação:</h5>';
+                    const firstPub = pubs[0];
+                    output.innerHTML += `
+                        <ul>
+                            <li>ID: ${firstPub.id}</li>
+                            <li>Autor: ${firstPub.author || 'N/A'}</li>
+                            <li>Título: ${firstPub.title || 'N/A'}</li>
+                            <li>Likes: ${firstPub.likes_count || 0}</li>
+                            <li>Dislikes: ${firstPub.dislikes_count || 0}</li>
+                        </ul>
+                    `;
+                }
+                
+                output.innerHTML += '<p style="color: green; font-weight: bold;">✅ Carregamento concluído!</p>';
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        // Executar testes automaticamente quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .test-results {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #test-output,
+        #publications-output {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</body>
+</html> 

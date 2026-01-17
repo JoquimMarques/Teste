@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - LinkDireto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .links {
+            margin-top: 20px;
+        }
+        .links a {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .links a:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste do Sistema LinkDireto</h1>
+        
+        <div class="test-section">
+            <h3>📋 Status do Sistema</h3>
+            <div id="systemStatus" class="status info">
+                Verificando status...
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>👤 Teste de Autenticação</h3>
+            <div id="authStatus" class="status info">
+                Verificando autenticação...
+            </div>
+            <button onclick="testAuth()">Testar Autenticação</button>
+            <button onclick="testLogin()">Simular Login</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Teste de Publicações</h3>
+            <div id="publicationsStatus" class="status info">
+                Verificando publicações...
+            </div>
+            <button onclick="testPublications()">Carregar Publicações</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Links de Teste</h3>
+            <div class="links">
+                <a href="index.html">🏠 Página Inicial</a>
+                <a href="login.html">🔐 Login</a>
+                <a href="register.html">📝 Registro</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://nvswucwnvshvklqgojcw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        async function testAuth() {
+            try {
+                updateStatus('authStatus', 'Verificando usuário atual...', 'info');
+                
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) throw error;
+                
+                if (user) {
+                    updateStatus('authStatus', `✅ Usuário logado: ${user.email}`, 'success');
+                } else {
+                    updateStatus('authStatus', '❌ Nenhum usuário logado', 'error');
+                }
+            } catch (error) {
+                updateStatus('authStatus', `❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            try {
+                updateStatus('authStatus', 'Tentando login...', 'info');
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: 'joaquim.cesar.francisco.marques@linkdireto.com',
+                    password: '1111'
+                });
+                
+                if (error) throw error;
+                
+                updateStatus('authStatus', `✅ Login bem-sucedido: ${data.user.email}`, 'success');
+            } catch (error) {
+                updateStatus('authStatus', `❌ Erro no login: ${error.message}`, 'error');
+            }
+        }
+
+        async function testPublications() {
+            try {
+                updateStatus('publicationsStatus', 'Carregando publicações...', 'info');
+                
+                const { data, error } = await supabase
+                    .from('publications')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                updateStatus('publicationsStatus', `✅ ${data.length} publicações carregadas`, 'success');
+            } catch (error) {
+                updateStatus('publicationsStatus', `❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste inicial
+        window.addEventListener('load', async function() {
+            updateStatus('systemStatus', '✅ Sistema carregado com sucesso', 'success');
+            await testAuth();
+            await testPublications();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>briolink</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description"
+        content="Plataforma de rede social para estudantes, com publicações, comentários e interações">
+    <meta name="theme-color" content="#371669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Briolink">
+    <meta name="msapplication-TileColor" content="#371669">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="favicon_io-22/apple-touch-icon.png">
+    <link rel="shortcut icon" href="favicon_io-22/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io-22/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io-22/favicon-16x16.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="stylesheet" href="src/css/auth-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+
+</head>
+
+<body class="intro-active">
+
+    <div class="intro-container" id="introContainer">
+        <div class="background-animation"></div>
+        <div class="particles" id="particles"></div>
+        <div class="connection-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="logo-container">
+            <div class="logop">briolink</div>
+            <div class="tagline">Valorizamos o que nasce da criatividade</div>
+            <div class="loading-container">
+                <div class="loading-bar">
+                    <div class="loading-progress" id="loadingProgress"></div>
+                </div>
+                <div class="loading-text" id="loadingText">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="notification-container"></div>
+    <div id="notificationOverlay" class="notification-overlay"></div>
+    <header class="header">
+        <div class="header-content">
+            <!-- Left Section: Logo + Search -->
+            <div class="header-left">
+                <div class="logo-wrapper" onclick="showSection('home')">
+                    <img src="src/img/briolink.png" alt="Briolink" class="logo-img">
+                </div>
+                <div class="search-container">
+                    <div class="searchP">
+                        <i class="fas fa-search lupa"></i>
+                        <input type="text" id="searchInput" placeholder="Pesquisar no Briolink" class="search-input"
+                            oninput="handleSearch(this.value)" autocomplete="off">
+                        <div class="search-results" id="searchResults" style="display: none;">
+                            <div class="search-loading" id="searchLoading">
+                                <i class="fas fa-spinner fa-spin"></i> Pesquisando...
+                            </div>
+                            <div class="search-results-content" id="searchResultsContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Section: Navigation -->
+            <nav class="nav-center" id="nav">
+                <a href="#home" class="nav-link-fb active" onclick="showSection('home')" value="all" title="Início">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="#ranking" class="nav-link-fb" onclick="showSection('ranking')" title="Ranking">
+                    <i class="fas fa-trophy"></i>
+                </a>
+                <a href="src/html/chatBrio.html" class="nav-link-fb" id="desktopChatLink" title="Mensagens">
+                    <i class="fas fa-comments"></i>
+                    <span class="notification-count" id="chatUnreadCount" style="display:none;">0</span>
+                </a>
+                <a href="#notificacoes" class="nav-link-fb" id="notificationBell" title="Notificações">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount" style="display:none;">0</span>
+                </a>
+
+                <!-- Mobile Menu Items (only visible in hamburger menu) -->
+                <div class="mobile-menu-items">
+                    <div class="mobile-menu-divider"></div>
+                    <a href="#" class="mobile-menu-item" id="mobileProfileBtn"
+                        onclick="openMyProfile(); closeMobileMenu();">
+                        <i class="fas fa-user"></i>
+                        <span>Meu Perfil</span>
+                    </a>
+                    <a href="#" class="mobile-menu-item" onclick="toggleDarkMode(); closeMobileMenu();">
+                        <i class="fas fa-moon" id="mobileDarkModeIcon"></i>
+                        <span id="mobileDarkModeText">Modo Escuro</span>
+                    </a>
+                    <a href="#" class="mobile-menu-item" id="mobileCategoriesBtn"
+                        onclick="toggleMobileCategories(event);">
+                        <i class="fas fa-th-list"></i>
+                        <span>Categorias</span>
+                        <i class="fas fa-chevron-down mobile-category-arrow"
+                            style="margin-left: auto; font-size: 0.8rem;"></i>
+                    </a>
+                    <!-- Submenu de categorias (escondido por padrão) -->
+                    <div class="mobile-categories-submenu" id="mobileCategoriesSubmenu" style="display: none;">
+                        <a href="#" class="mobile-submenu-item" onclick="filterByCategory('all'); closeMobileMenu();">
+                            <i class="fas fa-home"></i> Todas
+                        </a>
+                        <a href="#" class="mobile-submenu-item"
+                            onclick="filterByCategory('programacao'); closeMobileMenu();">
+                            <i class="fas fa-laptop-code"></i> Programação
+                        </a>
+                        <a href="#" class="mobile-submenu-item"
+                            onclick="filterByCategory('automacao'); closeMobileMenu();">
+                            <i class="fas fa-industry"></i> Automação
+                        </a>
+                        <a href="#" class="mobile-submenu-item"
+                            onclick="filterByCategory('negocios'); closeMobileMenu();">
+                            <i class="fas fa-briefcase"></i> Negócios
+                        </a>
+                        <a href="#" class="mobile-submenu-item"
+                            onclick="filterByCategory('mecatronica'); closeMobileMenu();">
+                            <i class="fas fa-robot"></i> Mecatrônica
+                        </a>
+                        <a href="#" class="mobile-submenu-item"
+                            onclick="filterByCategory('eletronica'); closeMobileMenu();">
+                            <i class="fas fa-bolt"></i> Eletrônica
+                        </a>
+                    </div>
+                    <a href="#sobre" class="mobile-menu-item" onclick="showSection('sobre'); closeMobileMenu();">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Sobre</span>
+                    </a>
+                    <!-- Mobile Search Input -->
+                    <div class="mobile-search-container">
+                        <div class="mobile-search-wrapper">
+                            <i class="fas fa-search mobile-search-icon"></i>
+                            <input type="text" id="mobileSearchInput" placeholder="Pesquisar no Briolink"
+                                class="mobile-search-input" oninput="handleSearch(this.value)" autocomplete="off">
+                        </div>
+                        <div class="mobile-search-results" id="mobileSearchResults" style="display: none;">
+                            <div class="search-loading" id="mobileSearchLoading">
+                                <i class="fas fa-spinner fa-spin"></i> Pesquisando...
+                            </div>
+                            <div class="search-results-content" id="mobileSearchResultsContent"></div>
+                        </div>
+                    </div>
+                    <a href="src/html/login.html" class="mobile-menu-item mobile-login-btn" id="mobileLoginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Entrar</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Right Section: Actions + Profile -->
+            <div class="header-right">
+                <button class="header-btn" onclick="toggleDarkMode()" title="Alternar tema">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
+                <!-- About Button -->
+                <button class="header-btn" onclick="showSection('sobre')" title="Sobre">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+                <!-- Settings Dropdown -->
+                <div class="settings-dropdown-wrapper">
+                    <button class="header-btn" onclick="toggleSettingsMenu()" title="Categorias">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <div class="dropdown-header">Categorias</div>
+                        <a href="#" class="dropdown-item" data-filter="all"
+                            onclick="filterByCategory('all'); toggleSettingsMenu();">
+                            <i class="fas fa-home"></i> Página Inicial
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="programacao"
+                            onclick="filterByCategory('programacao'); toggleSettingsMenu();">
+                            <i class="fas fa-laptop-code"></i> Programação
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="automacao"
+                            onclick="filterByCategory('automacao'); toggleSettingsMenu();">
+                            <i class="fas fa-industry"></i> Automação
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="negocios"
+                            onclick="filterByCategory('negocios'); toggleSettingsMenu();">
+                            <i class="fas fa-briefcase"></i> Negócios
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="mecatronica"
+                            onclick="filterByCategory('mecatronica'); toggleSettingsMenu();">
+                            <i class="fas fa-robot"></i> Mecatrônica
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="mecanica"
+                            onclick="filterByCategory('mecanica'); toggleSettingsMenu();">
+                            <i class="fas fa-cogs"></i> Mecânica
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="quimica"
+                            onclick="filterByCategory('quimica'); toggleSettingsMenu();">
+                            <i class="fas fa-flask"></i> Química
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="robotica"
+                            onclick="filterByCategory('robotica'); toggleSettingsMenu();">
+                            <i class="fas fa-microchip"></i> Robótica
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="sistemas"
+                            onclick="filterByCategory('sistemas'); toggleSettingsMenu();">
+                            <i class="fas fa-network-wired"></i> Sistemas
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="petroquimica"
+                            onclick="filterByCategory('petroquimica'); toggleSettingsMenu();">
+                            <i class="fas fa-oil-can"></i> Petroquímica
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="eletronica"
+                            onclick="filterByCategory('eletronica'); toggleSettingsMenu();">
+                            <i class="fas fa-bolt"></i> Eletrônica
+                        </a>
+                        <a href="#" class="dropdown-item" data-filter="eletricidade"
+                            onclick="filterByCategory('eletricidade'); toggleSettingsMenu();">
+                            <i class="fas fa-plug"></i> Eletricidade
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#sobre" class="dropdown-item" onclick="showSection('sobre'); toggleSettingsMenu();">
+                            <i class="fas fa-info-circle"></i> Sobre
+                        </a>
+                    </div>
+                </div>
+                <!-- Profile Avatar (shown when logged in) -->
+                <div class="header-profile" id="headerProfileBtn" style="display: none;">
+                    <div class="header-avatar" id="headerAvatar" onclick="openMyProfile()">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <!-- Login button (shown when not logged in) -->
+                <a href="src/html/login.html" class="header-login-btn" id="headerLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Entrar</span>
+                </a>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav-buttons">
+                <a href="#ranking" class="nav-link mobile-nav-link" onclick="showSection('ranking')">
+                    <i class="fas fa-trophy"></i>
+                </a>
+                <a href="#home" class="nav-link mobile-nav-link active" onclick="showSection('home')" value="all">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="src/html/chatBrio.html" class="nav-link mobile-nav-link" id="mobileChatLink"
+                    style="position:relative;">
+                    <i class="fas fa-comments"></i>
+                    <span class="notification-count" id="mobileChatUnreadCount" style="display:none;">0</span>
+                </a>
+                <a href="#notificacoes" class="nav-link mobile-nav-link" id="mobileNotificationBell"
+                    style="position:relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="mobileNotificationCount" style="display:none;">0</span>
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    <div id="notificationPanel" class="notification-panel">
+        <div id="notificationList"></div>
+    </div>
+
+    <main class="main">
+        <!-- Feed Central -->
+        <section class="feed-container">
+            <!-- Criar Publicação (só aparece quando logado) -->
+            <div class="create-post" id="createPost" style="display: none;box-shadow:none">
+                <div class="create-post-header">
+                    <div class="create-post-avatar" id="createPostAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <input type="text" class="create-post-input" placeholder="O que você está pensando?"
+                        onclick="openModal()">
+                </div>
+                <div class="create-post-actions">
+                    <button class="create-post-btn" onclick="filterByMedia('photo')">
+                        <i class="fas fa-image"></i>
+                        Foto
+                    </button>
+                    <button class="create-post-btn" onclick="filterByMedia('video')">
+                        <i class="fas fa-video"></i>
+                        Vídeo
+                    </button>
+                    <button class="create-post-btn primary" onclick="openModal()">
+                        <i class="fas fa-edit"></i>
+                        Escrever
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Carregando publicações...</p>
+            </div>
+
+            <!-- Publicações -->
+            <div id="publicationsGrid">
+                <!-- As publicações serão inseridas aqui dinamicamente -->
+            </div>
+        </section>
+
+        <!-- Sidebar Direita - Seção de Anúncios -->
+        <aside class="ads-sidebar-right">
+            <div class="ads-sidebar-header">
+                <h3><i class="fas fa-bullhorn"></i> Anúncios</h3>
+            </div>
+            <div class="ads-container" id="adsContainer">
+                <!-- Anúncios serão carregados aqui via JavaScript -->
+                <div class="ads-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- Sidebar Direita - Menu Rápido - ESCONDIDO, agora está no dropdown do header -->
+        <aside class="right-sidebar" style="display: none !important;">
+            <div class="sidebar-section" id="quickMenuSection">
+                <h3 class="sidebar-title">Menu Rápido</h3>
+                <div class="quick-menu-desktop">
+                    <a href="#sobre" class="nav-link btn-infor" onclick="showSection('sobre')">
+                        <i class="fas fa-tools"></i>
+                        <span class="nav-text"></span>
+                    </a>
+                    <a href="#" class="sidebar-item" data-filter="all">
+                        <i class="fas fa-home"></i>
+                        Página Inicial
+                    </a>
+                    <!-- Botão de instalação PWA -->
+
+                    <a href="#" class="sidebar-item" data-filter="programacao">
+                        <i class="fas fa-laptop-code"></i>
+                        Programação
+                    </a>
+                    <a href="#" class="sidebar-item" data-filter="automacao">
+                        <i class="fas fa-industry"></i>
+                        Automação
+                    </a>
+                    <a href="#" class="sidebar-item" data-filter="negocios">
+                        <i class="fas fa-briefcase"></i>
+                        Negócios
+                    </a>
+
+                    <div id="quickMenuMore" style="display: none;">
+                        <a href="#" class="sidebar-item" data-filter="mecatronica">
+                            <i class="fas fa-robot"></i>
+                            Mecatrônica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="mecanica">
+                            <i class="fas fa-cogs"></i>
+                            Mecânica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="quimica">
+                            <i class="fas fa-flask"></i>
+                            Química
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="robotica">
+                            <i class="fas fa-microchip"></i>
+                            Robótica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="sistemas">
+                            <i class="fas fa-network-wired"></i>
+                            Sistemas
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="petroquimica">
+                            <i class="fas fa-oil-can"></i>
+                            Petroquímica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="eletronica">
+                            <i class="fas fa-bolt"></i>
+                            Eletrônica
+                        </a>
+                        <a href="#" class="sidebar-item" data-filter="eletricidade">
+                            <i class="fas fa-plug"></i>
+                            Eletricidade
+                        </a>
+
+                    </div>
+                    <button class="btn btn-outline" id="quickMenuShowMore" onclick="toggleQuickMenuMore()"
+                        style="margin-top: 8px; width: 100%;">
+                        Ver mais
+                    </button>
+                </div>
+
+            </div>
+        </aside>
+    </main>
+
+    <!-- Seção Conversas -->
+    <section id="conversas" class="conversas-section" style="display: none;">
+        <div class="conversas-container">
+            <div class="conversas-header">
+                <h2><i class="fas fa-comments"></i> Conversas</h2>
+                <p>Suas conversas privadas</p>
+            </div>
+
+            <div class="conversas-content">
+                <div style="display: flex; gap: 20px; height: 70vh;">
+                    <!-- Lista de Usuários -->
+                    <div class="users-sidebar"
+                        style="width: 300px; background: white; border-radius: 10px; padding: 20px; overflow-y: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3 style="margin-bottom: 15px; color: #333;">Usuários Online</h3>
+                        <div id="usersListChat" style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Usuários serão inseridos aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Área de Chat -->
+                    <div class="chat-area-container" id="chatAreaContainer"
+                        style="flex: 1; background: white; border-radius: 10px; display: none; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <div class="chat-header-active"
+                            style="padding: 15px 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div id="chatHeaderAvatar"
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                    ?</div>
+                                <div>
+                                    <h4 id="chatHeaderName" style="margin: 0; color: #333;">Selecione um usuário</h4>
+                                    <span id="chatHeaderStatus" style="font-size: 12px; color: #888;">Offline</span>
+                                </div>
+                            </div>
+                            <button onclick="closeChatArea()"
+                                style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div id="chatMessagesContainer"
+                            style="flex: 1; overflow-y: auto; padding: 15px; background-color: #ece5dd;">
+                            <!-- Mensagens serão inseridas aqui -->
+                        </div>
+
+                        <div style="padding: 15px 20px; border-top: 2px solid #e0e0e0; background: white;">
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="chatMessageInputChat" placeholder="Digite sua mensagem..."
+                                    style="flex: 1; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 14px; transition: border 0.3s;"
+                                    onfocus="this.style.borderColor = '#667eea'"
+                                    onblur="this.style.borderColor = '#e0e0e0'">
+                                <button id="sendMessageBtnChat" onclick="sendChatMessage()"
+                                    style="padding: 12px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: bold; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);"
+                                    onmouseover="this.style.transform = 'scale(1.1)'"
+                                    onmouseout="this.style.transform = 'scale(1)'">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem quando nenhum chat está aberto -->
+                    <div id="noChatSelected"
+                        style="flex: 1; display: flex; align-items: center; justify-content: center; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <div style="text-align: center; color: #888;">
+                            <i class="fas fa-comments" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
+                            <p>Selecione um usuário para começar a conversar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Perfil do Utilizador -->
+    <section id="perfil-usuario" class="profile-page" style="display: none;">
+        <div class="profile-container">
+            <!-- Header do Perfil -->
+            <div class="profile-header-section">
+                <button class="profile-back-btn" onclick="showSection('home')">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Voltar</span>
+                </button>
+
+                <div class="profile-cover"></div>
+
+                <div class="profile-info-wrapper">
+                    <div class="profile-avatar-large" id="profilePageAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <div class="profile-details">
+                        <h1 class="profile-name" id="profilePageName">Nome do Utilizador</h1>
+                        <p class="profile-turma" id="profilePageTurma">Escola: Não definida</p>
+                        <p class="profile-description" id="profilePageDescription">Sem descrição</p>
+                        <p class="profile-short-desc" id="profilePageShortDesc">Profissão ou área</p>
+                    </div>
+
+                    <!-- Estatísticas -->
+                    <div class="profile-stats-row">
+                        <div class="profile-stat">
+                            <span class="stat-number" id="profilePagePubCount">0</span>
+                            <span class="stat-label">Publicações</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number" id="profilePageImpulses">0</span>
+                            <span class="stat-label">Impulsos</span>
+                        </div>
+                    </div>
+
+                    <!-- Ações -->
+                    <div class="profile-actions-row">
+                        <!-- Botão Conversar (apenas para outros utilizadores) -->
+                        <button class="profile-btn-chat" id="profileBtnChat" style="display: none;"
+                            onclick="shareOnWhatsApp(this.dataset.userId)">
+                            <i class="fas fa-comments"></i>
+                            <span>Conversar</span>
+                        </button>
+
+                        <!-- Botão Editar (apenas para próprio perfil) -->
+                        <button class="profile-btn-edit" id="profileBtnEdit" style="display: none;"
+                            onclick="openEditProfileModal()">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar Perfil</span>
+                        </button>
+
+                        <!-- Botão Sair (apenas para próprio perfil) -->
+                        <button class="profile-btn-logout" id="profileBtnLogout" style="display: none;"
+                            onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Publicações do Utilizador -->
+            <div class="profile-publications-section">
+                <h2 class="profile-section-title">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Publicações</span>
+                </h2>
+                <div class="profile-publications-grid" id="profilePublicationsGrid">
+                    <!-- Publicações serão carregadas aqui via JavaScript -->
+                    <div class="loading-publications">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando publicações...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Sobre -->
+    <section id="sobre" class="sobre-section" style="display: none;">
+        <div class="sobre-container">
+            <!-- Botão Voltar -->
+            <button class="sobre-back-btn" onclick="showSection('home')">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar</span>
+            </button>
+
+            <div class="sobre-header">
+                <h2>Sobre a Plataforma</h2>
+                <p class="sobre-subtitle">Conectando mentes criativas e inovadoras</p>
+            </div>
+
+            <div class="sobre-content">
+                <!-- Card Principal - Sobre -->
+                <div class="sobre-card sobre-card-main">
+                    <div class="sobre-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Nossa Missão</h3>
+                    <p>O Briolink é uma plataforma digital que valoriza a criatividade e o conhecimento técnico,
+                        conectando estudantes e profissionais em um ambiente colaborativo.</p>
+                </div>
+
+                <!-- Card Funcionalidades -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Funcionalidades</h3>
+                    <ul class="funcionalidades-list">
+                        <li><i class="fas fa-users"></i> Rede de profissionais</li>
+                        <li><i class="fas fa-trophy"></i> Sistema de ranking</li>
+                        <li><i class="fas fa-comments"></i> Discussões colaborativas</li>
+                    </ul>
+                </div>
+
+                <!-- Card Ranking -->
+                <div class="sobre-card">
+                    <div class="sobre-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Sistema de Impulsos</h3>
+                    <p>Valorize publicações com o botão "Impulsionar" e suba no ranking da comunidade!</p>
+                    <div class="ranking-tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Compartilhe ideias criativas para ganhar impulsos</span>
+                    </div>
+                </div>
+
+                <!-- Card Equipe de Desenvolvimento -->
+                <div class="sobre-card sobre-card-dev">
+                    <div class="sobre-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Equipe de Desenvolvimento</h3>
+                    <p class="team-description">Somos uma equipe de jovens apaixonados por tecnologia e inovação,
+                        dedicados a criar soluções que conectam pessoas e ideias.</p>
+                    <div class="dev-social">
+                        <a href="https://github.com/JoquimMarques" target="_blank" rel="noopener" class="social-btn">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/joaquim-c%C3%A9sar-francisco-marques-2b957a2a7/"
+                            target="_blank" rel="noopener" class="social-btn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:nelsonmarquesj55@gmail.com" class="social-btn">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="https://devjoaquim.netlify.app/" target="_blank" rel="noopener"
+                            class="social-btn portfolio">
+                            <i class="fas fa-briefcase"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé do Sobre -->
+            <div class="sobre-footer">
+                <p>Projeto desenvolvido em 2025 • <i class="fas fa-coffee"></i> Feito com muito café</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal para nova publicação -->
+    <div id="publicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #7b00ff;"><i class="fas fa-edit" style="margin-right: 7px;"></i>Criar Publicação</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="publicationForm" class="publication-form">
+                <div class="form-group">
+                    <label for="title">Título</label>
+                    <input type="text" id="title" name="title" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="content">Assunto</label>
+                    <textarea id="content" name="content" rows="8" required class="form-textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Categoria</label>
+                    <select id="category" name="category" class="form-select">
+                        <option value="programacao">Programação</option>
+                        <option value="mecanica">Mecânica</option>
+                        <option value="negocios">Negócios</option>
+                        <option value="quimica">Química</option>
+                        <option value="mecatronica">Mecatrônica</option>
+                        <option value="robotica">Robótica</option>
+                        <option value="sistemas">Sistemas</option>
+                        <option value="petroquimica">Petroquímica</option>
+                        <option value="eletronica">Eletrônica</option>
+                        <option value="eletricidade">Eletricidade</option>
+                        <option value="automacao">Automação</option>
+
+                    </select>
+                </div>
+                <!-- Upload de Foto -->
+                <div class="form-group">
+                    <label for="photoUpload" class="custom-file-upload" style="color: white;">
+                        <i class="fas fa-image"></i> Adicionar imagem
+                        <input type="file" id="photoUpload" name="photo" accept="image/*" style="display: none;">
+                    </label>
+                    <div id="photoPreview" class="media-preview" style="display: none;">
+                        <img id="photoPreviewImg" src="" alt="Preview da foto">
+                        <button type="button" class="remove-media-btn" onclick="removePhoto()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload de Vídeo -->
+                <div class="form-group">
+                    <label for="videoUpload" class="custom-file-upload" style="color: white">
+                        <i class="fas fa-video"></i> Adicionar vídeo
+                        <input type="file" id="videoUpload" name="video" accept="video/*" style="display: none;">
+                    </label>
+                    <div id="videoPreview" class="media-preview" style="display: none;">
+                        <video controls class="publication-video" id="videoPreviewPlayer">
+                            <source id="videoPreviewSrc" src="" type="video/mp4">
+                        </video>
+                        <div class="video-info">
+                            <span id="videoDuration">Duração: 0s</span>
+                            <button type="button" class="remove-media-btn" onclick="removeVideo()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Publicar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Perfil -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #7b00ff;"><i class="fas fa-edit" style="margin-right: 7px;"></i>Editar Perfil</h3>
+                <button class="close-btn" onclick="closeEditProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editProfileForm" class="auth-form">
+
+                <div class="form-group">
+
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div id="avatarPreview"
+                            style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #e0c3fc 0%, #a68efc 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 8px rgba(106,27,154,0.08);">
+                            <i class="fas fa-user" style="font-size: 2rem; color: #b39ddb;" id="avatarIcon"></i>
+                            <!-- A imagem de preview será inserida via JS -->
+                        </div>
+                        <label for="editProfileAvatar"
+                            style="cursor: pointer; background: linear-gradient(90deg, #7b00ff 0%, #2e025a 100%); color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: 500; font-size: 1rem; box-shadow: 0 2px 8px rgba(41,4,119,0.08); transition: background 0.2s;">
+                            <i class="fas fa-upload" style="margin-right: 7px;"></i> Selecionar foto
+                            <input type="file" id="editProfileAvatar" accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+                    <small style="color: #888; margin-top: 4px; display: block;">Formatos aceitos: JPG, PNG, até
+                        5MB.</small>
+
+
+                </div>
+                <div class="form-group">
+                    <label for="editProfileName">Nome Completo</label>
+                    <input type="text" id="editProfileName" name="name" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileTurma">Escola ou Instituição</label>
+                    <input type="text" id="editProfileTurma" name="turma" required class="form-input"
+                        placeholder="Ex: Instituto Politécnico">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileShortDescription">Profissão ou área</label>
+                    <input type="text" id="editProfileShortDescription" name="short_description" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="editProfileDescription">Biografia</label>
+                    <textarea id="editProfileDescription" name="description" rows="3" class="form-textarea"
+                        maxlength="100"
+                        style="resize: vertical; field-sizing: content; min-height: 1px; border-radius: 10px; max-height: 60px;"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil de Usuário -->
+    <div id="userProfileModal" class="modal">
+        <div class="modal-content" id="userProfileModalContent">
+            <div class="modal-header">
+                <h3 id="userProfileModalName">Perfil do Usuário</h3>
+                <button class="close-btn" onclick="closeUserProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="user-profile-card user-profile-modal-details">
+                <div class="user-avatar-large" id="userProfileModalAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4 class="user-full-name" id="userProfileModalFullName">Nome do Usuário</h4>
+                <p class="user-turma" id="userProfileModalTurma">Turma: Não definida</p>
+                <p class="user-description" id="userProfileModalDescription">Sem descrição</p>
+                <p class="user-short-description" id="userProfileModalShortDescription">Profissão ou área</p>
+
+                <!-- Seção de Estatísticas -->
+                <div class="user-stats-section" id="userStatsSection">
+                    <div class="user-stats-grid">
+                        <div class="user-stat-item">
+                            <div class="user-stat-number" id="userPublicationsCount">0</div>
+                            <div class="user-stat-label">Publicações</div>
+                        </div>
+                        <div class="user-stat-item">
+                            <div class="user-stat-number" id="userTotalImpulses">0</div>
+                            <div class="user-stat-label">Impulsões</div>
+                        </div>
+                    </div>
+                    <div class="user-contribution-bar">
+                        <div class="contribution-label">Contribuição para a plataforma</div>
+                        <div class="contribution-progress">
+                            <div class="contribution-fill" id="contributionFill" style="width: 0%"></div>
+                        </div>
+                        <div class="contribution-percentage" id="contributionPercentage">0%</div>
+                    </div>
+                </div>
+
+                <!-- Botão de Conversar -->
+                <button class="btn-conversar" id="userProfileModalChatBtn"
+                    onclick="shareOnWhatsApp(this.dataset.userId)" style="display: none;">
+                    <i class="fas fa-comments"></i>
+                    <span>Conversar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Fim do Modal de Perfil de Usuário -->
+
+    <!-- Visualizador de Imagens em Tela Cheia -->
+    <div id="imageViewer" class="image-viewer">
+        <div class="image-viewer-overlay" onclick="closeImageViewer()"></div>
+        <div class="image-viewer-container">
+            <div class="image-viewer-header">
+                <button class="image-viewer-close" onclick="closeImageViewer()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="image-viewer-info">
+                    <span id="imageViewerCounter">1 / 1</span>
+                </div>
+                <div class="image-viewer-actions">
+                    <button class="image-viewer-action" onclick="downloadImage()" title="Baixar imagem">
+                        <i class="fas fa-download"></i>
+                    </button>
+
+                </div>
+            </div>
+            <div class="image-viewer-content">
+                <button class="image-viewer-nav image-viewer-prev" onclick="previousImage()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="image-viewer-main">
+                    <img id="imageViewerImg" src="" alt="Imagem em visualização">
+                    <div class="image-viewer-zoom-controls">
+                        <button class="zoom-btn" onclick="zoomOut()" title="Diminuir zoom">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="zoom-btn" onclick="resetZoom()" title="Zoom padrão">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button class="zoom-btn" onclick="zoomIn()" title="Aumentar zoom">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="image-viewer-nav image-viewer-next" onclick="nextImage()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Chat -->
+    <div id="chatModal" class="modal chat-modal">
+        <div class="modal-content chat-modal-content">
+            <div class="modal-header chat-header">
+                <h3 style="color: #7b00ff;">
+                    <i class="fas fa-comments" style="margin-right: 7px;"></i>
+                    Chat Global
+                </h3>
+                <button class="close-btn" onclick="closeChatModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-container">
+                <!-- Lista de usuários online (apenas para chat global) -->
+                <div class="chat-sidebar" id="chatSidebar">
+                    <div class="online-users-header">
+                        <h4><i class="fas fa-users"></i> Usuários Online</h4>
+                    </div>
+                    <div id="onlineUsersList" class="online-users-list">
+                        <!-- Usuários online serão listados aqui -->
+                    </div>
+                </div>
+
+                <!-- Área principal do chat -->
+                <div class="chat-main" id="chatMain">
+                    <!-- Mensagens -->
+                    <div id="chatMessages" class="chat-messages">
+                        <!-- Mensagens serão inseridas aqui -->
+                    </div>
+
+                    <!-- Input para enviar mensagem -->
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="chatMessageInput" placeholder="Digite sua mensagem..."
+                                class="chat-input">
+                            <button id="sendMessageBtn" class="chat-send-btn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Supabase CDN - Must be loaded before app scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Cache Service - Must load before other app scripts -->
+    <script src="src/js/cache-service.js"></script>
+    <script src="src/js/modules/app-utils.js"></script>
+    <script src="src/js/modules/image-viewer.js"></script>
+    <script src="src/js/script-corrected.js"></script>
+    <script src="src/js/modules/hashtag-system.js"></script>
+
+    <!-- Dark Mode Toggle Script -->
+    <script>
+        // Função para alternar dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            const isDark = body.classList.toggle('dark-mode');
+
+            // Salvar preferência
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+
+            // Atualizar ícone
+            if (isDark) {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+            } else {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+            }
+        }
+
+        // Carregar preferência salva ao carregar a página
+        document.addEventListener('DOMContentLoaded', function () {
+            const darkMode = localStorage.getItem('darkMode');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                if (darkModeIcon) {
+                    darkModeIcon.classList.remove('fa-moon');
+                    darkModeIcon.classList.add('fa-sun');
+                }
+            }
+        });
+    </script>
+    <!-- <script type="module" src="./src/js/performance-boost.js"></script> -->
+
+    <!-- Firebase Database CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Script do Chat Integrado -->
+    <script type="module">
+        const SUPABASE_URL = 'https://nvswucwnvshvklqgojcw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
+        const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        const desktopBadge = document.getElementById('chatUnreadCount');
+        const mobileBadge = document.getElementById('mobileChatUnreadCount');
+
+        function setBadge(count) {
+            [desktopBadge, mobileBadge].forEach(el => {
+                if (!el) return;
+                if (count > 0) {
+                    el.textContent = String(count);
+                    el.style.display = 'inline-block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        async function computeUnreadCount() {
+            try {
+                if (!sb) return setBadge(0);
+                const { data: { session } } = await sb.auth.getSession();
+                if (!session?.user) return setBadge(0);
+                const userId = session.user.id;
+
+                const { data: conversations, error } = await sb
+                    .from('conversations')
+                    .select('id, user1_id, user2_id, updated_at')
+                    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+                if (error || !conversations) return setBadge(0);
+
+                let total = 0;
+                for (const conv of conversations) {
+                    const { data: lastMsg } = await sb
+                        .from('messages')
+                        .select('created_at, sender_id')
+                        .eq('conversation_id', conv.id)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+                    if (!lastMsg) continue;
+                    const lastOpened = Number(localStorage.getItem(`conv_last_open_${conv.id}`) || 0);
+                    const lastMsgTs = new Date(lastMsg.created_at).getTime();
+                    const isUnread = lastMsg.sender_id !== userId && lastMsgTs > lastOpened;
+                    if (isUnread) total += 1;
+                }
+                setBadge(total);
+            } catch (e) {
+                console.warn('Erro ao calcular não lidas:', e);
+                setBadge(0);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', computeUnreadCount);
+        setInterval(computeUnreadCount, 15000);
+
+        if (sb) {
+            sb.channel('unread-counter')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => computeUnreadCount())
+                .subscribe();
+        }
+    </script>
+    <!-- <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, set, onDisconnect, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Configuração Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCzhT1SATR_R6KFoiT_-2o95xR14yjsZZo",
+            authDomain: "briolinkechat.firebaseapp.com",
+            projectId: "briolinkechat",
+            storageBucket: "briolinkechat.firebasestorage.app",
+            messagingSenderId: "232898284627",
+            appId: "1:232898284627:web:e91b4710c5934f21620aa6",
+            databaseURL: "https://briolinkechat-default-rtdb.firebaseio.com"
+        };
+
+        // Inicializar Firebase
+        console.log('🔥 Inicializando Firebase...');
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        console.log('✅ Firebase inicializado com sucesso');
+
+        // Usar a instância do Supabase já carregada em supabase-config.js
+        let currentUser = null;
+        let selectedUser = null;
+        let messagesListener = null;
+
+        // Funções globais
+        window.openChatWithUser = async function(userId) {
+            console.log('🎯 openChatWithUser chamado com userId:', userId);
+            
+            if (!userId) {
+                console.error('❌ userId não fornecido');
+                return;
+            }
+            
+            try {
+                // Buscar informações do usuário
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('id, name, email')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) {
+                    console.error('❌ Erro ao buscar perfil:', error);
+                    return;
+                }
+
+                console.log('👤 Perfil encontrado:', profile);
+
+                if (profile) {
+                    selectedUser = {
+                        id: profile.id,
+                        name: profile.name || profile.email.split('@')[0],
+                        email: profile.email,
+                        avatar: (profile.name || profile.email).charAt(0).toUpperCase()
+                    };
+
+                    console.log('✅ Usuário selecionado:', selectedUser);
+
+                    // Atualizar UI
+                    const chatHeaderAvatar = document.getElementById('chatHeaderAvatar');
+                    const chatHeaderName = document.getElementById('chatHeaderName');
+                    const chatHeaderStatus = document.getElementById('chatHeaderStatus');
+                    const chatAreaContainer = document.getElementById('chatAreaContainer');
+                    const noChatSelected = document.getElementById('noChatSelected');
+
+                    if (chatHeaderAvatar) chatHeaderAvatar.textContent = selectedUser.avatar;
+                    if (chatHeaderName) chatHeaderName.textContent = selectedUser.name;
+                    if (chatHeaderStatus) chatHeaderStatus.textContent = 'Offline';
+                    
+                    // Mostrar área de chat
+                    if (chatAreaContainer) {
+                        chatAreaContainer.style.display = 'flex';
+                        console.log('✅ Área de chat mostrada');
+                    }
+                    if (noChatSelected) {
+                        noChatSelected.style.display = 'none';
+                    }
+
+                    // Carregar mensagens
+                    loadMessages();
+                }
+            } catch (error) {
+                console.error('❌ Erro ao abrir chat:', error);
+            }
+        };
+
+        window.closeChatArea = function() {
+            selectedUser = null;
+            document.getElementById('chatAreaContainer').style.display = 'none';
+            document.getElementById('noChatSelected').style.display = 'flex';
+            
+            if (messagesListener) {
+                messagesListener();
+                messagesListener = null;
+            }
+        };
+
+        // Armazenar mensagens localmente até Firebase funcionar
+        window.chatMessages = window.chatMessages || {};
+
+        window.sendChatMessage = async function() {
+            const input = document.getElementById('chatMessageInputChat');
+            const text = input.value.trim();
+            
+            if (!text || !selectedUser) {
+                console.log('⚠️ Nenhuma mensagem ou usuário selecionado');
+                return;
+            }
+
+            if (!currentUser) {
+                console.error('❌ Usuário não está logado');
+                alert('Você precisa estar logado para enviar mensagens');
+                return;
+            }
+
+            const sendBtn = document.getElementById('sendMessageBtnChat');
+            const chatId = [currentUser.id, selectedUser.id].sort().join('_');
+            
+            // Limpar input imediatamente e mostrar mensagem
+            input.value = '';
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const messageData = {
+                senderId: currentUser.id,
+                senderName: currentUser.name,
+                text: text,
+                timestamp: Date.now(),
+                read: false
+            };
+
+            try {
+                // Obter ou criar conversa
+                const conversationId = await getOrCreateConversation();
+                if (!conversationId) {
+                    console.error('❌ Não foi possível obter conversa');
+                    alert('Erro ao enviar mensagem');
+                    return;
+                }
+
+                // Salvar no Supabase
+                console.log('📤 Enviando mensagem para Supabase...');
+                const { error } = await supabase
+                    .from('messages')
+                    .insert({
+                        conversation_id: conversationId,
+                        sender_id: currentUser.id,
+                        message_text: text,
+                        message_type: 'text'
+                    });
+
+                if (error) {
+                    console.error('❌ Erro ao enviar mensagem:', error);
+                    alert('Erro ao enviar mensagem: ' + error.message);
+                    return;
+                }
+
+                console.log('✅ Mensagem enviada para Supabase!');
+            } catch (error) {
+                console.error('❌ Erro ao enviar mensagem:', error);
+                alert('Erro ao enviar mensagem');
+            }
+
+            // Mostrar mensagem imediatamente (independente de salvar ou não)
+            displayMessage(messageData);
+
+            // Scroll
+            setTimeout(() => {
+                const container = document.getElementById('chatMessagesContainer');
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            }, 100);
+
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        };
+
+        // Carregar mensagens do Supabase
+        async function loadMessages() {
+            try {
+                console.log('📥 Carregando mensagens do Supabase...');
+                
+                const container = document.getElementById('chatMessagesContainer');
+                if (!container) {
+                    console.error('❌ Container de mensagens não encontrado');
+                    return;
+                }
+
+                container.innerHTML = 'Carregando...';
+
+                // Carregar conversa existente ou criar nova
+                const conversationId = await getOrCreateConversation();
+                if (!conversationId) {
+                    container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Erro ao carregar conversa</div>';
+                    return;
+                }
+
+                // Carregar mensagens existentes
+                const { data: messages, error } = await supabase
+                    .from('messages')
+                    .select('*')
+                    .eq('conversation_id', conversationId)
+                    .order('created_at', { ascending: true });
+
+                if (error) {
+                    console.error('❌ Erro ao carregar mensagens:', error);
+                    container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Erro ao carregar mensagens</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                
+                if (messages && messages.length > 0) {
+                    messages.forEach(message => {
+                        displayMessage({
+                            senderId: message.sender_id,
+                            senderName: selectedUser.name,
+                            text: message.message_text,
+                            timestamp: new Date(message.created_at).getTime(),
+                            type: message.message_type,
+                            fileUrl: message.file_url,
+                            fileName: message.file_name,
+                            fileSize: message.file_size
+                        });
+                    });
+                } else {
+                    container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Nenhuma mensagem ainda. Comece a conversar!</div>';
+                }
+
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('❌ Erro na função loadMessages:', error);
+            }
+        }
+
+        // Obter ou criar conversa
+        async function getOrCreateConversation() {
+            const user1Id = currentUser.id < selectedUser.id ? currentUser.id : selectedUser.id;
+            const user2Id = currentUser.id < selectedUser.id ? selectedUser.id : currentUser.id;
+
+            const { data: existing } = await supabase
+                .from('conversations')
+                .select('id')
+                .eq('user1_id', user1Id)
+                .eq('user2_id', user2Id)
+                .single();
+
+            if (existing) return existing.id;
+
+            const { data: newConv, error } = await supabase
+                .from('conversations')
+                .insert({ user1_id: user1Id, user2_id: user2Id })
+                .select()
+                .single();
+
+            if (error) {
+                console.error('❌ Erro ao criar conversa:', error);
+                return null;
+            }
+
+            return newConv.id;
+        }
+
+        // Função para carregar mensagens locais
+        function loadLocalMessages(chatId, container) {
+            // Carregar do localStorage
+            const savedMessages = localStorage.getItem('chatMessages');
+            if (savedMessages) {
+                try {
+                    const allMessages = JSON.parse(savedMessages);
+                    if (allMessages[chatId] && allMessages[chatId].length > 0) {
+                        container.innerHTML = '';
+                        allMessages[chatId].forEach(message => {
+                            displayMessage(message);
+                        });
+                        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                        console.log('✅ Mensagens locais carregadas');
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Erro ao parsear mensagens locais:', e);
+                }
+            }
+            
+            container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Nenhuma mensagem ainda. Comece a conversar!</div>';
+        }
+
+        // Exibir mensagem - VERSÃO MELHORADA
+        function displayMessage(message) {
+            const container = document.getElementById('chatMessagesContainer');
+            const isSent = message.senderId === currentUser.id;
+            
+            const messageWrapper = document.createElement('div');
+            messageWrapper.style.cssText = `
+                display: flex;
+                margin-bottom: 8px;
+                padding: 4px 12px;
+                ${isSent ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
+            `;
+
+            const messageContent = document.createElement('div');
+            messageContent.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                max-width: 70%;
+                ${isSent ? 'align-items: flex-end;' : 'align-items: flex-start;'}
+            `;
+
+            // Nome do remetente (só para mensagens recebidas)
+            if (!isSent && message.senderName) {
+                const senderName = document.createElement('div');
+                senderName.style.cssText = `
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 4px;
+                    font-weight: 600;
+                `;
+                senderName.textContent = message.senderName;
+                messageContent.appendChild(senderName);
+            }
+
+            // Bolha da mensagem com estilo WhatsApp
+            const bubble = document.createElement('div');
+            bubble.style.cssText = `
+                padding: 8px 12px;
+                border-radius: ${isSent ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
+                word-wrap: break-word;
+                max-width: 100%;
+                background: ${isSent ? '#dcf8c6' : 'white'};
+                color: ${isSent ? '#000' : '#333'};
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                position: relative;
+                display: inline-block;
+                line-height: 1.4;
+            `;
+            bubble.textContent = message.text;
+
+            // Timestamp estilo WhatsApp
+            const time = document.createElement('div');
+            time.style.cssText = `
+                font-size: 11px;
+                color: #667781;
+                margin-top: 4px;
+                text-align: ${isSent ? 'right' : 'left'};
+                padding: 0 8px;
+                opacity: 0.7;
+            `;
+            
+            const timestamp = new Date(message.timestamp);
+            const timeStr = timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
+            // Adicionar check para mensagens enviadas
+            if (isSent) {
+                time.innerHTML = `<i class="fas fa-check-double" style="color: #4fc3f7; margin-right: 4px;"></i> ${timeStr}`;
+            } else {
+                time.textContent = timeStr;
+            }
+
+            messageContent.appendChild(bubble);
+            messageContent.appendChild(time);
+            messageWrapper.appendChild(messageContent);
+            container.appendChild(messageWrapper);
+        }
+
+        // Inicializar chat quando a seção de conversas for aberta - VERSÃO SEM FIREBASE
+        async function initChat() {
+            try {
+                console.log('🚀 Inicializando chat...');
+                
+                // Verificar se está logado
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) {
+                    console.error('❌ Erro ao verificar sessão:', sessionError);
+                    return;
+                }
+                
+                if (!session) {
+                    console.log('⚠️ Usuário não está logado');
+                    return;
+                }
+
+                console.log('✅ Usuário logado:', session.user.email);
+
+                // Obter dados do usuário logado
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('id, name, email')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (profileError) {
+                    console.error('❌ Erro ao buscar perfil:', profileError);
+                    return;
+                }
+
+                if (profile) {
+                    currentUser = {
+                        id: profile.id,
+                        name: profile.name || profile.email.split('@')[0],
+                        email: profile.email,
+                        avatar: (profile.name || profile.email).charAt(0).toUpperCase()
+                    };
+
+                    console.log('✅ Usuário atual definido:', currentUser);
+
+                    // SIMPLIFICADO: Não usar Firebase, apenas carregar usuários do Supabase
+                    loadUsers();
+                }
+            } catch (error) {
+                console.error('❌ Erro ao inicializar chat:', error);
+            }
+        }
+
+        // Carregar SOMENTE usuários com quem já tenho conversa
+        async function loadUsers() {
+            try {
+                console.log('📋 Carregando lista de conversas...');
+
+                const usersList = document.getElementById('usersListChat');
+                if (!usersList) return;
+                usersList.innerHTML = '';
+
+                // 1) buscar conversas do usuário atual
+                const { data: conversations, error: convError } = await supabase
+                    .from('conversations')
+                    .select('id, user1_id, user2_id, updated_at')
+                    .or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`)
+                    .order('updated_at', { ascending: false });
+
+                if (convError) {
+                    console.error('❌ Erro ao buscar conversas:', convError);
+                    return;
+                }
+
+                const otherIds = Array.from(new Set((conversations || []).map(c => c.user1_id === currentUser.id ? c.user2_id : c.user1_id)));
+
+                if (otherIds.length === 0) {
+                    usersList.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">Sem conversas ainda. Use "Conversar" numa publicação.</p>';
+                    return;
+                }
+
+                // 2) buscar perfis apenas desses ids
+                const { data: profiles, error } = await supabase
+                    .from('profiles')
+                    .select('id, name, email')
+                    .in('id', otherIds);
+
+                if (error) {
+                    console.error('❌ Erro ao carregar usuários:', error);
+                    return;
+                }
+
+                profiles.forEach(profile => {
+                    const userItem = document.createElement('div');
+                    userItem.style.cssText = `
+                        padding: 12px;
+                        background: #f8f9fa;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        margin-bottom: 8px;
+                    `;
+                    userItem.onmouseover = () => userItem.style.background = '#667eea';
+                    userItem.onmouseout = () => userItem.style.background = '#f8f9fa';
+
+                    const userName = profile.name || profile.email.split('@')[0];
+                    const userAvatar = userName.charAt(0).toUpperCase();
+
+                    userItem.innerHTML = `
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0;">
+                            ${userAvatar}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #333;">${userName}</div>
+                            <div style="font-size: 12px; color: #888;">⚫ Offline</div>
+                        </div>
+                    `;
+
+                    userItem.onclick = () => {
+                        console.log('🖱️ Clique no usuário:', profile.id, userName);
+                        window.openChatWithUser(profile.id);
+                    };
+                    
+                    usersList.appendChild(userItem);
+                });
+            } catch (error) {
+                console.error('❌ Erro ao carregar usuários:', error);
+            }
+        }
+
+
+        // Inicializar quando a seção de conversas for aberta
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ Chat script carregado');
+            
+            // Event listener para Enter no input de mensagem
+            const chatInput = document.getElementById('chatMessageInputChat');
+            if (chatInput) {
+                // Enviar com Enter
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+                
+                // Limpar placeholder ao focar
+                chatInput.addEventListener('focus', () => {
+                    chatInput.style.background = '#ffffff';
+                });
+                
+                chatInput.addEventListener('blur', () => {
+                    chatInput.style.background = '';
+                });
+            }
+
+            // Observar mudanças na seção de conversas
+            const conversasSection = document.getElementById('conversas');
+            console.log('📋 Elemento conversas:', conversasSection);
+            
+            if (conversasSection) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        const displayValue = mutation.target.style.display;
+                        console.log('👁️ Mudança detectada no display:', displayValue);
+                        
+                        if (displayValue === 'block' || displayValue === 'flex') {
+                            console.log('✅ Seção de conversas foi aberta!');
+                            if (!currentUser) {
+                                console.log('🚀 Inicializando chat...');
+                                initChat();
+                            } else {
+                                console.log('⚠️ Chat já inicializado');
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(conversasSection, {
+                    attributes: true,
+                    attributeFilter: ['style']
+                });
+                console.log('👀 MutationObserver configurado');
+            } else {
+                console.error('❌ Elemento conversas não encontrado!');
+            }
+        });
+    </script> -->
+
+</body>
+
+</html>

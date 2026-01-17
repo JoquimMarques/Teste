@@ -1,0 +1,1283 @@
+
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border: 1.5px solid var(--primary-purple);
+}
+
+.form-textarea {
+    resize: none;
+    min-height: 5px;
+    text-align: left;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-purple);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-purple-dark);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: var(--primary-purple-light);
+    color: var(--primary-purple-dark);
+    border: none;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-purple);
+    color: #fff;
+}
+
+/* Mobile menu button */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-btn i {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-btn.rotated i {
+    transform: rotate(180deg);
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.mobile-menu-btn.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    .main {
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 24px;
+        padding: 24px 16px;
+    }
+
+    .header-content {
+        padding: 0 16px;
+    }
+}
+
+/* ===== RESPONSIVIDADE PARA TABLETS ===== */
+/* Tablet Landscape (1024px - 768px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .main {
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        padding: 24px 20px;
+        max-width: 100%;
+    }
+
+    .right-sidebar {
+        display: none;
+    }
+
+    .left-sidebar {
+        width: 280px;
+        min-width: 280px;
+        max-width: 320px;
+    }
+
+    .logo {
+        font-size: 2.2rem;
+    }
+
+    .logo i {
+        font-size: 2.2rem;
+    }
+
+    /* Ajustar cards de publicação para tablets */
+    .publication-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .publication-header {
+        margin-bottom: 16px;
+    }
+
+    .publication-content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .publication-actions {
+        padding: 16px 0;
+        gap: 16px;
+    }
+
+    .publication-action {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar botões de criar publicação */
+    .create-post {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .create-post-actions {
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .create-post-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar sidebar esquerda */
+    .sidebar-section {
+        margin-bottom: 20px;
+        padding: 16px;
+    }
+
+    .user-profile-card {
+        padding: 16px;
+    }
+
+    .quick-menu-desktop {
+        gap: 8px;
+    }
+
+    .sidebar-item {
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar header */
+    .header-content {
+        padding: 0 20px;
+    }
+
+    .search-container {
+        max-width: 300px;
+    }
+
+    .search-input {
+        font-size: 0.9rem;
+        padding: 10px 40px 10px 16px;
+    }
+
+    /* Ajustar modais para tablets */
+    .modal-content {
+        width: 90%;
+        max-width: 600px;
+        margin: 5% auto;
+        padding: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    /* Modal de perfil específico para tablets landscape */
+    #userProfileModal .modal-content {
+        width: 85%;
+        max-width: 500px;
+        padding: 20px;
+    }
+
+    .user-profile-modal-details {
+        padding: 16px;
+        text-align: center;
+    }
+
+    .user-profile-modal-details .user-avatar-large {
+        width: 70px;
+        height: 70px;
+        font-size: 1.6rem;
+        margin-bottom: 14px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar seção sobre */
+    .sobre-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .sobre-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .sobre-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+
+    .sobre-card p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Ajustar ranking */
+    .ranking-container {
+        padding: 20px;
+    }
+
+    .ranking-header {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .ranking-item {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    /* Ajustar navegação para tablets landscape */
+    .mobile-nav-buttons {
+        display: none !important;
+    }
+
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    .nav {
+        display: flex !important;
+    }
+
+    .nav .nav-link {
+        display: flex !important;
+        padding: 12px 18px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar header para tablets landscape */
+    .header {
+        padding: 12px 0;
+    }
+
+    .header-content {
+        height: 60px;
+    }
+
+    /* Ajustar botões de autenticação */
+    .auth-buttons {
+        gap: 16px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar mídias para tablets landscape */
+    .publication-image,
+    .publication-video {
+        max-height: 320px;
+        border-radius: 8px;
+    }
+
+    .media-preview img,
+    .media-preview video {
+        max-height: 180px;
+        width: 60%;
+    }
+
+    .video-info {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar menu rápido para tablets landscape */
+    .quick-menu-desktop {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .sidebar-item {
+        justify-content: center;
+        text-align: center;
+    }
+
+    #quickMenuSectionInNav {
+        padding: 12px 0;
+    }
+
+    #quickMenuSectionInNav h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+}
+
+/* Tablet Portrait (768px - 481px) */
+@media (max-width: 768px) and (min-width: 481px) {
+    .main {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px 16px;
+        margin-top: 100px;
+    }
+
+    .left-sidebar {
+        position: static;
+        order: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: auto;
+    }
+
+    .feed-container {
+        order: 1;
+    }
+
+    .right-sidebar {
+        display: none;
+    }
+
+    /* Ajustar cards de publicação */
+    .publication-card {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .publication-header {
+        margin-bottom: 14px;
+    }
+
+    .publication-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .publication-actions {
+        padding: 14px 0;
+        gap: 14px;
+    }
+
+    .publication-action {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar botões de criar publicação */
+    .create-post {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .create-post-actions {
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .create-post-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar sidebar */
+    .sidebar-section {
+        margin-bottom: 18px;
+        padding: 14px;
+    }
+
+    .user-profile-card {
+        padding: 14px;
+    }
+
+    .quick-menu-desktop {
+        gap: 6px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .sidebar-item {
+        padding: 10px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    /* Ajustar header */
+    .header-content {
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    .search-container {
+        max-width: 250px;
+    }
+
+    .search-input {
+        font-size: 0.85rem;
+        padding: 8px 36px 8px 14px;
+    }
+
+    /* Ajustar modais */
+    .modal-content {
+        width: 95%;
+        max-width: 500px;
+        margin: 10% auto;
+        padding: 20px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    /* Modal de perfil específico para tablets portrait */
+    #userProfileModal .modal-content {
+        width: 90%;
+        max-width: 450px;
+        padding: 18px;
+    }
+
+    .user-profile-modal-details {
+        padding: 14px;
+        text-align: center;
+    }
+
+    .user-profile-modal-details .user-avatar-large {
+        width: 65px;
+        height: 65px;
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.8rem;
+    }
+
+    /* Ajustar seção sobre */
+    .sobre-container {
+        padding: 16px;
+    }
+
+    .sobre-card {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .sobre-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    /* Ajustar ranking */
+    .ranking-container {
+        padding: 16px;
+    }
+
+    .ranking-header {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .ranking-item {
+        padding: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Ajustar navegação para tablets portrait */
+    .mobile-nav-buttons {
+        display: flex !important;
+        gap: 16px;
+    }
+
+    .mobile-nav-buttons .nav-link {
+        font-size: 1.1rem;
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+    }
+
+    .mobile-menu-btn {
+        display: block !important;
+        font-size: 1.2rem;
+        padding: 8px;
+    }
+
+    .nav {
+        display: none;
+    }
+
+    /* Ajustar header para tablets portrait */
+    .header {
+        padding: 10px 0;
+    }
+
+    .header-content {
+        height: 55px;
+    }
+
+    /* Ajustar botões de autenticação para tablets portrait */
+    .auth-buttons {
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .tituI {
+        font-size: 1.8rem;
+    }
+
+    .titLogin {
+        font-size: 1.1rem;
+    }
+
+    .tituPara {
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar mídias para tablets portrait */
+    .publication-image,
+    .publication-video {
+        max-height: 280px;
+        border-radius: 6px;
+    }
+
+    .media-preview img,
+    .media-preview video {
+        max-height: 160px;
+        width: 70%;
+    }
+
+    .video-info {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Ajustar menu rápido para tablets portrait */
+    #quickMenuSectionInNav {
+        padding: 10px 0;
+        margin-top: 8px;
+    }
+
+    #quickMenuSectionInNav h2 {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .quick-menu-desktop {
+        gap: 4px;
+    }
+
+    .sidebar-item {
+        padding: 8px;
+        font-size: 0.75rem;
+        min-height: 36px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .main {
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+
+    .right-sidebar {
+        display: none;
+    }
+
+    .logo {
+        font-size: 2.4rem;
+    }
+
+    .logo i {
+        font-size: 2.4rem;
+    }
+
+    .nav-link {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
+    }
+
+    .header {
+        padding: 8px 0;
+    }
+
+    .header-content {
+        padding: 0 16px;
+        flex-wrap: wrap;
+        gap: 16px;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .mobile-nav-buttons {
+        display: flex;
+        order: 2;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex: 1;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 20%;
+        transform: translate(-50%, -50%);
+   
+    }
+
+    .mobile-nav-link {
+        background: linear-gradient(135deg, rgba(139, 12, 213, 0.843) 0%, rgba(80, 2, 154, 0.538) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.169);
+        border-radius: 12px;
+        color: white;
+        padding: 0 2px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        height: 48px;
+        text-decoration: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+        margin: 0 6px;
+        gap: 8px;
+    }
+
+    .mobile-nav-link:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+        border-color: rgba(119, 16, 255, 0.5);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .mobile-nav-link:active {
+        transform:none;
+    }
+
+    .mobile-nav-link.active {
+        background: linear-gradient(135deg, rgba(92, 4, 143, 0.343) 0%, rgba(103, 2, 197, 0.318) 100%);
+        border-color: rgba(255, 255, 255, 0.429);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        order: 1;
+        position: absolute;
+        left: 16px;
+    }
+
+    /* Esconder o logo no mobile */
+    .logo {
+        display: none !important;
+    }
+
+    /* Mostrar os botões de navegação mobile */
+    .mobile-nav-buttons {
+        display: flex !important;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+
+    /* Esconder botões do menu principal no mobile, exceto informações */
+    .nav .nav-link {
+        display: none;
+    }
+    
+    /* Mostrar apenas o botão de informações no menu mobile */
+    .nav .nav-link[href="#sobre"] {
+        display: flex !important;
+    }
+
+    .logo i {
+        font-size: 2rem;
+    }
+
+    .nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        transition: left 0.3s ease;
+        z-index: 999;
+    }
+
+    .nav.active {
+        left: 0;
+    }
+
+    .nav-link {
+        padding: 16px 32px;
+        font-size: 1.2rem;
+        width: 80%;
+        justify-content: center;
+        border-radius: 16px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-link i {
+        font-size: 1.4rem;
+    }
+
+    .nav-text {
+        font-size: 1.1rem;
+    }
+
+    .main {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px 12px;
+        margin-top: 120px;
+    }
+
+    .left-sidebar {
+        position: static;
+        order: 2;
+    }
+
+    .sidebar-section {
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .sidebar-title {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+
+    .sidebar-item {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .create-post {
+        padding: 20px;
+       
+    }
+
+    .create-post-header {
+        gap: 12px;
+        margin-bottom: 16px;
+       
+    }
+
+    .create-post-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .create-post-input {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .create-post-actions {
+        gap: 8px;
+    }
+
+    .create-post-btn {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+
+    .publication-card {
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .publication-header {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .publication-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .publication-author {
+        font-size: 0.9rem;
+    }
+
+    .publication-meta {
+        font-size: 0.8rem;
+        gap: 8px;
+    }
+
+    .publication-content {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+    }
+
+    .publication-actions {
+        gap: 6px;
+        padding-top: 12px;
+    }
+
+    .publication-action {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    .loading-state {
+        padding: 2rem;
+    }
+
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0.5rem;
+    }
+
+    .loading-state p {
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    /* Estilos específicos para modal de perfil do usuário em mobile */
+    .user-profile-modal-details {
+        padding: 16px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1.1rem;
+        line-height: 1.3;
+        margin-bottom: 10px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.8rem;
+    }
+
+    .modal-header {
+        padding: 20px 20px 12px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .close-btn {
+        font-size: 1.3rem;
+        padding: 0;
+        color: #ffffff;
+        background: rgb(51, 1, 98);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(51, 1, 98, 0.3);
+    }
+
+    .publication-form {
+        padding: 20px;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .search-container {
+        margin-bottom: 16px;
+    }
+
+    .search-input {
+        padding: 12px 16px 12px 48px;
+        font-size: 0.9rem;
+    }
+
+    .search-icon {
+        left: 16px;
+        font-size: 1rem;
+    }
+
+    .user-profile-summary > *:not(.user-avatar-large) {
+        display: none !important;
+    }
+    .user-profile-summary .user-avatar-large {
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+    .user-profile-section {
+        margin-bottom: 0;
+    }
+    .user-profile-section.expanded .user-profile-details {
+        display: block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
+    }
+
+    .header-content {
+        padding: 0 8px;
+        gap: 8px;
+    }
+
+    .mobile-nav-buttons .nav-link {
+        font-size: 1.2rem;
+        margin: 0;
+        width: 44px;
+        height: 44px;
+    }
+
+    .mobile-menu-btn {
+        padding: 6px;
+        font-size: 1.3rem;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    .logo i {
+        font-size: 1.8rem;
+    }
+
+    .nav {
+        gap: 20px;
+    }
+
+    .nav-link {
+        padding: 14px 24px;
+        font-size: 1.1rem;
+        width: 90%;
+    }
+
+    .nav-link i {
+        font-size: 1.3rem;
+    }
+
+    .main {
+        padding: 12px 8px;
+        margin-top: 100px;
+        gap: 12px;
+    }
+
+    .publication-card {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .create-post {
+        padding: 16px;
+    }
+
+    .publication-header {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .publication-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .publication-author {
+        font-size: 0.85rem;
+    }
+
+    .publication-meta {
+        font-size: 0.75rem;
+        gap: 6px;
+    }
+
+    .publication-content {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+    }
+
+    .publication-actions {
+        gap: 4px;
+        padding-top: 10px;
+    }
+
+    .publication-action {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
+
+    .create-post-header {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .create-post-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .create-post-input {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    .create-post-actions {
+        gap: 6px;
+    }
+
+    .create-post-btn {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    .modal-content {
+        width: 98%;
+        max-height: 98vh;
+    }
+
+    /* Estilos específicos para modal de perfil do usuário em telas pequenas */
+    .user-profile-modal-details {
+        padding: 12px;
+    }
+
+    .user-profile-modal-details .user-full-name {
+        font-size: 1rem;
+        line-height: 1.2;
+        margin-bottom: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
+    }
+
+    .user-profile-modal-details .user-turma {
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-description {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+
+    .user-profile-modal-details .user-short-description {
+        font-size: 0.75rem;
+    }
+
+    .modal-header {
+        padding: 16px 16px 10px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .close-btn {
+        font-size: 1.2rem;
+        padding: 0;
+        color: #ffffff;
+        background: rgb(51, 1, 98);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(51, 1, 98, 0.3);
+    }
+
+    .publication-form {
+        padding: 16px;
+    }
+
+    .form-group label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .loading-state {
+        padding: 1.5rem;
+    }
+
+    .loading-spinner {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 0.5rem;
+    }
+
+    .loading-state p {
+        font-size: 0.85rem;
+    }
+}

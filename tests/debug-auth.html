@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Autenticação</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .debug-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        .debug-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .debug-title {
+            color: #ff6b35;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .debug-content {
+            font-family: monospace;
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .test-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .test-btn:hover {
+            background: #e55a2b;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Debug de Autenticação</h1>
+        
+        <div class="debug-section">
+            <div class="debug-title">Status do Supabase</div>
+            <div id="supabaseStatus" class="status info">Verificando...</div>
+            <button class="test-btn" onclick="testSupabase()">Testar Supabase</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-title">Status de Autenticação</div>
+            <div id="authStatus" class="status info">Verificando...</div>
+            <button class="test-btn" onclick="checkAuth()">Verificar Auth</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-title">Teste de Registro</div>
+            <button class="test-btn" onclick="testRegister()">Testar Registro</button>
+            <div id="registerResult" class="debug-content"></div>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-title">Logs</div>
+            <div id="logs" class="debug-content">Aguardando logs...</div>
+            <button class="test-btn" onclick="clearLogs()">Limpar Logs</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-title">Navegação</div>
+            <a href="index.html" class="test-btn">Página Inicial</a>
+            <a href="register.html" class="test-btn">Página de Registro</a>
+            <a href="login.html" class="test-btn">Página de Login</a>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+        function log(message) {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            logsDiv.textContent += `[${timestamp}] ${message}\n`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').textContent = 'Logs limpos...\n';
+        }
+
+        async function testSupabase() {
+            const statusDiv = document.getElementById('supabaseStatus');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Testando conexão...';
+            log('Testando conexão com Supabase...');
+
+            try {
+                // Testar se o cliente Supabase está disponível
+                if (!supabase) {
+                    throw new Error('Cliente Supabase não encontrado');
+                }
+
+                // Testar conexão básica
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('count')
+                    .limit(1);
+
+                if (error) throw error;
+
+                statusDiv.className = 'status success';
+                statusDiv.textContent = 'Supabase conectado com sucesso!';
+                log('✅ Supabase conectado com sucesso!');
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Erro: ' + error.message;
+                log('❌ Erro no Supabase: ' + error.message);
+            }
+        }
+
+        async function checkAuth() {
+            const statusDiv = document.getElementById('authStatus');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = 'Verificando autenticação...';
+            log('Verificando status de autenticação...');
+
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) throw error;
+
+                if (user) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `Usuário logado: ${user.email}`;
+                    log(`✅ Usuário logado: ${user.email}`);
+
+                    // Verificar perfil
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+
+                    if (profileError) {
+                        log('⚠️ Perfil não encontrado: ' + profileError.message);
+                    } else {
+                        log(`✅ Perfil encontrado: ${profile.name}`);
+                    }
+                } else {
+                    statusDiv.className = 'status info';
+                    statusDiv.textContent = 'Nenhum usuário logado';
+                    log('ℹ️ Nenhum usuário logado');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Erro: ' + error.message;
+                log('❌ Erro na autenticação: ' + error.message);
+            }
+        }
+
+        async function testRegister() {
+            const resultDiv = document.getElementById('registerResult');
+            resultDiv.textContent = 'Testando registro...\n';
+            log('Testando registro de usuário...');
+
+            try {
+                const testUser = {
+                    email: 'teste' + Date.now() + '@teste.com',
+                    password: '123456',
+                    name: 'Usuário Teste',
+                    turma: 'TESTE',
+                    description: 'Usuário de teste'
+                };
+
+                log(`Tentando registrar: ${testUser.email}`);
+
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: testUser.email,
+                    password: testUser.password
+                });
+
+                if (authError) throw authError;
+
+                log('✅ Usuário criado no Auth');
+
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .insert([{
+                        id: authData.user.id,
+                        name: testUser.name,
+                        email: testUser.email,
+                        turma: testUser.turma,
+                        description: testUser.description,
+                        created_at: new Date().toISOString()
+                    }])
+                    .select();
+
+                if (profileError) throw profileError;
+
+                log('✅ Perfil criado com sucesso');
+                resultDiv.textContent = `Registro bem-sucedido!\nUsuário: ${testUser.email}\nID: ${authData.user.id}`;
+
+            } catch (error) {
+                log('❌ Erro no registro: ' + error.message);
+                resultDiv.textContent = 'Erro no registro: ' + error.message;
+            }
+        }
+
+        // Executar testes automáticos
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Página de debug carregada');
+            testSupabase();
+            checkAuth();
+        });
+    </script>
+</body>
+</html> 

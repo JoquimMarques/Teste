@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="../css/auth-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <link rel="apple-touch-icon" href="../../favicon_io-22/apple-touch-icon.png">
+    <link rel="shortcut icon" href="../../favicon_io-22/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../favicon_io-22/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../favicon_io-22/favicon-16x16.png">
+    <title>Criar Conta - briolink</title>
+    <style>
+        /* Reset e configurações básicas */
+
+
+
+        :root {
+            --primary-purple: #371669;
+            --primary-purple-light: #5e2d91;
+            --primary-purple-dark: #240c3f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+            min-height: 100vh;
+            background: linear-gradient(13deg, #240c3f 0%, #5e2d91 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            background-color: black;
+        }
+
+        /* Efeito de background com padrão sutil */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            z-index: -1;
+        }
+
+        /* Link de voltar */
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+
+
+
+        /* Container principal */
+        .register-container {
+            background: transparent;
+            border: 1px solid rgba(76, 0, 207, 0.799);
+            width: 45%;
+            backdrop-filter: blur(30px);
+            margin-top: -6px;
+            border-radius: 19px;
+            box-shadow: 0 25px 50px rgba(64, 45, 91, 0.511);
+            overflow: hidden;
+            padding: 50px 25px;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+            margin-left: 10px;
+
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .register-header {
+
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Audiowide', sans-serif;
+        }
+
+
+
+        .register-header h1 {
+            color: #ffffff;
+            margin-top: -10px;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 19px;
+
+        }
+
+        .register-header p {
+
+            color: white;
+            font-size: 1rem;
+            margin-top: 34px;
+            margin-bottom: -30px;
+        }
+
+        /* Formulário */
+        #registerForm {
+            padding: 32px;
+            font-family: 'Audiowide', sans-serif;
+            margin-top: -20px;
+
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 600;
+            margin-left: 4px;
+            color: rgb(255, 255, 255);
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 13px 17px;
+            border: 1px solid #5e2d91;
+            margin-bottom: -20px;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: hsla(0, 0%, 100%, 0.835);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #5e2d91;
+            box-shadow: 0 0 0 3px rgba(144, 53, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #4702b5;
+        }
+
+        /* Textarea específico */
+        textarea.form-input {
+            resize: vertical;
+            field-sizing: content;
+            min-height: 1px;
+            border-radius: 10px;
+            max-height: 60px;
+        }
+
+        /* Botão de registro */
+        .btn-register {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.253);
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 43px var(--primary-purple-light);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Link de login */
+        .login-link {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: -10px;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .login-link p {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Audiowide', sans-serif;
+        }
+
+        .login-link a {
+            color: #9231f9;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
+
+
+        /* Mensagens de erro e sucesso */
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: -6px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            display: none;
+            font-family: 'Audiowide', sans-serif;
+        }
+
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: -6px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            display: none;
+            font-family: 'Audiowide', sans-serif;
+        }
+
+        /* 
+@media (max-width: 480px) {
+    .register-container {
+        margin: 20px;
+        max-width: none;
+        border-radius: 16px;
+    }
+    
+    .register-header {
+        padding: 24px 24px 20px;
+    }
+    
+    .register-header h1 {
+        font-size: 24px;
+    }
+    
+    #registerForm {
+        padding: 24px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .back-link {
+        top: 10px;
+        left: 10px;
+        font-size: 14px;
+    }
+} */
+
+        @media (max-width: 768px) {
+            body {
+                background-color: black;
+            }
+
+            .logo img {
+                display: none;
+            }
+
+            .register-container {
+                padding: 20px 1px;
+                margin-top: -20px;
+                margin-left: 3px;
+                margin-right: 2px;
+                width: 600px;
+                border: none;
+                box-shadow: none;
+                backdrop-filter: none;
+
+
+
+            }
+
+            .register-header h1 {
+                display: none;
+            }
+
+            .register-header p {
+
+                color: #ffffff;
+                font-size: 1.2rem;
+                margin-bottom: -20px;
+                font-family: 'Audiowide', sans-serif;
+                font-size: 1rem;
+                margin-top: -20px;
+            }
+
+            .logo {
+
+                left: 66px !important;
+                top: 40px !important;
+                font-size: 3.3rem ! important;
+            }
+
+            .form-input {
+
+                padding: 11px 10px;
+                border: 1px solid #5e2d91;
+                margin-bottom: -20px;
+                border-radius: 10px;
+                font-size: 15px;
+                transition: all 0.3s ease;
+                background: hsla(0, 0%, 100%, 0.835);
+                font-family: inherit;
+            }
+
+            .register-header {
+                padding: 24px 32px 20px;
+                border-radius: 10px;
+            }
+
+            #registerForm {
+                padding: 24px 1px;
+
+            }
+
+            .form-group label {
+                font-size: 0.8rem;
+
+
+            }
+
+            .form-group {
+
+
+                margin-left: -8px;
+                margin-bottom: -2px;
+                width: 104% !important;
+                padding: 11px;
+                font-size: 16px;
+            }
+
+        }
+
+        .bg-video {
+            display: none;
+        }
+
+        #typewriter::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+            color: #a386f9;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+
+        .logo {
+
+            font-size: 2.8rem;
+            position: absolute;
+            top: 16px;
+            left: 30px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+            font-family: 'Audiowide', sans-serif;
+        }
+
+        .logo-link {
+            text-decoration: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- <canvas id="canvas"></canvas> -->
+
+
+    <a href="/index.html" class="logo-link">
+
+
+        <h1 class="logo"> <img src="../img/briolink.png" alt=""></h1>
+    </a>
+
+    <!-- <div class="imagens">
+        <img src="../img/Design sem nome.png" alt="" style="width: 600px;"> 
+
+    </div> -->
+
+
+    <div class="register-container">
+
+        <div class="register-header">
+            <h1>Criar Conta</h1>
+
+            <p id="typewriter"></p>
+
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" name="name" class="form-input" autocomplete="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="turma">Escola ou Instituição:</label>
+                <input type="text" id="turma" name="turma" class="form-input" autocomplete="off" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Biografia:</label>
+                <textarea id="description" name="description" class="form-input" rows="8" autocomplete="off" required
+                    maxlength="100"> </textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" id="password" name="password" class="form-input" autocomplete="new-password"
+                        required>
+                    <i class="fa-solid fa-eye toggle-password" id="togglePassword"
+                        style="position: absolute; top: 50%; right: 20px; transform: translateY(-50%);font-size: 18px; cursor: pointer; color: hsl(269, 99%, 72%); margin-top: 6px;"
+                        onclick="togglePassword()"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-register" id="registerBtn">
+                Criar Conta
+            </button>
+        </form>
+
+        <div class="login-link">
+            <p>Já tem uma conta? <a href="login.html">Entrar</a></p>
+        </div>
+    </div>
+    <script src="../js/canvas.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Configuration - Initialize only if not already done
+        (function initSupabase() {
+            if (window.supabaseClient) return;
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                console.error('Supabase SDK not loaded!');
+                return;
+            }
+            var SUPABASE_URL = 'https://nvswucwnvshvklqgojcw.supabase.co';
+            var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52c3d1Y3dudnNodmtscWdvamN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEwNTY0MjAsImV4cCI6MjA2NjYzMjQyMH0.axU4sYS4G9b_Ebo1oiXVcVP933gcWytAb80hPEEQPBA';
+            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        })();
+        var supabase = window.supabaseClient;
+
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const registerBtn = document.getElementById('registerBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Limpar mensagens anteriores
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            // Desabilitar botão
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Criando conta...';
+
+            try {
+                const name = document.getElementById('name').value.trim();
+                const turma = document.getElementById('turma').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Validações básicas
+                if (!name || !turma || !description || !password) {
+                    throw new Error('Todos os campos são obrigatórios');
+                }
+
+                if (password.length < 6) {
+                    throw new Error('A senha deve ter pelo menos 6 caracteres');
+                }
+
+                // Criar email único baseado no nome (removendo acentos e caracteres especiais)
+                const email = `${name.toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+                    .replace(/[^a-z0-9\s]/g, '') // Remove caracteres especiais
+                    .replace(/\s+/g, '.')}@briolink.com`;
+
+                console.log('Iniciando registro...');
+                console.log('Dados:', { name, turma, description, email });
+
+                // Registrar usuário no Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+                if (authError) {
+                    console.error('Erro no registro:', authError);
+
+                    if (authError.message.includes('duplicate')) {
+                        throw new Error('Já existe uma conta com este nome. Tente um nome diferente.');
+                    } else {
+                        throw new Error('Já existe uma conta com este nome. Tente um nome diferente.');
+                    }
+                }
+
+                if (!authData.user) {
+                    throw new Error('Erro ao criar usuário');
+                }
+
+                console.log('Usuário criado:', authData.user);
+
+                // Criar perfil na tabela profiles
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: authData.user.id,
+                        name: name,
+                        turma: turma,
+                        description: description,
+                        email: email,
+                        created_at: new Date().toISOString()
+                    });
+
+                if (profileError) {
+                    console.error('Erro ao criar perfil:', profileError);
+
+                    if (profileError.message.includes('duplicate')) {
+                        throw new Error('Perfil já existe. Tente fazer login.');
+                    } else {
+                        throw new Error(`Erro ao criar perfil: ${profileError.message}`);
+                    }
+                }
+
+                console.log('Perfil criado com sucesso');
+
+                // Mostrar mensagem de sucesso
+                successMessage.textContent = 'Conta criada com sucesso! Redirecionando...';
+                successMessage.style.display = 'block';
+
+                // Fazer login automático
+                const { error: loginError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (loginError) {
+                    console.error('Erro no login automático:', loginError);
+                    // Mesmo com erro no login automático, redirecionar para login
+                    console.log('Redirecionando para login.html...');
+                    console.log('URL atual:', window.location.href);
+                    console.log('Caminho atual:', window.location.pathname);
+                    window.location.href = '/src/html/login.html';
+                } else {
+                    // Login bem-sucedido, redirecionar para página inicial
+                    console.log('Login automático bem-sucedido!');
+                    console.log('URL atual:', window.location.href);
+                    console.log('Caminho atual:', window.location.pathname);
+                    console.log('Redirecionando para página principal...');
+
+                    // Redirecionamento direto e imediato
+                    window.location.href = '/index.html';
+                }
+
+            } catch (error) {
+                console.error('Erro:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+
+                // Reabilitar botão
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Criar Conta';
+            }
+        });
+
+        const texto = "Junte-se à nós e comece!";
+        const elemento = document.getElementById("typewriter");
+        let i = 0;
+
+        function typeWriter() {
+            if (i < texto.length) {
+                elemento.innerHTML += texto.charAt(i);
+                i++;
+                setTimeout(typeWriter, 40); // velocidade da digitação
+            }
+        }
+        typeWriter();
+
+        // Recarrega a página após 30 segundos
+        setTimeout(() => {
+            window.location.reload();
+        }, 100000); // 30000 milissegundos = 30 segundos
+
+
+
+
+        function togglePassword() {
+            const password = document.getElementById("password");
+            const toggle = document.getElementById("togglePassword");
+
+            if (password.type === "password") {
+                password.type = "text";
+                toggle.classList.remove("fa-eye");
+                toggle.classList.add("fa-eye-slash");
+            } else {
+                password.type = "password";
+                toggle.classList.remove("fa-eye-slash");
+                toggle.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+
+</html>
